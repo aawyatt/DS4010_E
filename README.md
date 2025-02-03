@@ -1,4 +1,9 @@
-# DS4010_E
+# DS4010 Team E
+
+**Paragraph of purpose of the repository**
+
+This repository contains information and raw data for our final project in DS4010, the Data Science Capstone at Iowa State University. 
+
 
 ## Team Members
 
