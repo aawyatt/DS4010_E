@@ -12,7 +12,7 @@
 
 - Description: Farm land separated into 4 primary sections
 
-**Plot**
+## **Plot**
 
 - Type: Categorical number
 
@@ -20,35 +20,35 @@
 
 - Description: Farm block separated into further sub-sections called plots
 
-**TRT**
+## **TRT**
 
 - Type: Categorical text
 
 - Values:CC, P, CCW, PF
 
-- Description: CC: continuous corn without a cover crop; CCW: continuous corn with a rye cover crop; P:unfertilized prairie; PF: fertilized prairie.
+- Description: CC: Continuous corn without a cover crop; CCW: continuous corn with a rye cover crop; P:unfertilized prairie; PF: fertilized prairie.
 
 
-**Grain Yield Mg/ha @ 15.5% moisture**
+## **Grain Yield Mg/ha @ 15.5% moisture**
 
 - Type: Positive Float value
 
 - Description: Yield in Mg per hectare adjusted to 15.5% moisture concentration(blank reflects absence of corn grain production in P and PF)
 
-**Stover and prairie yield Mg/ha @ 0% moisture**
+## **Stover and prairie yield Mg/ha @ 0% moisture**
 
 - Type: Positive Float value
 
 - Description: harvested corn stover or prairie biomass in Mg per hectare at 0% moisture concentration.
 
 
-**Stover and prairie yield kg/ha @ 0% moisture**
+## **Stover and prairie yield kg/ha @ 0% moisture**
 
 - Type: Positive Float value
 
 - Description: harvested corn stover or prairie biomass in kg per hectare at 0% moisture concentration
 
-**Ln biomass Mg ha^-1**
+## **Ln biomass Mg ha^-1**
 
 - Type: Positive Float value
 
