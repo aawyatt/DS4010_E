@@ -1,5 +1,5 @@
 # Raw Data
-This folder contains the raw data files along with the csv files used for this project. 
+This folder contains the raw data files used in the project in the format of csv. Each of the data sets used for the project have been placed in their own sub-folders as described below.
 
 ## Folders
 
