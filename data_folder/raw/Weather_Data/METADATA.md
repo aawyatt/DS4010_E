@@ -6,16 +6,16 @@ Daily precipitation and mean air temperature data were collected at a weather st
 
 *Year*: year of measurement, between 2009-2022 (date, YYYY)
 
-*Annual precip mm*: cumulative precipitation in mm, 1 January-31 December (float)
+*Annual precip mm*: cumulative precipitation in mm, 1 January-31 December (positive float)
 
-*Growing season precip mm (1Apr-31Oct)*: cumulative precipitation in mm, 1 April-31 October (float)
+*Growing season precip mm (1Apr-31Oct)*: cumulative precipitation in mm, 1 April-31 October (positive float)
 
-*Annual ave. air temp C*: average daily air temperature in °C, 1 January-31 December (float)
+*Annual ave. air temp C*: average daily air temperature in °C, 1 January-31 December (positive float)
 
-*Growing season ave. air temp C (1Apr-31Oct)*: average daily air temperature in °C, 1 April-31 October (float)
+*Growing season ave. air temp C (1Apr-31Oct)*: average daily air temperature in °C, 1 April-31 October (positive float)
 
-*Annual ET mm*: cumulative reference evapotranspiration in mm, 1 January-31 December (float)
+*Annual ET mm*: cumulative reference evapotranspiration in mm, 1 January-31 December (positive float)
 
-*Growing season ET mm (1Apr-31Oct)*: cumulative reference evapotranspiration in mm, 1 April-31 October (float)
+*Growing season ET mm (1Apr-31Oct)*: cumulative reference evapotranspiration in mm, 1 April-31 October (positive float)
 
 The data dictionary is adapted from the study the data is taken from: "Multi-year productivity and nitrate-nitrogen loss from corn and prairie bioenergy cropping systems" (https://iastate.figshare.com/articles/dataset/Data_for_Multi-year_productivity_and_nitrate-nitrogen_loss_from_corn_and_prairie_bioenergy_cropping_systems/27144879/1?file=49550532)
