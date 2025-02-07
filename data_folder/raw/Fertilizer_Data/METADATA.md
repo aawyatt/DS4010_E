@@ -1,5 +1,5 @@
 # COBS NPK fertilizer data
-This dataset contains information on the application of nitrogen (N), phosphorus (P), and potassium (K) fertilizers across different cropping systems in the Comparison of Biofuel Systems (COBS) experiment conducted at Iowa State University. The dataset records fertilizer application rates for N P and K in Kgs/ha, crop treatment types, and associated dates.
+This dataset contains information on the application of nitrogen (N), phosphorus (P), and potassium (K) fertilizers across different cropping systems in the Comparison of Biofuel Systems (COBS) experiment conducted at Iowa State University. The dataset records fertilizer application rates for N, P, and K in Kgs/ha, crop treatment types, and associated dates.
 
 ## Variables:
 - **Date:** Date for application of Fertilizers. 
