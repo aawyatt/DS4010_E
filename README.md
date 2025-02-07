@@ -11,9 +11,16 @@ Srika Raja - Srika1919
 
 ## Folders
 ### Data
-This folder will contain raw and cleaned data in their respective folders. 
+This folder contains the raw and cleaned data in their respective folders. 
 #### Raw
-This contains the 3 raw data files. The file `METADATA.md` contains a list of the variable names, the types of variables, possible values for the variables, and a brief description of the variables.
+This folder contains 3 folders, each containing a raw data file and its respective `METADATA.md` containing a list of the variable names, the type of variable, possible
+values for the variable, and a brief description of the variable.
+##### Fertilizer_Data
+Contains the data file `COBS NPK fertilizer data.csv` and its respective `METADATA.md` file.
+##### Weather_Data
+Contains the data file `COBS weather data.csv` and its respective `METADATA.md` file.
+##### Yield_Data
+Contains the data file `COBS yield data.csv` and its respective `METADATA.md` file.
 
 ## Data Citation
 
