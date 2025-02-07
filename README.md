@@ -10,3 +10,7 @@ Alison Wyatt - aawyatt
 Srika Raja - Srika1919  
 
 ## Folders
+### Data
+This folder will contain raw and cleaned data in their respective folders. 
+#### Raw
+This contains the 3 raw data files. The file `METADATA.md` contains a list of the variable names, the types of variables, possible values for the variables, and a brief description of the variables.
