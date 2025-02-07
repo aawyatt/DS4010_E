@@ -17,11 +17,14 @@ This dataset contains information on the application of nitrogen (N), phosphorus
   Treatment Categories: CC: continuous corn without a cover crop; CCW: Continuous corn with a rye cover crop; P: unfertilized prairie; PF: fertilized prairie.
   
 - **N kg/ha:** Nitrogen applied in Kg/Ha
-  Type: Float
+  Type: Numeric
+  Range: Non-negative Real
   
 - **P kg/ha:** Phosphorus applied in Kg/Ha
-  Type: Float
+  Type: Numeric
+  Range: Non-negative Real
   
 - **K kg/ha:** Potassium applied in Kg/Ha
-  Type: Float
+  Type: Numeric
+  Range: Non-negative Real
   
