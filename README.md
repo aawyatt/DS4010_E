@@ -14,3 +14,7 @@ Srika Raja - Srika1919
 This folder will contain raw and cleaned data in their respective folders. 
 #### Raw
 This contains the 3 raw data files. The file `METADATA.md` contains a list of the variable names, the types of variables, possible values for the variables, and a brief description of the variables.
+
+## Data Citation
+
+Liebman, Matthew; Helmers, Matthew J. (2024). Data for: Multi-year productivity and nitrate-nitrogen loss from corn and prairie bioenergy cropping systems. Iowa State University. Dataset. https://doi.org/10.25380/iastate.27144879.v1
