@@ -1,0 +1,209 @@
+Year,University Name,Student Classification,Resident Status,Headcount
+2012,Iowa State University,Graduate,Non-Resident,2997
+2012,Iowa State University,Graduate,Resident,1610
+2012,Iowa State University,Professional,Non-Resident,326
+2012,Iowa State University,Professional,Resident,262
+2012,Iowa State University,Undergraduate,Non-Resident,8503
+2012,Iowa State University,Undergraduate,Resident,17050
+2012,University of Iowa,Graduate,Non-Resident,3063
+2012,University of Iowa,Graduate,Resident,2041
+2012,University of Iowa,Professional,Non-Resident,938
+2012,University of Iowa,Professional,Resident,2087
+2012,University of Iowa,Undergraduate,Non-Resident,9796
+2012,University of Iowa,Undergraduate,Resident,12203
+2012,University of Northern Iowa,Graduate,Non-Resident,329
+2012,University of Northern Iowa,Graduate,Resident,1289
+2012,University of Northern Iowa,Undergraduate,Non-Resident,849
+2012,University of Northern Iowa,Undergraduate,Resident,9806
+2013,Iowa State University,Graduate,Non-Resident,3116
+2013,Iowa State University,Graduate,Resident,1594
+2013,Iowa State University,Professional,Non-Resident,339
+2013,Iowa State University,Professional,Resident,247
+2013,Iowa State University,Undergraduate,Non-Resident,9650
+2013,Iowa State University,Undergraduate,Resident,18009
+2013,University of Iowa,Graduate,Non-Resident,2971
+2013,University of Iowa,Graduate,Resident,1852
+2013,University of Iowa,Professional,Non-Resident,916
+2013,University of Iowa,Professional,Resident,2035
+2013,University of Iowa,Undergraduate,Non-Resident,9962
+2013,University of Iowa,Undergraduate,Resident,12012
+2013,University of Northern Iowa,Graduate,Non-Resident,348
+2013,University of Northern Iowa,Graduate,Resident,1431
+2013,University of Northern Iowa,Undergraduate,Non-Resident,969
+2013,University of Northern Iowa,Undergraduate,Resident,9411
+2014,Iowa State University,Graduate,Non-Resident,3411
+2014,Iowa State University,Graduate,Resident,1539
+2014,Iowa State University,Professional,Non-Resident,349
+2014,Iowa State University,Professional,Resident,243
+2014,Iowa State University,Undergraduate,Non-Resident,10415
+2014,Iowa State University,Undergraduate,Resident,18478
+2014,University of Iowa,Graduate,Non-Resident,3186
+2014,University of Iowa,Graduate,Resident,2618
+2014,University of Iowa,Professional,Non-Resident,643
+2014,University of Iowa,Professional,Resident,1169
+2014,University of Iowa,Undergraduate,Non-Resident,10214
+2014,University of Iowa,Undergraduate,Resident,12140
+2014,University of Northern Iowa,Graduate,Non-Resident,347
+2014,University of Northern Iowa,Graduate,Resident,1439
+2014,University of Northern Iowa,Undergraduate,Non-Resident,1090
+2014,University of Northern Iowa,Undergraduate,Resident,9052
+2015,Iowa State University,Graduate,Non-Resident,3554
+2015,Iowa State University,Graduate,Resident,1542
+2015,Iowa State University,Professional,Non-Resident,347
+2015,Iowa State University,Professional,Resident,237
+2015,Iowa State University,Undergraduate,Non-Resident,10749
+2015,Iowa State University,Undergraduate,Resident,19285
+2015,University of Iowa,Graduate,Non-Resident,3083
+2015,University of Iowa,Graduate,Resident,2605
+2015,University of Iowa,Professional,Non-Resident,656
+2015,University of Iowa,Professional,Resident,1143
+2015,University of Iowa,Undergraduate,Non-Resident,10597
+2015,University of Iowa,Undergraduate,Resident,12760
+2015,University of Northern Iowa,Graduate,Non-Resident,346
+2015,University of Northern Iowa,Graduate,Resident,1466
+2015,University of Northern Iowa,Undergraduate,Non-Resident,1086
+2015,University of Northern Iowa,Undergraduate,Resident,9083
+2016,Iowa State University,Graduate,Non-Resident,3573
+2016,Iowa State University,Graduate,Resident,1523
+2016,Iowa State University,Professional,Non-Resident,353
+2016,Iowa State University,Professional,Resident,233
+2016,Iowa State University,Undergraduate,Non-Resident,11714
+2016,Iowa State University,Undergraduate,Resident,18957
+2016,University of Iowa,Graduate,Non-Resident,3029
+2016,University of Iowa,Graduate,Resident,2669
+2016,University of Iowa,Professional,Non-Resident,699
+2016,University of Iowa,Professional,Resident,1138
+2016,University of Iowa,Undergraduate,Non-Resident,11161
+2016,University of Iowa,Undergraduate,Resident,13315
+2016,University of Northern Iowa,Graduate,Non-Resident,369
+2016,University of Northern Iowa,Graduate,Resident,1432
+2016,University of Northern Iowa,Undergraduate,Non-Resident,1008
+2016,University of Northern Iowa,Undergraduate,Resident,9096
+2017,Iowa State University,Graduate,Non-Resident,3616
+2017,Iowa State University,Graduate,Resident,1375
+2017,Iowa State University,Professional,Non-Resident,374
+2017,Iowa State University,Professional,Resident,222
+2017,Iowa State University,Undergraduate,Non-Resident,12160
+2017,Iowa State University,Undergraduate,Resident,18246
+2017,University of Iowa,Graduate,Non-Resident,3046
+2017,University of Iowa,Graduate,Resident,2770
+2017,University of Iowa,Professional,Non-Resident,692
+2017,University of Iowa,Professional,Resident,1155
+2017,University of Iowa,Undergraduate,Non-Resident,10343
+2017,University of Iowa,Undergraduate,Resident,14160
+2017,University of Northern Iowa,Graduate,Non-Resident,402
+2017,University of Northern Iowa,Graduate,Resident,1500
+2017,University of Northern Iowa,Undergraduate,Non-Resident,960
+2017,University of Northern Iowa,Undergraduate,Resident,9045
+2018,Iowa State University,Graduate,Non-Resident,3494
+2018,Iowa State University,Graduate,Resident,1280
+2018,Iowa State University,Professional,Non-Resident,373
+2018,Iowa State University,Professional,Resident,224
+2018,Iowa State University,Undergraduate,Non-Resident,12103
+2018,Iowa State University,Undergraduate,Resident,17518
+2018,University of Iowa,Graduate,Non-Resident,2972
+2018,University of Iowa,Graduate,Resident,2854
+2018,University of Iowa,Professional,Non-Resident,666
+2018,University of Iowa,Professional,Resident,1175
+2018,University of Iowa,Undergraduate,Non-Resident,9331
+2018,University of Iowa,Undergraduate,Resident,14658
+2018,University of Northern Iowa,Graduate,Non-Resident,370
+2018,University of Northern Iowa,Graduate,Resident,1281
+2018,University of Northern Iowa,Undergraduate,Non-Resident,866
+2018,University of Northern Iowa,Undergraduate,Resident,8695
+2019,Iowa State University,Graduate,Non-Resident,3247
+2019,Iowa State University,Graduate,Resident,1251
+2019,Iowa State University,Professional,Non-Resident,374
+2019,Iowa State University,Professional,Resident,225
+2019,Iowa State University,Undergraduate,Non-Resident,11429
+2019,Iowa State University,Undergraduate,Resident,16865
+2019,University of Iowa,Graduate,Non-Resident,3011
+2019,University of Iowa,Graduate,Resident,2889
+2019,University of Iowa,Professional,Non-Resident,678
+2019,University of Iowa,Professional,Resident,1180
+2019,University of Iowa,Undergraduate,Non-Resident,8859
+2019,University of Iowa,Undergraduate,Resident,14623
+2019,University of Northern Iowa,Graduate,Non-Resident,321
+2019,University of Northern Iowa,Graduate,Resident,1203
+2019,University of Northern Iowa,Undergraduate,Non-Resident,782
+2019,University of Northern Iowa,Undergraduate,Resident,8191
+2020,Iowa State University,Graduate,Non-Resident,3077
+2020,Iowa State University,Graduate,Resident,1275
+2020,Iowa State University,Professional,Non-Resident,389
+2020,Iowa State University,Professional,Resident,238
+2020,Iowa State University,Undergraduate,Non-Resident,10448
+2020,Iowa State University,Undergraduate,Resident,16398
+2020,University of Iowa,Graduate,Non-Resident,3175
+2020,University of Iowa,Graduate,Resident,2966
+2020,University of Iowa,Professional,Non-Resident,694
+2020,University of Iowa,Professional,Resident,1179
+2020,University of Iowa,Undergraduate,Non-Resident,8342
+2020,University of Iowa,Undergraduate,Resident,13962
+2020,University of Northern Iowa,Graduate,Non-Resident,348
+2020,University of Northern Iowa,Graduate,Resident,870
+2020,University of Northern Iowa,Undergraduate,Non-Resident,719
+2020,University of Northern Iowa,Undergraduate,Resident,7585
+2021,Iowa State University,Graduate,Non-Resident,2977
+2021,Iowa State University,Graduate,Resident,1287
+2021,Iowa State University,Professional,Non-Resident,397
+2021,Iowa State University,Professional,Resident,239
+2021,Iowa State University,Undergraduate,Non-Resident,10102
+2021,Iowa State University,Undergraduate,Resident,15706
+2021,University of Iowa,Graduate,Non-Resident,3402
+2021,University of Iowa,Graduate,Resident,3013
+2021,University of Iowa,Professional,Non-Resident,746
+2021,University of Iowa,Professional,Resident,1140
+2021,University of Iowa,Undergraduate,Non-Resident,8104
+2021,University of Iowa,Undergraduate,Resident,13504
+2021,University of Northern Iowa,Graduate,Non-Resident,287
+2021,University of Northern Iowa,Graduate,Resident,963
+2021,University of Northern Iowa,Undergraduate,Non-Resident,663
+2021,University of Northern Iowa,Undergraduate,Resident,7318
+2022,Iowa State University,Graduate,Non-Resident,2845
+2022,Iowa State University,Graduate,Resident,1249
+2022,Iowa State University,Professional,Non-Resident,397
+2022,Iowa State University,Professional,Resident,237
+2022,Iowa State University,Undergraduate,Non-Resident,10031
+2022,Iowa State University,Undergraduate,Resident,15210
+2022,University of Iowa,Graduate,Non-Resident,3301
+2022,University of Iowa,Graduate,Resident,2855
+2022,University of Iowa,Professional,Non-Resident,770
+2022,University of Iowa,Professional,Resident,1116
+2022,University of Iowa,Undergraduate,Non-Resident,8636
+2022,University of Iowa,Undergraduate,Resident,13337
+2022,University of Northern Iowa,Graduate,Non-Resident,217
+2022,University of Northern Iowa,Graduate,Resident,993
+2022,University of Northern Iowa,Undergraduate,Non-Resident,617
+2022,University of Northern Iowa,Undergraduate,Resident,7122
+2023,Iowa State University,Graduate,Non-Resident,3005
+2023,Iowa State University,Graduate,Resident,1205
+2023,Iowa State University,Professional,Non-Resident,401
+2023,Iowa State University,Professional,Resident,234
+2023,Iowa State University,Undergraduate,Non-Resident,10474
+2023,Iowa State University,Undergraduate,Resident,14858
+2023,University of Iowa,Graduate,Non-Resident,3401
+2023,University of Iowa,Graduate,Resident,2678
+2023,University of Iowa,Professional,Non-Resident,732
+2023,University of Iowa,Professional,Resident,1101
+2023,University of Iowa,Undergraduate,Non-Resident,9024
+2023,University of Iowa,Undergraduate,Resident,13106
+2023,University of Northern Iowa,Graduate,Non-Resident,218
+2023,University of Northern Iowa,Graduate,Resident,1061
+2023,University of Northern Iowa,Undergraduate,Non-Resident,685
+2023,University of Northern Iowa,Undergraduate,Resident,7057
+2024,Iowa State University,Graduate,Non-Resident,3028
+2024,Iowa State University,Graduate,Resident,1142
+2024,Iowa State University,Professional,Non-Resident,402
+2024,Iowa State University,Professional,Resident,232
+2024,Iowa State University,Undergraduate,Non-Resident,10886
+2024,Iowa State University,Undergraduate,Resident,14742
+2024,University of Iowa,Graduate,Non-Resident,3532
+2024,University of Iowa,Graduate,Resident,2632
+2024,University of Iowa,Professional,Non-Resident,763
+2024,University of Iowa,Professional,Resident,1114
+2024,University of Iowa,Undergraduate,Non-Resident,9490
+2024,University of Iowa,Undergraduate,Resident,13248
+2024,University of Northern Iowa,Graduate,Non-Resident,225
+2024,University of Northern Iowa,Graduate,Resident,1342
+2024,University of Northern Iowa,Undergraduate,Non-Resident,699
+2024,University of Northern Iowa,Undergraduate,Resident,7017
