@@ -1,6 +1,9 @@
 # DS4010 Team E (a.k.a Statistical Superstars)
 
-This repository contains information and raw data for our final project in DS4010, the Data Science Capstone at Iowa State University. We are using this data to create a dashboard and apply the data science and statistical knowledge we have learned during our Data Science coursework. This repository will also include descriptions of the data, data cleaning methods, statistical applications, and takeaways from our analysis.  
+This repository contains information and raw data for our final project in DS4010, the Data Science Capstone at Iowa State University. We are using this data to create a dashboard and apply the data science and statistical knowledge we have learned during our Data Science coursework. This repository will also include descriptions of the data, data cleaning methods, statistical applications, and takeaways from our analysis. 
+
+# Project Description:
+This project aims to analyze and predict trends in the ISU Dining meal plan. By examining historical meal plan purchases, residence hall occupancy, and churn rates over semesters and years, we will identify the most popular meal plans, analyze student retention, and forecast meal plan sales and revenue for Fall 2025. Additionally, we will assess how many students in residence halls who do not require meal plans still choose to purchase them and whether this changes over time. Using predictive modeling, churn analysis, and comparative analytics, we will uncover patterns in meal plan adoption and student housing trends. The insights from this study will help ISU Dining and Housing Services optimize pricing, meal plan structures, and retention strategies, ensuring financial sustainability while improving student satisfaction. Our team will develop interactive dashboards to track trends and predictions, making data-driven policy decisions more accessible.
 
 ## Team Members
 
