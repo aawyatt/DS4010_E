@@ -13,15 +13,12 @@ Srika Raja - Srika1919
 ### Data
 This folder contains the raw and cleaned data in their respective folders. 
 #### Raw
-This folder contains 3 folders, each containing a raw data file and its respective `METADATA.md` containing a list of the variable names, the type of variable, possible
+This folder contains 2 folders, each containing a raw data file and its respective `METADATA.md` containing a list of the variable names, the type of variable, possible
 values for the variable, and a brief description of the variable.
-##### Fertilizer_Data
-Contains the data file `COBS NPK fertilizer data.csv` and its respective `METADATA.md` file.
-##### Weather_Data
-Contains the data file `COBS weather data.csv` and its respective `METADATA.md` file.
-##### Yield_Data
-Contains the data file `COBS yield data.csv` and its respective `METADATA.md` file.
+##### Dining_Data
+Contains the data file `Meal Plan Data for Student Project.xlsx` and its respective `METADATA.md` file.
+##### Regant_Data
+Contains the data file `Regent_University_Fall_Enrollment_By_Student_Classification_And_Resident_Status.csv` and its respective `METADATA.md` file.
+
 
 ## Data Citation
-
-Liebman, Matthew; Helmers, Matthew J. (2024). Data for: Multi-year productivity and nitrate-nitrogen loss from corn and prairie bioenergy cropping systems. Iowa State University. Dataset. https://doi.org/10.25380/iastate.27144879.v1
