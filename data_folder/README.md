@@ -1,2 +1,7 @@
 ## Data Organization
-The data used in this project have all been assigned to their own sub-folders under the raw data dolder based on the kind of data it contains (Fertilizer, Weather, and Yeild respectively). Within each of these sub-folders is the csv datafile containing the data that was used for this project along with a METADATA.md file describing the meaning of the variables used in the dataset to allow for better understanding. The raw folder contains all of the data sub-folders to allow for easier access and better organization. The README.md file of the raw folder goes into more detail about the data sub-folders.
+
+### Raw
+This folder contains sub-folders of the raw data for our project. The folders contain the regents and dining plan data in their respective folders.
+
+### Clean
+This folder will contain the cleaned versions of the data in the raw folder.
