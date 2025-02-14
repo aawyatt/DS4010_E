@@ -10,7 +10,7 @@ R, RShiny/Quarto
 
 Write a paragraph describing your team's goals for the project, what scientific questions you are trying to address, 
 and who your audience is. These project goals may evolve, but this will be a snapshot in time for what your current project goals are. \
-**Alison** :)
+**Alison**
 
 Write a paragraph describing how well your team is working in accomplishing the end-of-semester goal of having a functioning dashboard. 
 Include comments on what obstacles might prevent your team from being able to achieve the its weekly and end-of-semester goals and how these obstacles may be overcome. 
