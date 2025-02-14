@@ -8,6 +8,8 @@ Please also comment on how much support you will need in deciding on what techno
 **Cael**
 R, RShiny/Quarto
 
+Addition
+
 Write a paragraph describing your team's goals for the project, what scientific questions you are trying to address, 
 and who your audience is. These project goals may evolve, but this will be a snapshot in time for what your current project goals are. \
 **Alison**
