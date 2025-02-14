@@ -19,7 +19,7 @@ This folder contains the raw and cleaned data in their respective folders.
 This folder contains 2 folders, each containing a raw data file and its respective `METADATA.md` containing a list of the variable names, the type of variable, possible
 values for the variable, and a brief description of the variable.
 ##### Dining_Data
-Contains the data file `Meal Plan Data for Student Project.xlsx` and its respective `METADATA.md` file.
+Contains the data file `Meal Plan Data for Student Project.xlsx` and its respective `METADATA.md` file. 
 ##### Regant_Data
 Contains the data file `Regent_University_Fall_Enrollment_By_Student_Classification_And_Resident_Status.csv` and its respective `METADATA.md` file.
 
