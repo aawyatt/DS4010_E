@@ -12,7 +12,7 @@ sheet_names <- c("Fall 2021", "Spring 2022", "Fall 2022", "Spring 2023",
 
 output_folder <- "./data_folder/transformed_data/"
 
-terms_to_remove <- c(" Fall 2022"," - Fall 2022"," Fall 2023","-Spring 2024"," Fall 2024")
+terms_to_remove <- c(" Fall 2022"," - Fall 2022"," Fall 2023","Spring 2024"," Fall 2024")
 term_pattern <- paste(terms_to_remove, collapse = "|")
 
 for (sheet in sheet_names) {
