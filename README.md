@@ -16,12 +16,19 @@ Srika Raja - Srika1919
 ### Data
 This folder contains the raw and cleaned data in their respective folders. 
 #### Raw
-This folder contains 2 folders, each containing a raw data file and its respective `METADATA.md` containing a list of the variable names, the type of variable, possible
+This folder contains 2 folders, each containing a raw data file and its `METADATA.md` containing a list of the variable names, the type of variable, possible
 values for the variable, and a brief description of the variable.
 ##### Dining_Data
-Contains the data file `Meal Plan Data for Student Project.xlsx` and its respective `METADATA.md` file. 
-##### Regant_Data
-Contains the data file `Regent_University_Fall_Enrollment_By_Student_Classification_And_Resident_Status.csv` and its respective `METADATA.md` file.
-
+Contains the data file `Meal Plan Data for Student Project.xlsx` and its `METADATA.md` file. 
+##### Regents_Data
+Contains the data file `Regent_University_Fall_Enrollment_By_Student_Classification_And_Resident_Status.csv` and its `METADATA.md` file.
+##### Dining_Hall_Webscraped
+Contains the data files `CleanedDiningHalls.csv`, `Convos.csv`, `SeasonsMarketplace.csv`, `Udcc.csv`, and `Windows.csv`, the Python script for cleaning the data, `Cleaner.py`, and the `METADATA.md` file.
+##### Prices_Data
+Contains the data file `Meal Plan Prices.csv` and its `METADATA.md` file.
+##### Reddit_Webscraped
+Contains the data file `Post_Data.csv`, the Python script `DS401-Webscraped`, and the `METADATA.md` file. 
+#### Transformed
+This folder contains 
 
 ## Data Citation
