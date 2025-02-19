@@ -2,6 +2,7 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 library(forcats)
+library(viridis)
 
 #Loading All the datasets
 fall_24<-read.csv("./data_folder/transformed_data/Fall_24.csv")
