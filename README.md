@@ -31,4 +31,7 @@ Contains the data file `Post_Data.csv`, the Python script `DS401-Webscraped`, an
 #### Transformed
 This folder contains 
 
+### Code
+This folder contains initial R scripts for data exploration and visualization. 
+
 ## Data Citation
