@@ -54,7 +54,7 @@ print(cleaned.shape)
 #    if()
 
 ##Part 5
-cleaned.to_csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/data_folder/raw/Reddit_Webscraped/Cleaned.csv", index=False)
+cleaned.to_csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/data_folder/raw/Reddit_Webscraped/PreCleaned.csv", index=False)
 print(len(cleaned))
 
 ##other parts on another script
