@@ -58,7 +58,14 @@ spring_22<-read.csv("./data_folder/transformed_data/Spring_2022.csv")
 
 combined_data <- bind_rows(fall_24, fall_23, fall_22, fall_21,
                            spring_25, spring_24, spring_23, spring_22)
-
+# Standardize Room Location Names
+combined_data <- combined_data %>%
+  mutate(Room.Location.Description = case_when(
+    grepl("^Frederiksen Court", Room.Location.Description) ~ "Frederiksen Court",
+    grepl("^University Village", Room.Location.Description) ~ "University Village",
+    grepl("^Schilletter Village", Room.Location.Description) ~ "Schilletter Village",
+    TRUE ~ Room.Location.Description
+  ))
 # Save as a single CSV file
 write.csv(combined_data, "./data_folder/transformed_data/Combined_Data.csv", row.names = FALSE)
 

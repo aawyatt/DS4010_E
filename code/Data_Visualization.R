@@ -92,14 +92,7 @@ fig3 <- ggplot(top_meal_plans_by_year, aes(x = Meal.Plan.Description, y = Count,
 
 ggplotly(fig3)
 
-# Standardize Room Location Names
-combined_data <- combined_data %>%
-  mutate(Room.Location.Description = case_when(
-    grepl("^Frederiksen Court", Room.Location.Description) ~ "Frederiksen Court",
-    grepl("^University Village", Room.Location.Description) ~ "University Village",
-    grepl("^Schilletter Village", Room.Location.Description) ~ "Schilletter Village",
-    TRUE ~ Room.Location.Description
-  ))
+
 
 # Compute student distribution by housing
 housing_distribution <- combined_data %>%
