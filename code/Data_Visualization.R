@@ -14,6 +14,7 @@ spring_25<-read.csv("./data_folder/transformed_data/Spring_25.csv")
 spring_24<-read.csv("./data_folder/transformed_data/Spring_2024.csv")
 spring_23<-read.csv("./data_folder/transformed_data/Spring_2023.csv")
 spring_22<-read.csv("./data_folder/transformed_data/Spring_2022.csv")
+
 combined_data<-read.csv("./data_folder/transformed_data/Combined_Data.csv")
 
 # Define the correct term order
@@ -110,3 +111,39 @@ fig4 <- ggplot(housing_distribution, aes(x = reorder(Room.Location.Description, 
 
 ggplotly(fig4)
 
+
+## Merging the prices data to the meal plan data:
+clean_price_data<-read.csv("./data_folder/transformed_data/Clean_Meal_Plan_Prices.csv")
+
+
+# Perform Left Join to attach price data
+price_data <- combined_data %>%
+  left_join(clean_price_data, by = c("Meal.Plan.Description", "Term.Session.Description"))
+
+
+
+# Compute number of students per meal plan
+price_vs_students <- price_data %>%
+  group_by(Meal.Plan.Description) %>%
+  summarise(
+    Total_Students = n(),
+    Avg_Price_Semester = mean(Price.Semester, na.rm = TRUE)  # Use avg semester price
+  )
+clean_price_data <- clean_price_data %>%
+  mutate(Term.Session.Description = factor(Term.Session.Description, levels = term_order))
+
+# Line chart: Price Trends Over Time using clean_price_data
+fig3 <- ggplot(clean_price_data, aes(x = Term.Session.Description, y = Price.Year, 
+                                     color = Meal.Plan.Description, group = Meal.Plan.Description)) +
+  geom_line(size = 1) +
+  geom_point(size = 3) +
+  scale_color_viridis_d() +
+  labs(
+    title = "Meal Plan Price Trends Over Time",
+    x = "Term",
+    y = "Price per Semester ($)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplotly(fig3)

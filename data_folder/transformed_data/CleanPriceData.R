@@ -29,6 +29,16 @@ cleaned_meal_plan_prices <- cleaned_meal_plan_prices %>%
     `Price (Year)` = as.integer(`Price (Year)`),
     `Price (Semester)` = as.integer(`Price (Semester)`)
   )
+
+#Matching column names
+cleaned_meal_plan_prices <- cleaned_meal_plan_prices %>%
+  rename(
+    Term.Session.Description = Term,  
+    Meal.Plan.Description = `Meal Plan Description`, 
+    Price.Year = `Price (Year)`,
+    Price.Semester = `Price (Semester)`
+  )
+
 # Define output directory and filename
 output_directory <- "./data_folder/transformed_data/"
 output_filename <- paste0(output_directory, "Clean_Meal_Plan_Prices.csv")
