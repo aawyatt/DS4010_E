@@ -66,6 +66,13 @@ combined_data <- combined_data %>%
     grepl("^Schilletter Village", Room.Location.Description) ~ "Schilletter Village",
     TRUE ~ Room.Location.Description
   ))
+
+
+# Remove rows with specific meal plans
+combined_data <- combined_data %>%
+  filter(!Meal.Plan.Description %in% c("CA Plan", "RA Cardinal", "RA Plan"))
+
+
 # Save as a single CSV file
 write.csv(combined_data, "./data_folder/transformed_data/Combined_Data.csv", row.names = FALSE)
 
