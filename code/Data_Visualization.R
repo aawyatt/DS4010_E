@@ -121,17 +121,6 @@ price_data <- combined_data %>%
   left_join(clean_price_data, by = c("Meal.Plan.Description", "Term.Session.Description"))
 
 
-
-# Compute number of students per meal plan
-price_vs_students <- price_data %>%
-  group_by(Meal.Plan.Description) %>%
-  summarise(
-    Total_Students = n(),
-    Avg_Price_Semester = mean(Price.Semester, na.rm = TRUE)  # Use avg semester price
-  )
-clean_price_data <- clean_price_data %>%
-  mutate(Term.Session.Description = factor(Term.Session.Description, levels = term_order))
-
 # Line chart: Price Trends Over Time using clean_price_data
 fig3 <- ggplot(clean_price_data, aes(x = Term.Session.Description, y = Price.Year, 
                                      color = Meal.Plan.Description, group = Meal.Plan.Description)) +
@@ -147,3 +136,89 @@ fig3 <- ggplot(clean_price_data, aes(x = Term.Session.Description, y = Price.Yea
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggplotly(fig3)
+
+# Count students per meal plan per term
+popularity_trends <- price_data %>%
+  group_by(Term.Session.Description, Meal.Plan.Description) %>%
+  summarise(Total_Students = n(), .groups = 'drop')
+
+# Stacked Area Chart: Meal Plan Popularity
+fig_popularity <- ggplot(popularity_trends, aes(x = Term.Session.Description, y = Total_Students, 
+                                                fill = Meal.Plan.Description, group = Meal.Plan.Description)) +
+  geom_area(alpha = 0.8) +
+  scale_fill_viridis_d() +
+  labs(
+    title = "Most Popular Meal Plans Over Time",
+    x = "Term",
+    y = "Number of Students"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggplotly(fig_popularity)
+
+
+price_by_plan <- price_data %>%
+  filter(!is.na(Price.Year)) %>%
+  group_by(Meal.Plan.Description) %>%
+  summarise(
+    avg_yearly_price = mean(Price.Year, na.rm = TRUE),
+    avg_semester_price = mean(Price.Semester, na.rm = TRUE),
+    n_students = n()
+  ) %>%
+  arrange(desc(avg_yearly_price))
+
+
+library(scales)
+
+# Visualization of price by meal plan
+ggplot(price_by_plan, 
+       aes(x = reorder(Meal.Plan.Description, avg_yearly_price), 
+           y = avg_yearly_price)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  geom_text(aes(label = dollar(avg_yearly_price)), hjust = -0.1) +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Average Yearly Price by Meal Plan",
+       x = "Meal Plan",
+       y = "Average Yearly Price ($)") +
+  scale_y_continuous(labels = dollar_format())
+
+
+popularity_vs_price <- price_data %>%
+  filter(!is.na(Price.Year)) %>%
+  group_by(Meal.Plan.Description) %>%
+  summarise(
+    avg_price = mean(Price.Year, na.rm = TRUE),
+    number_of_students = n()
+  )
+
+ggplot(popularity_vs_price, 
+       aes(x = avg_price, y = number_of_students)) +
+  geom_point(aes(size = number_of_students), alpha = 0.6) +
+  geom_text(aes(label = Meal.Plan.Description), 
+            hjust = -0.1, 
+            size = 3) +
+  theme_minimal() +
+  labs(title = "Meal Plan Popularity vs Price",
+       x = "Average Yearly Price ($)",
+       y = "Number of Students") +
+  scale_x_continuous(labels = dollar_format())
+
+price_summary <- price_data %>%
+  filter(!is.na(Price.Year)) %>%
+  group_by(Meal.Plan.Description) %>%
+  summarise(
+    min_price = min(Price.Year),
+    max_price = max(Price.Year),
+    avg_price = mean(Price.Year),
+    median_price = median(Price.Year),
+    std_dev = sd(Price.Year),
+    n_students = n()
+  ) %>%
+  arrange(desc(n_students))
+
+# Print summary statistics
+print("Price Summary Statistics by Meal Plan:")
+print(price_summary, n = nrow(price_summary))
+
