@@ -19,9 +19,8 @@ Our team, the Statistical Superstars, are currently in line with regard to the g
 
 ### Project Progress - Srika
 
-### Modeling Plan - Alison
-some sort of linear modeling/forecasting with price, location, # of undergraduate students, plan type, to look at total income for dining and 
-churn stuff, predicting if students will buy again in the next year.
+### Modeling Plan - 
+Statistical Superstars is interested in fitting a multiple linear regression model to predict future meal plan pricing, with the potential explanatory variables of meal plan type, the number of students who purchase each plan, students' living situations, and the price as the response variable. We also want to predict the number of students who purchase each meal plan type. This will be achieved by fitting a Poisson regression model to predict future meal plan purchases, with the meal plan type as the explanatory variable and the amount of each meal plan purchased as the response variable. Poisson is used because the response variable is a count, and our data meets the assumption that each student is independent. Additionally, we would like to look into predicting if students will repurchase a meal plan. We currently do not have a concrete idea of what model would be ideal. These models fit well into our current dashboarding plan because we can show visualizations and summary statistics of our variables of interest and tie in what the future may look like with meal plan prices and the number of students who purchase each one. 
 
 ### Project Goals - Jonah
 Primary audience: ISU dining/administration
