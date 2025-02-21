@@ -17,5 +17,5 @@ ggplot(meal_plan_price[, 1:3] %>% filter(grepl('Fall', Term.Session.Description)
 #Formatting data set types
 meal_plan_price$Term.Session.Description <- as.factor(meal_plan_price$Term.Session.Description)
 
-#This is price per year as price each sememster has been the same for multiple years
+#This is price per year as price each semester has been the same for multiple years
 tapply(meal_plan_price$Price.Year, meal_plan_price$Term.Session.Description, summary)
