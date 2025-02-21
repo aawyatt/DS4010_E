@@ -6,6 +6,7 @@
 ## load libraries
 library(dplyr)
 library(stringr)
+library(ggplot2)
 
 ## read in data
 data <- read.csv("data_folder/transformed_data/Combined_Data.csv")
@@ -53,3 +54,15 @@ counts <- data.frame(
   NumSemesters = c('One', 'Two', 'More than Two'),
   NumRows = c(nrow(one_semester), nrow(two_semesters), nrow(morethan2))
 )
+
+ggplot(data=two_semesters, aes(x=Meal.Plan.Description)) +
+  geom_bar()+
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplot(data=one_semester, aes(x=Meal.Plan.Description)) +
+  geom_bar()+
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplot(data=morethan2, aes(x=Meal.Plan.Description)) +
+  geom_bar()+
+  theme(axis.text.x = element_text(angle = 90))
