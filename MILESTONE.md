@@ -24,3 +24,5 @@ some sort of linear modeling/forecasting with price, location, # of undergraduat
 churn stuff, predicting if students will buy again in the next year.
 
 ### Project Goals - Jonah
+Primary audience: ISU dining/administration
+Potentially wanting to do something for students in the future.
