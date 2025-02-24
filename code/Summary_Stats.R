@@ -1,6 +1,7 @@
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(plyr)
 
 #Pulling in the data
 joined_Data <- read.csv("./data_folder/transformed_data/Combined_Data.csv")
