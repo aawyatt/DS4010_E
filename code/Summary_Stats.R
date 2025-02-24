@@ -5,6 +5,7 @@ library(tidyr)
 #Pulling in the data
 joined_Data <- read.csv("./data_folder/transformed_data/Combined_Data.csv")
 meal_plan_price <- read.csv("./data_folder/transformed_data/Clean_Meal_Plan_Prices.csv")
+merged <- read.csv("./data_folder/raw/Reddit_Webscraped/MergedDataset.csv")
 
 #Plots the count of each meal plan and splits by term
 ggplot(joined_Data, aes(x = Meal.Plan.Description, fill = Term.Session.Description)) + geom_bar()
