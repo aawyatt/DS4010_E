@@ -29,9 +29,7 @@ Contains the data file `Meal Plan Prices.csv` and its `METADATA.md` file.
 ##### Reddit_Webscraped
 Contains the data file `Post_Data.csv`, the Python script `DS401-Webscraped`, and the `METADATA.md` file. 
 #### Transformed
-This folder contains 
+This folder contains data from their respective years and in a combined data set.
 
 ### Code
 This folder contains initial R scripts for data exploration and visualization. 
-
-## Data Citation
