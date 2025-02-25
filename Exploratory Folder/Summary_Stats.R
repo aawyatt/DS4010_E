@@ -23,3 +23,12 @@ meal_plan_price$Term.Session.Description <- as.factor(meal_plan_price$Term.Sessi
 
 #This is price per year as price each semester has been the same for multiple years
 tapply(meal_plan_price$Price.Year, meal_plan_price$Term.Session.Description, summary)
+
+convos<- read.csv("./data_folder/raw/Dining_Hall_Webscraped/Convos.csv")
+friley<- read.csv("./data_folder/raw/Dining_Hall_Webscraped/Windows.csv")
+UDCC<- read.csv("./data_folder/raw/Dining_Hall_Webscraped/Udcc.csv")
+seasons<- read.csv("./data_folder/raw/Dining_Hall_Webscraped/SeasonsMarketplace.csv")
+
+survey_data <- rbind(convos, seasons, UDCC, friley)
+
+write.csv(survey_data, "./data_folder/transformed_data/survey_data.csv", row.names = FALSE)
