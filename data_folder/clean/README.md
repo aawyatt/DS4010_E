@@ -11,3 +11,5 @@
 - **Dining Hall**: Which dining hall in particular they are refering to.
 - **reviewUrl**: Link to where the data came from.
 -  **Date**: When the review was posted.
+
+`CleanedReviews.csv` has 1 row per residence area on campus and one column for each semester starting in Spring 2021 and ending in Spring 2024(we are currently looking into getting more recent data). Each cell within this file has the total population of students residing in that hall in the given term.
