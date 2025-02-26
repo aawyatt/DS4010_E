@@ -32,3 +32,9 @@ seasons<- read.csv("./data_folder/raw/Dining_Hall_Webscraped/SeasonsMarketplace.
 survey_data <- rbind(convos, seasons, UDCC, friley)
 
 write.csv(survey_data, "./data_folder/transformed_data/survey_data.csv", row.names = FALSE)
+
+tapply(dining$Rating, dining$Dining.Hall, summary)
+
+#Counts of Ratings across dining halls
+ggplot(dining, aes(x = Rating, fill = Dining.Hall)) + geom_bar()
+
