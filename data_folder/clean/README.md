@@ -1,0 +1,3 @@
+`MealPlanBySemester.csv` has one row for each student ID in the data and one column for each semester in the data we received from ISU Dining. For every ID, the semester contains the Meal Plan for that semester or NA if no Meal Plan was purchased that semester. If a student purchased more than one meal plan that term, the plans are separated by commas. 
+
+`RoomLocationBySemester.csv` has one row for each student ID in the data and one column for each semester in the data we received from ISU Dining. For every ID, the semester contains the room location of that student for that semester or NA if the student did not purchase a meal plan that semester.
