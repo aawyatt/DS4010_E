@@ -27,3 +27,18 @@ Statistical Superstars is interested in fitting a multiple linear regression mod
 ### Project Goals - Jonah
 
 Our team, the Satistical Superstars, is coming to a close with data acquisition and cleaning and is shifting our views to modeling, exploratory analysis, and visualization via a dashboard. The primary research question that our team is trying to answer is: "What is the general popularity of the dining centers of Iowa State University?". This is with the hope of presenting our useful findings via an online dashboard to not only our fellow classmates but also to the Department of Dining and other administration at Iowa State University. Additionally, our research is done with the intention of identifying any issues that could be changed with the current dining system to improve the lives of all individuals at Iowa State. One of these issues that we are planning on diving into is the churn rate of various dining plans. Identifying any trends with churn could allow for the Department of Dining to really dial in on their area to maximize student engagement with dining halls. This kind of research would be what we want to portray in our dashboard, "Do individuals with a particular dining plan have a higher churn rate?" "Do people residing in a specific residence building have a higher churn rate?" "Are there ever any cases where instead of churning, the individual downgrades or upgrades their plan over the semesters?". Over the course of the semester, our team is planning on looking into churn, meal plan pricing predictions, how ratings of the dining halls have changed over time, and more.
+
+
+## 2025-3-02: Exploratory Analysis Milestone
+
+### Brainstorm Dashboard - Jonah
+Statistical Superstars are currently in the process of developing our preliminary plans for the final dashboard. Last week, our team created a preliminary dashboard to "test the waters" with R Shiny because our group doesn't have much experience with the package. This preliminary dashboard was similar to the example demonstrated in class, however, it was catered to the features of our group's dataset. Our team plans to visualize our four primary models via a dashboard. Those are predicting churn, the income of ISU dining, the population of residence halls, and the type of meal plan purchased. One idea that has been brought up and might be explored further is to give the option to switch the model type in each prediction section. The reasoning behind that our professor mentioned that a core motive of the course is to demonstrate everything the undergraduate data science students learn throughout their time at Iowa State University and showcase it. Creating more models for this data could showcase our modeling capabilities and give new data science students (or even people thinking about joining the data science program) to see what these models are capable of in a "real life" scenerio. This also allows these newer students to see how different models interact with our data, which could potentially compliment their introductory classes with understanding the reasoning behind choosing a new model. 
+
+
+### Data Report - Cael
+
+
+### Project Progress - Alison
+
+
+### Exploratory Analysis - Srika
