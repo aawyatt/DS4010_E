@@ -33,3 +33,6 @@ This folder contains data from their respective years and in a combined data set
 
 ### Code
 This folder contains initial R scripts for data exploration and visualization. 
+
+### Explanatory Analysis
+This folder contains plots and summary statistics from the cleaned datasets, which will be used in the shiny dashboard.
