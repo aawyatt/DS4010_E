@@ -21,7 +21,7 @@ For our exploratory analysis, since our project is in R our group has decided to
 ### Project Progress
 Our team has been working on the initial explanatory phase this week. We have collected all the data we need for now and have started transforming the data to easily bindable formats and standardized the naming conventions to be consistent among the datasets. We have also started our initial explanatory graphs and tables to understand the distribution of the various variables(meal plan and housing location). We have also scrapped some data from Reddit about reviews for various dining halls. We conducted an online Snapchat survey to get the personal preference ranking for the dining halls. All the team members have got the data in their local r studio and connected to the GitHub repo. We have also started testing and creating some dashboard models in R shiny to get some hands-on practice. As a team, we have found an effective way of allocating tasks and ensuring they are done on time by communicating through our Teams channel with updates. We have also decided on some research questions of interest to us. We have decided to move forward to the modeling phase next week, so we are planning to get suggestions from each member for the models they are suggesting and evaluate their efficiency.
 
-### Modeling Plan - 
+### Modeling Plan 
 Statistical Superstars is interested in fitting a multiple linear regression model to predict future meal plan pricing, with the potential explanatory variables of meal plan type, the number of students who purchase each plan, students' living situations, and the price as the response variable. We also want to predict the number of students who purchase each meal plan type. This will be achieved by fitting a Poisson regression model to predict future meal plan purchases, with the meal plan type as the explanatory variable and the amount of each meal plan purchased as the response variable. Poisson is used because the response variable is a count, and our data meets the assumption that each student is independent. Additionally, we would like to look into predicting if students will repurchase a meal plan. We currently do not have a concrete idea of what model would be ideal. These models fit well into our current dashboarding plan because we can show visualizations and summary statistics of our variables of interest and tie in what the future may look like with meal plan prices and the number of students who purchase each one. 
 
 ### Project Goals - Jonah
@@ -41,4 +41,9 @@ Statistical Superstars are currently in the process of developing our preliminar
 ### Project Progress - Alison
 
 
-### Exploratory Analysis - Srika
+### Exploratory Analysis
+
+We explored most of the data we gathered.  We made plot and summary tables. We looked at how some new meal plan prices relate to the prices of similar meals that existed earlier. We also decided to use the residence hall and price and previous plans a student took to predict the meal plan. We also wanted to model the meal plan prices. We have made plots looking at meal plan price trends for all the semesters. We also dropped meal plans that were discontinued. We also decided to drop the RA plans because our goal is to predict the expected income, and RA plans usually do not contribute to the income. We also looked proportion of people in different meal plans by housing distribution and found some plans were more popular in apartment-style housing. In contrast, others were more popular in dorms. We have decided to keep some of these visualizations we are just deciding on how to make to more interactive to user input. We also have joined the Google ratings data with the survey we conducted online about people’s preferences for the various dining centers. In the dataset we had for churn rate, we do have a lot of NAs for which we are still thinking about which assumptions would be the most appropriate.
+
+
+
