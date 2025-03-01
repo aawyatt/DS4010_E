@@ -31,14 +31,15 @@ Our team, the Satistical Superstars, is coming to a close with data acquisition 
 
 ## 2025-3-02: Exploratory Analysis Milestone
 
-### Brainstorm Dashboard - Jonah
+### Brainstorm Dashboard
 Statistical Superstars are currently in the process of developing our preliminary plans for the final dashboard. Last week, our team created a preliminary dashboard to "test the waters" with R Shiny because our group doesn't have much experience with the package. This preliminary dashboard was similar to the example demonstrated in class, however, it was catered to the features of our group's dataset. Our team plans to visualize our four primary models via a dashboard. Those are predicting churn, the income of ISU dining, the population of residence halls, and the type of meal plan purchased. One idea that has been brought up and might be explored further is to give the option to switch the model type in each prediction section. The reasoning behind that our professor mentioned that a core motive of the course is to demonstrate everything the undergraduate data science students learn throughout their time at Iowa State University and showcase it. Creating more models for this data could showcase our modeling capabilities and give new data science students (or even people thinking about joining the data science program) to see what these models are capable of in a "real life" scenerio. This also allows these newer students to see how different models interact with our data, which could potentially compliment their introductory classes with understanding the reasoning behind choosing a new model. 
 
 
 ### Data Report - Cael
 
 
-### Project Progress - Alison
+### Project Progress
+This week, Statistical Superstars continued to explore our data by receiving new tables from ISU Residence Halls and transforming/cleaning data. Jonah contacted ISU Residence this week and made a new dataset from the information he received from them. Srika and Cael made helpful plots and visualizations to assist us in narrowing down our interests for what to include in our final dashboard. Alison created two new datasets from our existing dining data by pivoting them to create a row for each ID and their corresponding meal plans/living situations. Our team is very strong at communicating, and we've come up with many great ideas for what to include in our dashboard and how to model our data. Moving forward, we need to decide what models to build and what transformations we need to do to our data to achieve those models. Each team member will contribute by researching the models we decide on (potentially Markov and Poisson) and implementing the initial code.
 
 
 ### Exploratory Analysis
