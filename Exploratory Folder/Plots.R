@@ -134,7 +134,6 @@ ggplotly(fig_popularity)
 
 # Update price summary using clean_data
 price_summary <- clean_data %>%
-  left_join(clean_price_data, by = c("Meal.Plan.Description", "Term.Session.Description")) %>%
   filter(!is.na(Price.Year)) %>%
   group_by(Meal.Plan.Description) %>%
   summarise(
