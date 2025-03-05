@@ -120,6 +120,8 @@ head(combined_data)
 
 
 
-write.csv(clean_data, "./data_folder/transformed_data/clean_data.csv", row.names = FALSE)
+#write.csv(clean_data, "./data_folder/transformed_data/clean_data.csv", row.names = FALSE)
+#write.csv(current_data, "./data_folder/transformed_data/current_data.csv", row.names = FALSE)
 
-write.csv(current_data, "./data_folder/transformed_data/current_data.csv", row.names = FALSE)
+write.csv(clean_data, "./data_folder/clean/CleanDiningData.csv", row.names = FALSE)
+write.csv(current_data, "./data_folder/clean/CurrentDiningData.csv", row.names = FALSE)
