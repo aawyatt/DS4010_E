@@ -15,7 +15,7 @@ Our team, the Statistical Superstars, are currently in line with regard to the g
 
 ## 2025-02-24: Project Goals Milestone
 
-### Exploratory Analysis - Cael
+### Exploratory Analysis
 For our exploratory analysis, since our project is in R our group has decided to use the dplyr, tidyr, shiny, and ggplot2/plotly libraries.  Dplyr and tidyr are used for our data cleaning and manipulation while shiny and ggplot2/plotly are being used to create our initial visualizations and eventual dashboards each depending on whether the group wants them to be interactive or not. During our preliminary analysis, the team identified three very important predictors for our eventual model of predicting dining income being price of meal plans, the number of students enrolled, and the type of meal plans themselves. Within each of these predictors, we identified two outlying meal plans that will be disregarded in the model which were RA meal plans that are provided for free by ISU Dining to the RAs of each residence hall. No major issues have arisen during this process so far as the majority has been making simple visualizations and joining/cleaning the data into the team’s needed format before model building begins next week.
 
 ### Project Progress
