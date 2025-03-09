@@ -7,8 +7,8 @@ plans2 <- read.csv("./data_folder/clean/MealPlanBySemester.csv")
 plans2$Spring.2022 <- as.factor(plans2$Spring.2022)
 plans2$Fall.2022 <- as.factor(plans2$Fall.2022)
 ctoc22 <- plans2 %>% count(Spring.2022, Fall.2022)
-ctoc23 <- plans2 %>% count(Spring.2022, Fall.2022)
-ctoc24 <- plans2 %>% count(Spring.2022, Fall.2022)
+ctoc23 <- plans2 %>% count(Spring.2023, Fall.2023)
+ctoc24 <- plans2 %>% count(Spring.2024, Fall.2024)
 
 
 #Transition matrix of probabilities between states
