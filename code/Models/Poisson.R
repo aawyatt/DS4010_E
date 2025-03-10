@@ -108,6 +108,19 @@ m5 <- glm(
 )
 summary(m5)
 
+m6 <- glm(
+  Frequency ~ Term + MealPlan + log(Price),
+  data=data.final,
+  family = 'poisson'
+)
+summary(m6)
+
+m1.0 <- glm(
+  Frequency ~ Term + MealPlan,
+  data=data.final
+)
+summary(m1.0)
+
 
 m1.1 <- glm(
   log(Frequency) ~ Term + MealPlan,
@@ -115,4 +128,15 @@ m1.1 <- glm(
 )
 summary(m1.1)
 
+m1.2 <- glm(
+  Frequency ~ Term + MealPlan + Price,
+  data=data.final
+)
+summary(m1.2)
+
+m1.3 <- glm(
+  log(Frequency) ~ Term + MealPlan + Price,
+  data=data.final
+)
+summary(m1.3)
 
