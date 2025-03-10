@@ -10,6 +10,9 @@ ctoc22 <- plans2 %>% count(Spring.2022, Fall.2022)
 ctoc23 <- plans2 %>% count(Spring.2023, Fall.2023)
 ctoc24 <- plans2 %>% count(Spring.2024, Fall.2024)
 
+ctoc22$Proportions <- ctoc22$n/nrow(plans2)
+ctoc23$Proportions <- ctoc23$n/nrow(plans2)
+ctoc24$Proportions <- ctoc24$n/nrow(plans2)
 
 #Transition matrix of probabilities between states
 states <- c("Cardinal", "Gold", "Campanile", "25MealBlocks", "50Mealblocks", "100MealBlocks", "NA")
