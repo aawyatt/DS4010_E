@@ -9,8 +9,8 @@ library(forcats)
 library(viridis)
 
 # Load datasets
-clean_data <- read.csv("./data_folder/clean/CleanDiningData.csv")
-current_data <- read.csv("./data_folder/clean/CurrentDiningData.csv")
+clean_data <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/data_folder/clean/CleanDiningData.csv")
+current_data <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/data_folder/clean/CurrentDiningData.csv")
 
 term_order <- c("Fall 2021", "Spring 2022", "Fall 2022", "Spring 2023", 
                 "Fall 2023", "Spring 2024", "Fall 2024", "Spring 2025", "Fall 2025")
@@ -28,7 +28,8 @@ dashboard_ui <- dashboardPage(
       ),
       menuItem("Predictions/Models", icon = icon("cogs"),
                menuSubItem("Price Prediction (Poisson)", tabName = "price_prediction"),
-               menuSubItem("Churn Rate (Markov)", tabName = "churn_rate")
+               menuSubItem("Churn Rate (Markov)", tabName = "churn_rate"),
+               menuSubItem("Personalized Models", tabName = "personalized_models")
       )
     )
   ),
@@ -63,6 +64,25 @@ dashboard_ui <- dashboardPage(
       tabItem(tabName = "churn_rate", 
               box(title = "Churn Rate using Markov Model", width = 12, status = "warning", solidHeader = TRUE, 
                   verbatimTextOutput("markov_output"))
+      ),
+      tabItem(tabName = "personalized_models",
+              fluidRow(
+                box(title = "Choose Variables and Model", width = 6, status = "primary", solidHeader = TRUE,
+                    selectInput("x_var", "Select X Variable:", choices = names(clean_data)),
+                    selectInput("y_var", "Select Y Variable:", choices = names(clean_data)),
+                    radioButtons("model_type", "Select Model:",
+                                 choices = c("Linear Regression" = "lm",
+                                             "Lasso Regression" = "lasso",
+                                             "Ridge Regression" = "ridge")),
+                    conditionalPanel(
+                      condition = "input.model_type == 'lasso' || input.model_type == 'ridge'",
+                      sliderInput("lambda", "Select Lambda:", min = 0, max = 1, value = 0.1, step = 0.01)
+                    ),
+                    actionButton("run_model", "Run Model")
+                ),
+                box(title = "Model Output", width = 6, status = "info", solidHeader = TRUE,
+                    verbatimTextOutput("model_output"))
+              )
       )
     )
   )
@@ -118,7 +138,32 @@ server <- function(input, output) {
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
     )
   })
+  
+  # Personalized Model Selection and Fitting
+  observeEvent(input$run_model, {
+    req(input$x_var, input$y_var)
+    
+    data <- clean_data %>%
+      select(all_of(input$x_var), all_of(input$y_var)) %>%
+      na.omit()
+    
+    x <- as.matrix(data[[input$x_var]])
+    y <- data[[input$y_var]]
+    
+    if (input$model_type == "lm") {
+      model <- lm(y ~ x, data = data)
+      output$model_output <- renderPrint({ summary(model) })
+      
+    } else if (input$model_type %in% c("lasso", "ridge")) {
+      library(glmnet)
+      alpha_value <- ifelse(input$model_type == "lasso", 1, 0)
+      model <- glmnet(x, y, alpha = alpha_value, lambda = input$lambda)
+      output$model_output <- renderPrint({ coef(model) })
+    }
+  })
 }
+
 
 # Run the app
 shinyApp(ui = dashboard_ui, server = server)
+
