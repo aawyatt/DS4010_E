@@ -1,7 +1,11 @@
 library(dplyr)
+library(ggplot2)
+library("ggResidpanel")
+library(MASS)
 
 # read in the data
 dining <- read.csv("./data_folder/clean/CurrentDiningData.csv")
+regents <- read.csv("./data_folder/clean/CleanRegents.csv")
 
 # make `MealPlan` and `Term` factors, and `Term` numerical from 1-8 for their corresponding factor levels
 dining$MealPlan <- factor(dining$Meal.Plan.Description)
@@ -29,14 +33,20 @@ data <- counts %>%
   left_join(dining, by = c("MealPlan", "Term")) %>%
   dplyr::select(MealPlan, Term, Price, Frequency) 
 
+undergradCounts <- regents %>%
+  filter(Student.Classification=="Undergraduate") %>%
+  select(Year, count) %>%
+  slice(rep(1:n(), each=2)) %>%
+  mutate(Term = c(1:8))
+
 data.final <- counts %>%
   left_join(dining %>% dplyr::select(MealPlan, Term, Price) %>% unique(), by = c("MealPlan", "Term")) %>%
   dplyr::select(MealPlan, Term, Price, Frequency) %>%
-  mutate(Term = as.factor(Term))
+  left_join(undergradCounts, by="Term")
 
 g <- ggplot(data.final,
             aes(x     = MealPlan,
-                y     = Frequency,
+                y     = Price,
                 color = Term)) +
   geom_point(
     position = position_jitterdodge(
@@ -44,31 +54,7 @@ g <- ggplot(data.final,
       dodge.width  = 0.1))
 g + scale_y_log10()
 
-m1 <- glm(
-  Frequency ~ MealPlan,
-  data=data.final,
-  family = 'poisson'
-)
 
-summary(m1)
-
-m2 <- glm(
-  Frequency ~ Term,
-  data=data.final,
-  family = 'poisson'
-)
-
-summary(m2)
-
-# big difference between residual deviance and degrees of freedom
-m3 <- glm(
-  Frequency ~ Term + MealPlan,
-  data=data.final,
-  family = 'poisson'
-)
-summary(m3)
-
-exp(confint(m3))
 
 nd <- data.final %>%
   dplyr::select(Term, MealPlan) %>%
@@ -93,50 +79,57 @@ p <- bind_cols(
     ) 
 )
 
-m4 <- glm(
-  Frequency ~ Term * MealPlan,
-  data=data.final,
-  family = 'poisson'
+m1 <- lm(
+  Frequency ~ Term + MealPlan + Price + count,
+  data=data.final
+)
+summary(m1)
+
+m1.1 <- lm(
+  Frequency ~ Term + MealPlan + Price,
+  data=data.final
+)
+summary(m1.1)
+anova(m1, m1.1) # count is not an important predictor
+
+resid_panel(m1,
+            plots    = c("resid", "index", "qq", "cookd"),
+            qqbands  = TRUE,
+            smoother = TRUE)
+
+m2 <- lm(
+  Frequency ~ Term + MealPlan + Price + Term*MealPlan,
+  data=data.final
+)
+summary(m2)
+
+
+resid_panel(m2,
+            plots    = c("resid", "index", "qq", "cookd"),
+            qqbands  = TRUE,
+            smoother = TRUE)
+
+m3 <- lm(
+  log(Frequency) ~ Term + MealPlan + Price + Term*MealPlan,
+  data=data.final
 )
 summary(m3)
 
 
-m5 <- glm(
-  Frequency ~ Term + MealPlan + Price,
-  data=data.final,
-  family = 'poisson'
-)
-summary(m5)
+resid_panel(m3,
+            plots    = c("resid", "index", "qq", "cookd"),
+            qqbands  = TRUE,
+            smoother = TRUE)
 
-m6 <- glm(
-  Frequency ~ Term + MealPlan + log(Price),
-  data=data.final,
-  family = 'poisson'
-)
-summary(m6)
 
-m1.0 <- glm(
-  Frequency ~ Term + MealPlan,
+m4 <- lm(
+  sqrt(Frequency) ~ Term + MealPlan + Price + count + Term*MealPlan,
   data=data.final
 )
-summary(m1.0)
+summary(m4)
 
-
-m1.1 <- glm(
-  log(Frequency) ~ Term + MealPlan,
-  data=data.final
-)
-summary(m1.1)
-
-m1.2 <- glm(
-  Frequency ~ Term + MealPlan + Price,
-  data=data.final
-)
-summary(m1.2)
-
-m1.3 <- glm(
-  log(Frequency) ~ Term + MealPlan + Price,
-  data=data.final
-)
-summary(m1.3)
+resid_panel(m4,
+            plots    = c("resid", "index", "qq", "cookd"),
+            qqbands  = TRUE,
+            smoother = TRUE)
 
