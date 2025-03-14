@@ -44,9 +44,9 @@ states <- steadyStates(object = planChain)
 states
 
 #Simulate Markov Chain
-#Setting seed for reproducability
+#Setting seed for reproducibility
 set.seed(2025)
-modelStates <- rmarkovchain(n = 5, object = planChain, what = "list")
+modelStates <- rmarkovchain(n = 4, object = planChain, what = "list")
 
 
 
