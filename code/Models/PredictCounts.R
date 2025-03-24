@@ -2,6 +2,9 @@ library(dplyr)
 library(ggplot2)
 library("ggResidpanel")
 library(MASS)
+library(ISLR2)
+library(glmnet)
+library(car)
 
 # read in the data
 dining <- read.csv("./data_folder/clean/CurrentDiningData.csv")
@@ -35,7 +38,7 @@ data <- counts %>%
 
 undergradCounts <- regents %>%
   filter(Student.Classification=="Undergraduate") %>%
-  select(Year, count) %>%
+  dplyr::select(Year, count) %>%
   slice(rep(1:n(), each=2)) %>%
   mutate(Term = c(1:8))
 
@@ -44,92 +47,111 @@ data.final <- counts %>%
   dplyr::select(MealPlan, Term, Price, Frequency) %>%
   left_join(undergradCounts, by="Term")
 
+#-------------------------------------------------------------------------------
+# Visualize the Data
+#-------------------------------------------------------------------------------
 g <- ggplot(data.final,
-            aes(x     = MealPlan,
-                y     = Price,
-                color = Term)) +
+            aes(x     = Term,
+                y     = Frequency,
+                color = MealPlan)) +
   geom_point(
     position = position_jitterdodge(
       jitter.width = 0.1, jitter.height = 0,
-      dodge.width  = 0.1))
+      dodge.width  = 0.1)) + 
+  geom_smooth()
 g + scale_y_log10()
 
-
-
-nd <- data.final %>%
-  dplyr::select(Term, MealPlan) %>%
-  unique()
-
-p <- bind_cols(
-  nd,
-  predict(m3,
-          newdata = nd,
-          se.fit = TRUE)|>
-    as.data.frame() |>
-    
-    # Manually construct confidence intervals
-    mutate(
-      lwr = fit - qnorm(0.975) * se.fit,
-      upr = fit + qnorm(0.975) * se.fit,
-      
-      # Exponentiate to get to response scale
-      freq = exp(fit),
-      lwr    = exp(lwr),
-      upr    = exp(upr)
-    ) 
-)
-
+#-------------------------------------------------------------------------------
+# Model 1: all variables
+#-------------------------------------------------------------------------------
 m1 <- lm(
   Frequency ~ Term + MealPlan + Price + count,
   data=data.final
 )
 summary(m1)
 
+## m1.1 does not contain `count`
 m1.1 <- lm(
   Frequency ~ Term + MealPlan + Price,
   data=data.final
 )
 summary(m1.1)
-anova(m1, m1.1) # count is not an important predictor
+anova(m1, m1.1) # `count` is not an important predictor
 
 resid_panel(m1,
             plots    = c("resid", "index", "qq", "cookd"),
             qqbands  = TRUE,
             smoother = TRUE)
 
+#-------------------------------------------------------------------------------
+# Model 2: no count, test interaction term 
+#-------------------------------------------------------------------------------
 m2 <- lm(
   Frequency ~ Term + MealPlan + Price + Term*MealPlan,
   data=data.final
 )
 summary(m2)
 
+m2.2 <- lm(
+  Frequency ~ Term + MealPlan + Price,
+  data=data.final
+)
+summary(m2.2)
+
+anova(m2, m2.2) # `Term`*`MealPlan` is significant in the model
+
 
 resid_panel(m2,
             plots    = c("resid", "index", "qq", "cookd"),
             qqbands  = TRUE,
             smoother = TRUE)
+## curvature in residual plot, Q-Q plot is pretty straight (normality)
 
+#-------------------------------------------------------------------------------
+# Model 3: log(Frequency) and interaction term
+#-------------------------------------------------------------------------------
 m3 <- lm(
   log(Frequency) ~ Term + MealPlan + Price + Term*MealPlan,
   data=data.final
 )
 summary(m3)
 
-
 resid_panel(m3,
             plots    = c("resid", "index", "qq", "cookd"),
             qqbands  = TRUE,
             smoother = TRUE)
+## Q-Q plot is pretty straight, less curvature in residual plot 
+## but it does show some groups (error variances aren't equal?)
+## variance is dependent on meal plan (generalized least squares?)
 
-
-m4 <- lm(
-  sqrt(Frequency) ~ Term + MealPlan + Price + count + Term*MealPlan,
-  data=data.final
-)
-summary(m4)
-
-resid_panel(m4,
-            plots    = c("resid", "index", "qq", "cookd"),
-            qqbands  = TRUE,
+resid_xpanel(m3,
             smoother = TRUE)
 
+
+data.clean <- na.omit(data.final)
+predicted <- predict(m3, newdata = data.clean)
+all <- data.clean %>%
+  mutate(predictValues = predicted,
+         expPredict = exp(predicted))
+
+all %>%
+  filter(predicted > 7) # predicted values > 7 are Cardinal, Gold & Campanile
+
+all %>%
+  filter(predicted > 8) # predicted values > 8 is Cardinal
+
+all %>%
+  filter(predicted < 7) # predicted values < 7 are the meal blocks (25, 50, 100)
+
+#-------------------------------------------------------------------------------
+# Model 4: Random Forest
+#-------------------------------------------------------------------------------
+
+library(randomForest)
+library(ISLR2)
+
+
+rf.dining <- randomForest(Frequency ~ .,
+                          data=data.clean, importance=TRUE, ntree=400)
+importance(rf.dining)
+varImpPlot(rf.dining)
