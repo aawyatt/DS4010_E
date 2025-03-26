@@ -62,15 +62,15 @@ Matrix <- matrix(c(0.40350877, 0.03508772, 0.13157895, 0, 0, 0.00877193, 0.42105
 #Creating the markov chain
 planChain <- new("markovchain", states = states, transitionMatrix = Matrix)
 
+
 #Steady State
 states <- steadyStates(object = planChain)
 states
 
 #Simulate Markov Chain
 #Setting seed for reproducibility
-set.seed(2025)
-modelStates <- rmarkovchain(n = 4, object = planChain, what = "list")
-
+modelStates <- rmarkovchain(n = 4, object = planChain, t0 = "NA", include.t0 = TRUE)
+modelStates[1:4]
 
 
 
