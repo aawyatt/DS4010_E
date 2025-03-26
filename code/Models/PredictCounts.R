@@ -143,15 +143,22 @@ all %>%
 all %>%
   filter(predicted < 7) # predicted values < 7 are the meal blocks (25, 50, 100)
 
+
 #-------------------------------------------------------------------------------
-# Model 4: Random Forest
+# Model idk: Poisson
 #-------------------------------------------------------------------------------
 
-library(randomForest)
-library(ISLR2)
+m.pois1 <- glm(Frequency ~ MealPlan + Term + log(count),
+               data=data.final,
+               family=poisson(link="log"))
+summary(m.pois1)
 
+with(m.pois1, cbind(res.deviance = deviance, df = df.residual,
+               p = pchisq(deviance, df.residual, lower.tail=FALSE)))
+## goodness of fit test is statistically significant, data do not fit the model well
+## residual deviance > degrees of freedom --> over dispersion
 
-rf.dining <- randomForest(Frequency ~ .,
-                          data=data.clean, importance=TRUE, ntree=400)
-importance(rf.dining)
-varImpPlot(rf.dining)
+library(jtools)
+
+# plot regression coefficients for poisson.model2
+plot_summs(m.pois1, scale = TRUE, exp = TRUE)
