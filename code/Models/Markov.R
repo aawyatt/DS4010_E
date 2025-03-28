@@ -21,11 +21,24 @@ ctoc24_nona <- plans2 %>% filter(!(is.na(Spring.2024) & is.na(Fall.2024))) %>% c
 hundred <- ctoc24 %>% filter(Spring.2024 == "100 Meal Blocks")
 hundred$Proportions <- hundred$n/sum(hundred$n)
 
+#Only needed if combination doesn't exists in data
+hundred <- rbind(hundred, c("100 Meal Blocks", "Cardinal", 0, 0))
+hundred <- rbind(hundred, c("100 Meal Blocks", "Campanile", 0, 0))
+
+
 twenty_five <- ctoc24 %>% filter(Spring.2024 == "25 Meal Blocks")
 twenty_five$Proportions <- twenty_five$n/sum(twenty_five$n)
 
+#Only needed if combination doesn't exists in data
+twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Cardinal", 0, 0))
+twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Campanile", 0, 0))
+twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Gold", 0, 0))
+
 fifty <- ctoc24 %>% filter(Spring.2024 == "50 Meal Blocks")
 fifty$Proportions <- fifty$n/sum(fifty$n)
+#Only needed if combination doesn't exists in data
+fifty <- rbind(fifty, c("50 Meal Blocks", "Gold", 0, 0))
+fifty <- fifty[order(fifty$Fall.2024),]
 
 camp <- ctoc24 %>% filter(Spring.2024 == "Campanile")
 camp$Proportions <- camp$n/sum(camp$n)
@@ -58,9 +71,12 @@ Matrix <- matrix(c(0.40350877, 0.03508772, 0.13157895, 0, 0, 0.00877193, 0.42105
                              0.007754040, 0.008784297, 0.009706106, 0.015562303, 0.256371326, 0.036709684, 0.665112244), nrow = 7, byrow = TRUE)
 
 
-
+Matrix2 <- matrix(c(hundred[1,4], hundred[2,4], hundred[3,4], hundred[7,4], hundred[6,4], hundred[4,4], hundred[5,4],
+                    twenty_five[1, 4], twenty_five[2, 4], twenty_five[3, 4], twenty_five[6, 4], twenty_five[5, 4], twenty_five[7, 4], twenty_five[4, 4],
+                    fifty[1, 4], ))
 #Creating the markov chain
 planChain <- new("markovchain", states = states, transitionMatrix = Matrix)
+
 
 #Steady State
 states <- steadyStates(object = planChain)
@@ -68,13 +84,23 @@ states
 
 #Simulate Markov Chain
 #Setting seed for reproducibility
-set.seed(2025)
-modelStates <- rmarkovchain(n = 4, object = planChain, what = "list")
+modelStates <- rmarkovchain(n = 4, object = planChain, t0 = "NA", include.t0 = TRUE)
+modelStates[1:4]
 
 
 
+#Plot of Simulation
+library(ggplot2)
 
 
+simulated_data <- data.frame(Time = 1:4, State = sample(c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA"),
+                                                         4, replace = TRUE, prob = states))
+
+ggplot(data = simulated_data, aes(x = Time, y = State, color = State)) +
+  geom_point() +
+  geom_line() +
+  labs(title = "State Evolution Over Time", x = "Time", y = "State") +
+  theme_minimal()
 
 
 
