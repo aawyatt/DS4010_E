@@ -24,6 +24,7 @@ hundred$Proportions <- hundred$n/sum(hundred$n)
 #Only needed if combination doesn't exists in data
 hundred <- rbind(hundred, c("100 Meal Blocks", "Cardinal", 0, 0))
 hundred <- rbind(hundred, c("100 Meal Blocks", "Campanile", 0, 0))
+hundred <- hundred %>% arrange(hundred$Fall.2024)
 
 
 twenty_five <- ctoc24 %>% filter(Spring.2024 == "25 Meal Blocks")
@@ -33,24 +34,32 @@ twenty_five$Proportions <- twenty_five$n/sum(twenty_five$n)
 twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Cardinal", 0, 0))
 twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Campanile", 0, 0))
 twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Gold", 0, 0))
+twenty_five <- twenty_five %>% arrange(twenty_five$Fall.2024)
 
 fifty <- ctoc24 %>% filter(Spring.2024 == "50 Meal Blocks")
 fifty$Proportions <- fifty$n/sum(fifty$n)
 #Only needed if combination doesn't exists in data
 fifty <- rbind(fifty, c("50 Meal Blocks", "Gold", 0, 0))
-fifty <- fifty[order(fifty$Fall.2024),]
+fifty <- fifty %>% arrange(fifty$Fall.2024)
 
 camp <- ctoc24 %>% filter(Spring.2024 == "Campanile")
 camp$Proportions <- camp$n/sum(camp$n)
+camp <- camp %>% arrange(camp$Fall.2024)
 
 card <- ctoc24 %>% filter(Spring.2024 == "Cardinal")
 card$Proportions <- card$n/sum(card$n)
+card <- card %>% arrange(card$Fall.2024)
 
 gold <- ctoc24 %>% filter(Spring.2024 == "Gold")
 gold$Proportions <- gold$n/sum(gold$n)
+gold <- gold %>% arrange(gold$Fall.2024)
 
 N_A <- ctoc24 %>% filter(is.na(Spring.2024))
 N_A$Proportions <- N_A$n/sum(N_A$n)
+N_A <- N_A %>% arrange(N_A$Fall.2024)
+
+used_proportions <- rbind(hundred, twenty_five, fifty, camp, card, gold, N_A)
+ 
 
 ctoc22$Proportions <- ctoc22$n/nrow(is.na(plans2$Spring.2022))
 ctoc23$Proportions <- ctoc23$n/nrow(plans2)
@@ -62,20 +71,11 @@ ctoc24_nona$Proportions <- ctoc24_nona$n/sum(ctoc24_nona$n)
 
 #Transition matrix of probabilities between states
 states <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA")
-Matrix <- matrix(c(0.40350877, 0.03508772, 0.13157895, 0, 0, 0.00877193, 0.42105263, 
-                             0.02714932, 0.23076923, 0.08597285, 0, 0, 0, 0.65610860,
-                             0.067741935, 0.067741935, 0.296774194, 0.019354839, 0.003225806, 0, 0.545161291,
-                             0.04726736, 0.01920236, 0.04948301, 0.26514032, 0.01550960, 0.01033973, 0.59305762,
-                             0.03149430, 0.01652893, 0.03462140, 0.10743802, 0.20013402, 0.03506813, 0.57471520,
-                             0.01998751, 0.02685821, 0.03560275, 0.11430356, 0.02998126, 0.07807620, 0.69519051,
-                             0.007754040, 0.008784297, 0.009706106, 0.015562303, 0.256371326, 0.036709684, 0.665112244), nrow = 7, byrow = TRUE)
+matrix2 <- matrix(as.numeric(used_proportions$Proportions), nrow = 7, byrow = TRUE)
 
 
-Matrix2 <- matrix(c(hundred[1,4], hundred[2,4], hundred[3,4], hundred[7,4], hundred[6,4], hundred[4,4], hundred[5,4],
-                    twenty_five[1, 4], twenty_five[2, 4], twenty_five[3, 4], twenty_five[6, 4], twenty_five[5, 4], twenty_five[7, 4], twenty_five[4, 4],
-                    fifty[1, 4], ))
 #Creating the markov chain
-planChain <- new("markovchain", states = states, transitionMatrix = Matrix)
+planChain <- new("markovchain", states = states, transitionMatrix = matrix2)
 
 
 #Steady State
@@ -93,8 +93,8 @@ modelStates[1:4]
 library(ggplot2)
 
 
-simulated_data <- data.frame(Time = 1:4, State = sample(c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA"),
-                                                         4, replace = TRUE, prob = states))
+simulated_data <- data.frame(Time = 1:4, State = modelStates[1:4], 4)
+                            
 
 ggplot(data = simulated_data, aes(x = Time, y = State, color = State)) +
   geom_point() +
