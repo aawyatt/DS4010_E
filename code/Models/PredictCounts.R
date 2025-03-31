@@ -43,6 +43,11 @@ data.final <- counts %>%
   dplyr::select(MealPlan, Term, Semester, Year, MealPlanCount, UndergradCount)
   
   
+numeric_data <- data.final %>%
+  select_if(is.numeric)
+
+# Calculate the correlation matrix
+cor(numeric_data)
 #-------------------------------------------------------------------------------
 # Visualize the Data
 #-------------------------------------------------------------------------------
@@ -136,7 +141,7 @@ m2_step <- stepAIC(m2, direction = "both")
 summary(m2_step) ## the model chose MealPlan, Term, Semester, and Year increase the AIC
 ## when they're removed from the model, meaning they have a strong influence on the counts
 
-lm_final <- lm(log(MealPlanCount) ~ MealPlan + Semester + UndergradCount, data=data.final)
+lm_final <- lm(log(MealPlanCount) ~ MealPlan + Semester + Year + UndergradCount, data=data.final)
 summary(lm_final)
 
 resid_panel(lm_final)
@@ -149,78 +154,96 @@ sqrt(mse2) ## RMSE = average difference between actual and predicted in LOG UNIT
 
 exp(sqrt(mse2)) ## 1.35, the model predictions are off by about 35% 
 
+
 #-------------------------------------------------------------------------------
-# Model 2: Cross Validation (k-fold)
+# Poisson Models
+#-------------------------------------------------------------------------------
+
+m.pois.full <- glm(MealPlanCount ~ .,
+               data=data.final,
+               family=poisson(link="log"))
+
+summary(m.pois.full)
+vif(m.pois.full) # doesn't work because two variables are highly correlated (Term and Year)
+
+m.pois.2 <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
+                   data=data.final,
+                   family=poisson(link="log"))
+summary(m.pois.2)
+vif(m.pois.2) # ideal VIF values meaning no multicollinearity
+
+m.pois.2log <- glm(MealPlanCount ~ MealPlan + Semester + Year + log(UndergradCount),
+               data=data.final,
+               family=poisson(link="log"))
+
+summary(m.pois.2log)
+
+## Compare the two models
+
+### AIC ###
+AIC(m.pois.2)
+AIC(m.pois.2log)
+## models have the same number of parameters, so AIC is very similar
+
+### deviance ###
+deviance(m.pois.2)
+deviance(m.pois.2log)
+
+### Chi-Square test ###
+anova(m.pois.2, m.pois.2log, test = "Chisq")
+## there is no added improvement in the model taking a log of UndergradCount
+## so we will use m.pois.2
+
+plot(residuals(m.pois.2)) 
+abline(h = 0, col = "red") # residuals have a good scatter
+
+
+
+predictions <- predict(m.pois.2, type = "response") # on the scale of MealPlanCount
+actuals <- data.clean$MealPlanCount
+
+# plot Predicted vs Actual
+plot(predictions, actuals, main = "Predicted vs Actual", xlab = "Predicted", ylab = "Actual")
+abline(0, 1, col = "red") 
+
+# RMSE
+rmse <- sqrt(mean((predictions - actuals)^2))
+rmse
+
+
+summary <- data.final %>%
+  group_by(Year) %>%
+  summarize(freqSum = sum(MealPlanCount, na.rm=TRUE),
+            totalCount = first(UndergradCount))
+
+#-------------------------------------------------------------------------------
+# Cross Validation (k-fold)
 #-------------------------------------------------------------------------------
 
 ## Using cross validation to train the model and test on data it hasn't seen
+## and compare the linear model and the Poisson model
 
 library(caret)
 
 k <- 10 # number of folds/times to rerun the code
 
-folds <- sample(1:k,nrow(data.final),replace=TRUE)
-names(folds)
+folds <- sample(1:k,nrow(data.clean),replace=TRUE)
 
 for(i in 1:k){
   test_index = folds[[i]]
   
-  test = data.final[test_index,]
-  train = data.final[-test_index,]
+  test <- data.clean[test_index,]
+  train <- data.clean[-test_index,]
   
-  M1 <- lm(log(MealPlanCount) ~ MealPlan + Semester + UndergradCount, data=data.final)
-  M1_count <- predict(M1,newdata=test[,-1])
+  M1 <- lm(log(MealPlanCount) ~ MealPlan + Semester + UndergradCount, data=train)
+  M1_count <- exp(predict(M1,newdata=test[,-5]))
+  M2 <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
+            data=train,
+            family=poisson(link="log"))
+  M2_count <- predict(M2, newdata=test[,-5], type="response")
+  cat("Log-Linear model:", M1_count, "\n Poisson model:", M2_count, "\n True value:",
+      test[,5], "\n")
   
 }
 
-#-------------------------------------------------------------------------------
-# Model 4: Poisson
-#-------------------------------------------------------------------------------
 
-m.pois1 <- glm(MealPlanCount ~ MealPlan + Term + Semester + Year + offset(log(UndergradCount)),
-               data=data.final,
-               family=poisson(link="log"))
-m.pois2 <- glm(MealPlanCount ~ MealPlan + Term + Semester + Year + log(UndergradCount),
-               data=data.final,
-               family=poisson(link="log"))
-summary(m.pois1)
-summary(m.pois2)
-confint(m.pois1)
-confint(m.pois2) ## higher # of students means lower counts of meal plans?
-
-summary <- data.final %>%
-  group_by(Year) %>%
-  summarize(freqSum = sum(Frequency, na.rm=TRUE),
-            totalCount = first(count))
-
-ggplot(summary, aes(x = Year)) +
-  # Line plot for Frequency
-  geom_line(aes(y = freqSum), color = "skyblue", size = 1.5) +
-  geom_point(aes(y = freqSum), color = "skyblue", size = 3) +
-  # Line plot for Count
-  geom_line(aes(y = totalCount), color = "orange", size = 1.5, linetype = "dashed") +
-  geom_point(aes(y = totalCount), color = "orange", size = 3) +
-  labs(title = "Total Frequency and Count by Year",
-       x = "Year",
-       caption = "Orange dashed line represents total undergrad students, 
-       Blue solid line represents total meal plans purchased") +
-  theme_minimal()
-
-
-1 - pchisq(deviance(m.pois1), df = m.pois1$df.residual)
-## p-value is 0
-## goodness of fit test is statistically significant, data do not fit the model well
-## residual deviance > degrees of freedom --> over dispersion
-## do I need to do quasipoisson?
-
-## Pearson GOF - 'the model is appropriate' vs 'not appropriate'
-Pearson <- sum((na.omit(data.final$Frequency) - m.pois1$fitted.values)^2 
-               / m.pois1$fitted.values)
-1 - pchisq(Pearson, df = m.pois1$df.residual)
-## p-value is 1, overwhelming evidence that model is not appropriate
-
-
-
-## do model selection
-
-## 
