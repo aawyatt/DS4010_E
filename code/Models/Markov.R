@@ -12,6 +12,7 @@ ctoc22 <- plans2[!grepl(", ", plans2$Fall.2022) & !grepl(", ", plans2$Spring.202
 ctoc23 <- plans2[!grepl(", ", plans2$Fall.2023) & !grepl(", ", plans2$Spring.2023),] %>%  count(Spring.2023, Fall.2023)
 ctoc24 <- plans2[!grepl(", ", plans2$Fall.2024) & !grepl(", ", plans2$Spring.2024),] %>% count(Spring.2024, Fall.2024)
 
+#Data set where NA is removed
 ctoc22_nona <- plans2 %>% filter(!(is.na(Spring.2022) & is.na(Fall.2022))) %>% count(Spring.2022, Fall.2022)
 ctoc23_nona <- plans2 %>% filter(!(is.na(Spring.2023) & is.na(Fall.2023))) %>% count(Spring.2023, Fall.2023)
 ctoc24_nona <- plans2 %>% filter(!(is.na(Spring.2024) & is.na(Fall.2024))) %>% count(Spring.2024, Fall.2024) 
