@@ -485,8 +485,19 @@ ui <- dashboardPage(
             width = 9,
             plotlyOutput("prediction_plot", height = "400px")
           )
+        ),
+        # New diagnostics box added below the prediction results
+        fluidRow(
+          box(
+            title = "Diagnostics",
+            status = "warning",
+            solidHeader = TRUE,
+            width = 12,
+            plotOutput("diagnostics_plot", height = "500px")
+          )
         )
       ),
+      
       
       # ===== MARKOV MODEL TAB =====
       tabItem(
@@ -1377,7 +1388,17 @@ server <- function(input, output, session) {
       ggplotly(p)
     })
   })
-  
+  output$diagnostics_plot <- renderPlot({
+    # Fit the linear model and retrieve the processed data
+    model_data <- fit_linear_model()
+    m1 <- model_data$model
+    
+    # Create diagnostic plots (residuals, index, qq, and Cook's distance)
+    resid_panel(m1,
+                plots    = c("resid", "index", "qq", "cookd"),
+                qqbands  = TRUE,
+                smoother = TRUE)
+  })
   
   
   

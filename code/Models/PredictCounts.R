@@ -5,6 +5,7 @@ library(MASS)
 library(ISLR2)
 library(glmnet)
 library(car)
+library(ggResidpanel)
 
 # read in the data
 dining <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CurrentDiningData.csv")
@@ -78,6 +79,15 @@ resid_panel(m1,
             plots    = c("resid", "index", "qq", "cookd"),
             qqbands  = TRUE,
             smoother = TRUE)
+
+ggplot(data.final, aes(x = Year, y = MealPlanCount, color = MealPlan)) +
+  geom_point() +  # Plot actual data points
+  geom_smooth(method = "lm", se = FALSE) +  # Separate regression lines for each MealPlan
+  labs(title = "Linear Model Fit by Meal Plan",
+       x = "Year",
+       y = "Meal Plan Count") +
+  theme_minimal()
+
 
 ## diagnostic plots do not look good, take log of response variable
 
