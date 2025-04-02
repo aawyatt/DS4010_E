@@ -66,6 +66,7 @@ ctoc22$Proportions <- ctoc22$n/nrow(is.na(plans2$Spring.2022))
 ctoc23$Proportions <- ctoc23$n/nrow(plans2)
 ctoc24$Proportions <- ctoc24$n/sum(ctoc24$n)
 
+# Proportions after removing NAs (Do not use)
 ctoc22_nona$Proportions <- ctoc22_nona$n/sum(ctoc22_nona$n)
 ctoc23_nona$Proportions <- ctoc23_nona$n/sum(ctoc23_nona$n)
 ctoc24_nona$Proportions <- ctoc24_nona$n/sum(ctoc24_nona$n)
