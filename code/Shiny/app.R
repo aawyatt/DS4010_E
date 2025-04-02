@@ -17,8 +17,8 @@ library(MASS)                # For Poisson regression
 library(ggrepel)             # For non-overlapping text labels
 
 # Load datasets
-clean_data <- read.csv("./data_folder/clean/CleanDiningData.csv")
-current_data <- read.csv("./data_folder/clean/CurrentDiningData.csv")
+clean_data <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CleanDiningData.csv")
+current_data <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CurrentDiningData.csv")
 
 # Define term order globally
 term_order <- c(
