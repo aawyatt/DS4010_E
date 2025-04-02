@@ -43,7 +43,8 @@ fit_linear_model <- function() {
     m1 <- lm(
       MealPlanCount ~ .,
       data=data.final
-    )    
+    )
+    
     # Return the model and processed data
     return(list(model = m1, data = data.final))
 }

@@ -1311,7 +1311,6 @@ server <- function(input, output, session) {
                          selected = meal_plans[1:min(5, length(meal_plans))])
   })
   
-  # When the user clicks "Run Prediction", filter and plot the data
   observeEvent(input$run_prediction, {
     # Get the selected meal plan types from the UI
     selected_meal_plans <- input$selected_meal_plans
@@ -1331,49 +1330,56 @@ server <- function(input, output, session) {
       return()
     }
     
-    # For each meal plan, fit a linear model (if there are at least 2 data points)
-    models <- historical_data %>%
-      group_by(MealPlan) %>%
-      filter(n() > 1) %>%
-      nest() %>%
+    # Fit a linear model for each meal plan (if there are at least 2 points)
+    models <- historical_data %>% 
+      group_by(MealPlan) %>% 
+      filter(n() > 1) %>% 
+      nest() %>% 
       mutate(model = map(data, ~ lm(MealPlanCount ~ Term, data = .x)))
     
-    # Add predictions to the historical data
+    # Create future predictions for each meal plan using explicit dplyr and tidyr functions
+    future_data <- models %>% 
+      mutate(future = map2(data, model, ~ {
+        max_term <- max(.x$Term, na.rm = TRUE)
+        new_terms <- seq(max_term + 1, max_term + as.numeric(input$future_terms))
+        predicted <- predict(.y, newdata = data.frame(Term = new_terms))
+        tibble(Term = new_terms, count = predicted)
+      })) %>% 
+      tidyr::unnest(future) %>% 
+      dplyr::select(MealPlan, Term, count) %>% 
+      mutate(Type = "Future")
     
-    predicted_data <- historical_data %>% 
-      left_join(models %>% dplyr::select(MealPlan, model), by = "MealPlan") %>% 
-      mutate(predicted_count = map2_dbl(model, Term, ~ {
-        if (!is.null(.x)) {
-          predict(.x, newdata = data.frame(Term = .y))
-        } else {
-          NA_real_
-        }
-      }))
+    # Prepare the historical data for plotting: explicitly select the same columns
+    historical_plot <- historical_data %>% 
+      dplyr::select(MealPlan, Term, MealPlanCount) %>% 
+      mutate(count = MealPlanCount,
+             Type = "Actual")
     
+    # Combine historical and future data and ensure the 'Type' column exists
+    combined_data <- dplyr::bind_rows(historical_plot, future_data)
+    combined_data <- combined_data %>% mutate(Type = factor(Type, levels = c("Actual", "Future")))
     
-    # Mark the actual and predicted data types for plotting
-    historical_data <- historical_data %>% mutate(Type = "Actual", count = MealPlanCount)
-    predicted_data <- predicted_data %>% mutate(Type = "Predicted", count = predicted_count)
-    
-    # Combine the datasets for plotting
-    combined_data <- bind_rows(historical_data, predicted_data)
-    
-    # Create the plot: points for the actual data and a trendline for each meal plan
+    # Create the plot:
+    # - Plot actual data and future predictions as points, and connect by a line.
+    # - Draw the dashed trendline on historical data only.
     p <- ggplot(combined_data, aes(x = Term, y = count, color = MealPlan, shape = Type)) +
       geom_point(size = 2) +
       geom_line(aes(group = MealPlan)) +
-      # Trendline for each meal plan type using a linear model
-      geom_smooth(aes(group = MealPlan), method = "lm", se = FALSE, linetype = "dashed", size = 0.8) +
+      geom_smooth(data = historical_plot, 
+                  aes(x = Term, y = MealPlanCount, color = MealPlan), 
+                  method = "lm", se = FALSE, linetype = "dashed", size = 0.8) +
       theme_minimal() +
       labs(x = "Term", y = "Meal Plan Count", color = "Meal Plan", shape = "Data Type") +
       scale_x_continuous(breaks = unique(combined_data$Term),
-                         labels = unique(paste(combined_data$Semester, combined_data$Year)))
+                         labels = unique(combined_data$Term))
     
-    # Render the Plotly plot for interactivity
     output$prediction_plot <- renderPlotly({
       ggplotly(p)
     })
   })
+  
+  
+  
   
   
   # ===== MARKOV MODEL TAB OUTPUTS =====
