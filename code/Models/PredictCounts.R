@@ -228,6 +228,8 @@ library(caret)
 k <- 10 # number of folds/times to rerun the code
 
 folds <- sample(1:k,nrow(data.clean),replace=TRUE)
+rmse_log_linear <- c()
+rmse_poisson <- c()
 
 for(i in 1:k){
   test_index = folds[[i]]
@@ -245,5 +247,58 @@ for(i in 1:k){
       test[,5], "\n")
   
 }
+
+## use GOF and pseudo Rsquare to test
+
+library(caret)
+
+k <- 10 # number of folds/times to rerun the code
+folds <- sample(1:k, nrow(data.clean), replace=TRUE)
+
+# Initialize vectors to store evaluation metrics for each fold
+rmse_log_linear <- c()
+rmse_poisson <- c()
+mae_log_linear <- c()
+mae_poisson <- c()
+r2_log_linear <- c()  # Only for the log-linear model
+deviance_poisson <- c()  # Only for the Poisson model
+
+for(i in 1:k) {
+  test_index <- which(folds == i)
+  
+  test <- data.clean[test_index,]
+  train <- data.clean[-test_index,]
+  
+  # Log-Linear Model (M1)
+  M1 <- lm(log(MealPlanCount) ~ MealPlan + Semester + UndergradCount, data=train)
+  M1_count <- exp(predict(M1, newdata=test[,-5]))
+  
+  # Poisson Model (M2)
+  M2 <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
+            data=train, family=poisson(link="log"))
+  M2_count <- predict(M2, newdata=test[,-5], type="response")
+  
+  # True values
+  true_values <- test[, 5]
+  
+  # Log-Linear Model Evaluation
+  rmse_log_linear[i] <- sqrt(mean((M1_count - true_values)^2))
+  mae_log_linear[i] <- mean(abs(M1_count - true_values))
+  r2_log_linear[i] <- summary(M1)$r.squared  # R-squared for the log-linear model
+  
+  # Poisson Model Evaluation
+  rmse_poisson[i] <- sqrt(mean((M2_count - true_values)^2))
+  mae_poisson[i] <- mean(abs(M2_count - true_values))
+  deviance_poisson[i] <- deviance(M2)  # Deviance for the Poisson model
+  
+  cat("Fold:", i, "\n")
+  cat("Log-Linear model: RMSE =", rmse_log_linear[i], " MAE =", mae_log_linear[i], " R-squared =", r2_log_linear[i], "\n")
+  cat("Poisson model: RMSE =", rmse_poisson[i], " MAE =", mae_poisson[i], " Deviance =", deviance_poisson[i], "\n")
+}
+
+# Calculate and print average metrics across all folds
+cat("\nAverage Metrics:\n")
+cat("Log-Linear model: RMSE =", mean(rmse_log_linear), " MAE =", mean(mae_log_linear), " R-squared =", mean(r2_log_linear), "\n")
+cat("Poisson model: RMSE =", mean(rmse_poisson), " MAE =", mean(mae_poisson), " Deviance =", mean(deviance_poisson), "\n")
 
 
