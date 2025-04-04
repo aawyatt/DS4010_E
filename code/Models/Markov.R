@@ -86,6 +86,7 @@ states
 
 #Simulate Markov Chain
 #Setting seed for reproducibility
+#t0 would be where user input would come into play
 modelStates <- rmarkovchain(n = 4, object = planChain, t0 = "NA", include.t0 = TRUE)
 modelStates[1:4]
 
