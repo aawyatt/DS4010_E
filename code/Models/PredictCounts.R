@@ -164,7 +164,7 @@ m.pois.full <- glm(MealPlanCount ~ .,
                family=poisson(link="log"))
 
 summary(m.pois.full)
-vif(m.pois.full) # doesn't work because two variables are highly correlated (Term and Year)
+#vif(m.pois.full) # doesn't work because two variables are highly correlated (Term and Year)
 
 m.pois.2 <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
                    data=data.final,
@@ -300,5 +300,59 @@ for(i in 1:k) {
 cat("\nAverage Metrics:\n")
 cat("Log-Linear model: RMSE =", mean(rmse_log_linear), " MAE =", mean(mae_log_linear), " R-squared =", mean(r2_log_linear), "\n")
 cat("Poisson model: RMSE =", mean(rmse_poisson), " MAE =", mean(mae_poisson), " Deviance =", mean(deviance_poisson), "\n")
+
+#-------------------------------------------------------------------------------
+# Final Model, Diagnostics, and Visualizations
+#-------------------------------------------------------------------------------
+
+finalModel <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
+                  data=data.clean, family=poisson(link="log"))
+
+summary(finalModel)
+
+predictions <- predict(finalModel, type="response", se.fit=TRUE)
+lower.ci <- predictions$fit - 1.96*predictions$se.fit
+upper.ci <- predictions$fit + 1.96*predictions$se.fit
+
+data.predict <- data.clean %>%
+  mutate(prediction = predictions$fit,
+         lower_ci = lower.ci,
+         upper_ci = upper.ci)
+
+plot(data.predict$MealPlanCount, data.predict$prediction)
+
+RMSE <- sqrt(mean((data.predict$prediction-data.predict$MealPlanCount)^2))
+
+plot(finalModel$residuals ~ fitted(finalModel))
+
+# plot residuals
+#ggplot(aes(x=predictions$fit, y=finalModel$residuals)) +
+#  geom_point(color="black", alpha=1) +
+#  geom_abline(slope=0, intercept = 0, color="blue", linetype="solid") +
+#  labs(
+#    title="Residuals vs Predicted",
+#    x = "Residuals",
+#    y = "Predicted Values"
+#  ) +
+#  theme_minimal()
+
+
+plot(predictions$fit, finalModel$residuals)
+abline(h=0, lty=2)
+
+qqnorm(res)
+qqline(res)
+
+## Plot actual vs predicted with confidence interavals
+ggplot(data.predict, aes(x = MealPlanCount, y = prediction)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2, color = "red") +
+  geom_abline(slope = 1, intercept = 0, color = "green", linetype = "dashed") + 
+  labs(
+    title = "Actual vs. Predicted Meal Plan Count",
+    x = "Actual Meal Plan Count",
+    y = "Predicted Meal Plan Count"
+  ) +
+  theme_minimal()
 
 
