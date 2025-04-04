@@ -41,7 +41,7 @@ fit_linear_model <- function() {
     
     # Fit linear regression model
     m1 <- lm(
-      MealPlanCount ~ .,
+      log(MealPlanCount) ~ MealPlan + Semester + UndergradCount,
       data=data.final
     )
     
