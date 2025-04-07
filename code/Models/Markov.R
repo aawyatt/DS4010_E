@@ -60,7 +60,7 @@ N_A$Proportions <- N_A$n/sum(N_A$n)
 N_A <- N_A %>% arrange(N_A$Fall.2024)
 
 used_proportions <- rbind(hundred, twenty_five, fifty, camp, card, gold, N_A)
- 
+write.csv(used_proportions, "./data_folder/clean/TransitionMatrix.csv", row.names = FALSE)
 
 ctoc22$Proportions <- ctoc22$n/nrow(is.na(plans2$Spring.2022))
 ctoc23$Proportions <- ctoc23$n/nrow(plans2)
@@ -73,8 +73,7 @@ ctoc24_nona$Proportions <- ctoc24_nona$n/sum(ctoc24_nona$n)
 
 #Transition matrix of probabilities between states
 states <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA")
-matrix2 <- matrix(as.numeric(used_proportions$Proportions), nrow = 7, byrow = TRUE)
-write.csv(matrix2, "./data_folder/clean/TransitionMatrix.csv", row.names = FALSE)
+matrix2 <- matrix(as.numeric(used_proportions$P  roportions), nrow = 7, byrow = TRUE)
 
 
 #Creating the markov chain
