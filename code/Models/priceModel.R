@@ -7,11 +7,10 @@ library(ggplot2)
 #-------------------------------
 load_meal_data <- function() {
   meal_prices <- read_csv("./data_folder/transformed_data/Clean_Meal_Plan_Prices.csv")
-  combined_data <- read_csv("./data_folder/transformed_data/Combined_Data.csv")
+  combined_data <- read_csv("./data_folder/clean/CurrentDiningData.csv")
+  regents <- read.csv("./data_folder/clean/CleanRegents.csv")
   
-  fall_2024_meal_plans <- unique(
-    combined_data$Meal.Plan.Description[combined_data$Term.Session.Description == "Fall 2024"]
-  )
+  fall_2024_meal_plans <- unique(combined_data$Meal.Plan.Description)
   
   meal_prices %>%
     filter(Meal.Plan.Description %in% fall_2024_meal_plans,
