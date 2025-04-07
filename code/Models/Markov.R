@@ -15,7 +15,7 @@ ctoc24 <- plans2[!grepl(", ", plans2$Fall.2024) & !grepl(", ", plans2$Spring.202
 #Data set where NA is removed
 ctoc22_nona <- plans2 %>% filter(!(is.na(Spring.2022) & is.na(Fall.2022))) %>% count(Spring.2022, Fall.2022)
 ctoc23_nona <- plans2 %>% filter(!(is.na(Spring.2023) & is.na(Fall.2023))) %>% count(Spring.2023, Fall.2023)
-ctoc24_nona <- plans2 %>% filter(!(is.na(Spring.2024) & is.na(Fall.2024))) %>% count(Spring.2024, Fall.2024) 
+ctoc24_nona <- plans2 %>% filter(!(is.na(Spring.2024) & is.na(Fall.2024))) %>% count(plans2$Spring.2024, plans2$Fall.2024) 
 
 ##Getting proportions for each state
 
@@ -60,6 +60,7 @@ N_A$Proportions <- N_A$n/sum(N_A$n)
 N_A <- N_A %>% arrange(N_A$Fall.2024)
 
 used_proportions <- rbind(hundred, twenty_five, fifty, camp, card, gold, N_A)
+write.csv(used_proportions, "./data_folder/clean/TransitionMatrix.csv", row.names = FALSE)
  
 
 ctoc22$Proportions <- ctoc22$n/nrow(is.na(plans2$Spring.2022))
@@ -101,7 +102,7 @@ simulated_data <- data.frame(Time = 1:4, State = modelStates[1:4], 4)
 
 ggplot(data = simulated_data, aes(x = Time, y = State, color = State)) +
   geom_point() +
-  geom_line() +
+  geom_line() + 
   labs(title = "State Evolution Over Time", x = "Time", y = "State") +
   theme_minimal()
 
