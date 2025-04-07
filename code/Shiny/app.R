@@ -15,10 +15,13 @@ library(viridis)
 library(markovchain)         # For Markov chain model
 library(MASS)                # For Poisson regression
 library(ggrepel)             # For non-overlapping text labels
+library(tidyr)
+library(seqinr)
 
 # Load datasets
 clean_data <- read.csv("./data_folder/clean/CleanDiningData.csv")
 current_data <- read.csv("./data_folder/clean/CurrentDiningData.csv")
+plans2 <- read.csv("./data_folder/clean/MealPlanBySemester.csv")
 
 # Define term order globally
 term_order <- c(
@@ -509,65 +512,52 @@ ui <- dashboardPage(
         tabName = "markov_model",
         fluidRow(
           box(
-            title = "Churn Analysis Model (Markov Chain)",
+            title = "What is a Markov Chain?",
             status = "primary",
             solidHeader = TRUE,
             width = 12,
-            p("This model analyzes how students transition between different meal plans over time. It uses a Markov chain approach to calculate the probability of students switching from one meal plan to another or discontinuing meal plan service."),
-            p("Understanding these transition patterns helps in predicting churn rates and identifying which meal plans have the highest retention rates.")
-          )
-        ),
-        fluidRow(
+            p("A Markov Chain is a statistical model that describes a sequence of possible events, where the probability of each event depends only on the state attained in the previous event."),
+            p("In this dashboard, it helps us model how students switch between meal plans across semesters and forecast retention and churn.")
+          ),
           box(
-            title = "Markov Model Controls",
+            title = "Run Markov Chain Simulation",
             status = "primary",
             solidHeader = TRUE,
             width = 3,
-            selectInput("markov_start_term", "Start Term:",
-                        choices = term_order,
-                        selected = term_order[length(term_order) - 1]),
-            selectInput("markov_end_term", "End Term:",
-                        choices = c(term_order, "Fall 2025"),
-                        selected = term_order[length(term_order)]),
-            selectInput("starting_meal_plan", "Starting Meal Plan:",
-                        choices = NULL, # Will be populated in server
-                        selected = NULL),
-            actionButton("run_markov", "Run Markov Model",
+            selectInput("starting_meal_plan", "Select Starting Meal Plan:",
+                        choices = c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA")),
+            
+            actionButton("run_markov", "Run Simulation",
                          icon = icon("random"),
                          class = "btn-primary btn-block")
           ),
           box(
-            title = "Transition Probabilities",
+            title = "Retention Forecast (Simulation)",
             status = "info",
             solidHeader = TRUE,
             width = 9,
-            plotlyOutput("transition_matrix_plot", height = "350px")
-          )
-        ),
-        fluidRow(
-          box(
-            title = "Churn Rates by Meal Plan",
-            status = "success",
-            solidHeader = TRUE,
-            width = 6,
-            plotlyOutput("churn_rate_plot", height = "350px")
+            plotlyOutput("retention_forecast_plot", height = "400px")
           ),
           box(
-            title = "Retention Forecast",
-            status = "warning",
-            solidHeader = TRUE,
-            width = 6,
-            plotlyOutput("retention_forecast_plot", height = "350px")
-          )
-        ),
-        fluidRow(
-          box(
-            title = "Long-term Prediction",
-            status = "primary",
+            title = "Transition Matrix Heatmap",
+            status = "info",
             solidHeader = TRUE,
             width = 12,
-            p("This shows the steady-state distribution of meal plans if current transition patterns continue."),
-            plotlyOutput("steady_state_plot", height = "250px")
+            plotlyOutput("transition_matrix_plot")
+          ),
+          box(
+            title = "Long-Term Meal Plan Distribution (Steady-State)",
+            status = "success",
+            solidHeader = TRUE,
+            width = 12,
+            plotlyOutput("steady_state_plot")
+          ),
+          box(
+            title = "Self-Retention Probabilities",
+            status = "warning",
+            solidHeader = TRUE,
+            width = 12,
+            plotlyOutput("retention_prob_plot")
           )
         )
       ),
@@ -706,7 +696,7 @@ server <- function(input, output, session) {
     # Update meal plan filter choices
     meal_plans <- sort(unique(filtered_data()$Meal.Plan.Description))
     updateSelectInput(session, "mealplan_filter", choices = meal_plans, selected = meal_plans[1:min(5, length(meal_plans))])
-    updateSelectInput(session, "starting_meal_plan", choices = meal_plans, selected = meal_plans[1])
+    #updateSelectInput(session, "starting_meal_plan", choices = meal_plans, selected = meal_plans[1])
     
     # Update housing filter choices
     housing_locations <- sort(unique(filtered_data()$Room.Location.Description))
@@ -1506,306 +1496,135 @@ server <- function(input, output, session) {
   
   # ===== MARKOV MODEL TAB OUTPUTS =====
   
-  # Create and store the Markov model
-  markov_model <- reactiveVal(NULL)
+  # ctoc24 <- plans2[!grepl(", ", plans2$Fall.2024) & !grepl(", ", plans2$Spring.2024),] %>% 
+  #   count(Spring.2024, Fall.2024)
+  # 
+  # 
+  # 
+  # hundred <- ctoc24 %>% filter(Spring.2024 == "100 Meal Blocks")
+  # hundred$Proportions <- hundred$n/sum(hundred$n)
+  # 
+  # #Only needed if combination doesn't exists in data
+  # hundred <- rbind(hundred, c("100 Meal Blocks", "Cardinal", 0, 0))
+  # hundred <- rbind(hundred, c("100 Meal Blocks", "Campanile", 0, 0))
+  # hundred <- hundred %>% arrange(hundred$Fall.2024)
+  # 
+  # 
+  # twenty_five <- ctoc24 %>% filter(Spring.2024 == "25 Meal Blocks")
+  # twenty_five$Proportions <- twenty_five$n/sum(twenty_five$n)
+  # 
+  # #Only needed if combination doesn't exists in data
+  # twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Cardinal", 0, 0))
+  # twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Campanile", 0, 0))
+  # twenty_five <- rbind(twenty_five, c("25 Meal Blocks", "Gold", 0, 0))
+  # twenty_five <- twenty_five %>% arrange(twenty_five$Fall.2024)
+  # 
+  # fifty <- ctoc24 %>% filter(Spring.2024 == "50 Meal Blocks")
+  # fifty$Proportions <- fifty$n/sum(fifty$n)
+  # #Only needed if combination doesn't exists in data
+  # fifty <- rbind(fifty, c("50 Meal Blocks", "Gold", 0, 0))
+  # fifty <- fifty %>% arrange(fifty$Fall.2024)
+  # 
+  # camp <- ctoc24 %>% filter(Spring.2024 == "Campanile")
+  # camp$Proportions <- camp$n/sum(camp$n)
+  # camp <- camp %>% arrange(camp$Fall.2024)
+  # 
+  # card <- ctoc24 %>% filter(Spring.2024 == "Cardinal")
+  # card$Proportions <- card$n/sum(card$n)
+  # card <- card %>% arrange(card$Fall.2024)
+  # 
+  # gold <- ctoc24 %>% filter(Spring.2024 == "Gold")
+  # gold$Proportions <- gold$n/sum(gold$n)
+  # gold <- gold %>% arrange(gold$Fall.2024)
+  # 
+  # N_A <- ctoc24 %>% filter(is.na(Spring.2024))
+  # N_A$Proportions <- N_A$n/sum(N_A$n)
+  # N_A <- N_A %>% arrange(N_A$Fall.2024)
+  # 
+  # ctoc24$Proportions <- ctoc24$n/sum(ctoc24$n)
+  # 
+  states <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA")
+  # used_proportions <- rbind(hundred, twenty_five, fifty, camp, card, gold, N_A)
+  used_proportions<-(read.csv("./data_folder/clean/TransitionMatrix.csv"))
+  transition <- matrix(as.numeric(used_proportions$Proportions), nrow = 7, byrow = TRUE)
   
-  # Run the Markov model when button is clicked
+ 
+  
+  # Create markovchain
+  planChain <- new("markovchain", states = states, transitionMatrix = transition)
+  
+  markov_model <- reactiveVal(planChain)
+  
   observeEvent(input$run_markov, {
-    # Prepare data for Markov analysis
-    # We need data that tracks the same students across terms
-    markov_data <- clean_data %>%
-      select(ID, Term.Session.Description, Meal.Plan.Description) %>%
-      pivot_wider(
-        id_cols = ID,
-        names_from = Term.Session.Description,
-        values_from = Meal.Plan.Description
-      ) %>%
-      pivot_longer(
-        cols = -ID,
-        names_to = "Term.Session.Description",
-        values_to = "Meal.Plan.Description"
-      ) %>%
-      filter(!is.na(Meal.Plan.Description)) %>%
-      arrange(ID, Term.Session.Description)
+    req(input$starting_meal_plan)  # Make sure a value is selected
     
-    # Get start and end terms
-    start_term <- input$markov_start_term
-    end_term <- input$markov_end_term
-    
-    # Check if we have at least two terms for comparison
-    start_idx <- which(term_order == start_term)
-    end_idx <- which(term_order == end_term)
-    
-    if (length(start_idx) == 0 || length(end_idx) == 0 || start_idx >= end_idx) {
-      # Show error message
-      showNotification("Please select valid start and end terms where end term is after start term",
-                       type = "error")
+    # Create Markov chain
+    mc <- markov_model()
+    valid_states <- states(mc)
+
+    if (!(input$starting_meal_plan %in% valid_states)) {
+      showNotification("Invalid starting state. Please select a valid meal plan.", type = "error")
       return(NULL)
     }
+    # Run simulation
+    sim <- rmarkovchain(n = 4, object = mc, t0 = input$starting_meal_plan, include.t0 = TRUE)
+    sim_df <- data.frame(Time = 0:4, State = sim)
+
+    output$retention_forecast_plot <- renderPlotly({
+      p <- ggplot(sim_df, aes(x = Time, y = State, group = 1)) +
+        geom_line(color = "#C8102E") +
+        geom_point(size = 3, color = "#F1BE48") +
+        labs(title = paste("Meal Plan Simulation Starting from", input$starting_meal_plan),
+             x = "Term Step", y = "Meal Plan") +
+        theme_minimal()
+      ggplotly(p)
+    })
     
-    # Get transition data
-    transition_data <- clean_data %>%
-      filter(Term.Session.Description %in% c(start_term, end_term)) %>%
-      select(ID, Term.Session.Description, Meal.Plan.Description) %>%
-      arrange(ID, Term.Session.Description) %>%
-      group_by(ID) %>%
-      filter(n() == 2) %>%  # Only include students with data in both terms
-      ungroup()
-    
-    # Create transition matrix
-    from_to <- transition_data %>%
-      pivot_wider(
-        id_cols = ID,
-        names_from = Term.Session.Description,
-        values_from = Meal.Plan.Description
-      )
-    
-    colnames(from_to)[2:3] <- c("from", "to")
-    
-    transition_counts <- from_to %>%
-      group_by(from, to) %>%
-      summarise(count = n(), .groups = 'drop')
-    
-    # Get unique meal plans
-    meal_plans <- sort(unique(c(transition_counts$from, transition_counts$to)))
-    
-    # Initialize transition matrix
-    n_plans <- length(meal_plans)
-    trans_matrix <- matrix(0, nrow = n_plans, ncol = n_plans)
-    rownames(trans_matrix) <- meal_plans
-    colnames(trans_matrix) <- meal_plans
-    
-    # Fill transition matrix
-    for (i in 1:nrow(transition_counts)) {
-      row <- which(rownames(trans_matrix) == transition_counts$from[i])
-      col <- which(colnames(trans_matrix) == transition_counts$to[i])
-      trans_matrix[row, col] <- transition_counts$count[i]
-    }
-    
-    # Convert to probabilities (rows sum to 1)
-    trans_probs <- trans_matrix / rowSums(trans_matrix)
-    trans_probs[is.na(trans_probs)] <- 0
-    
-    # Create Markov chain object
-    mc <- new("markovchain", 
-              states = meal_plans,
-              byrow = TRUE,
-              transitionMatrix = trans_probs)
-    
-    # Store the model
-    markov_model(mc)
-    
-    # Transition Matrix Plot
     output$transition_matrix_plot <- renderPlotly({
-      # Convert transition matrix to data frame for plotting
-      trans_df <- as.data.frame(as.table(trans_probs))
-      names(trans_df) <- c("From", "To", "Probability")
+      mat <- as.data.frame(as.table(transition))
+      colnames(mat) <- c("From", "To", "Probability")
       
-      # Filter out zero probabilities for better visualization
-      trans_df <- trans_df %>%
-        filter(Probability > 0)
-      
-      # Add text for hover
-      trans_df$text <- paste0(
-        "From: ", trans_df$From, "<br>",
-        "To: ", trans_df$To, "<br>",
-        "Probability: ", round(trans_df$Probability * 100, 1), "%"
-      )
-      
-      p <- ggplot(trans_df, aes(x = To, y = From, fill = Probability, text = text)) +
+      p <- ggplot(mat, aes(x = From, y = To, fill = Probability, text = paste0(
+        "From: ", From, "<br>",
+        "To: ", To, "<br>",
+        "Probability: ", round(Probability, 3)
+      ))) +
         geom_tile() +
         scale_fill_viridis_c(limits = c(0, 1)) +
         theme_minimal() +
-        labs(x = paste("Meal Plan in", end_term), 
-             y = paste("Meal Plan in", start_term), 
-             fill = "Transition Probability") +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        labs(x = "From", y = "To", title = "Transition Matrix Heatmap", fill = "Probability")
       
       ggplotly(p, tooltip = "text")
     })
     
-    # Churn Rate Plot
-    output$churn_rate_plot <- renderPlotly({
-      # Calculate churn rate (diagonal elements are retention)
-      churn_data <- data.frame(
-        Meal.Plan = meal_plans,
-        Retention = diag(trans_probs),
-        Churn = 1 - diag(trans_probs)
-      ) %>%
-        pivot_longer(cols = c(Retention, Churn), 
-                     names_to = "Metric", 
-                     values_to = "Rate")
-      
-      # Calculate number of students for sizing
-      students_count <- clean_data %>%
-        filter(Term.Session.Description == start_term) %>%
-        group_by(Meal.Plan.Description) %>%
-        summarise(Count = n(), .groups = 'drop') %>%
-        rename(Meal.Plan = Meal.Plan.Description)
-      
-      churn_data <- churn_data %>%
-        left_join(students_count, by = "Meal.Plan") %>%
-        replace_na(list(Count = 0))
-      
-      p <- ggplot(churn_data, aes(x = reorder(Meal.Plan, -Rate), 
-                                  y = Rate, 
-                                  fill = Metric,
-                                  text = paste0(
-                                    "Meal Plan: ", Meal.Plan, "<br>",
-                                    "Rate: ", round(Rate * 100, 1), "%", "<br>",
-                                    "Students: ", Count
-                                  ))) +
-        geom_bar(stat = "identity", position = "stack") +
-        scale_fill_manual(values = c("Retention" = theme_colors$success, "Churn" = theme_colors$danger)) +
-        scale_y_continuous(labels = scales::percent_format()) +
-        coord_flip() +
-        theme_minimal() +
-        labs(x = "Meal Plan", y = "Rate", fill = "Metric") +
-        theme(legend.position = "bottom")
-      
-      ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = "h", y = -0.2))
-    })
-    
-    # Retention Forecast Plot
-    output$retention_forecast_plot <- renderPlotly({
-      # Get starting distribution
-      if (!is.null(input$starting_meal_plan)) {
-        start_dist <- rep(0, length(meal_plans))
-        names(start_dist) <- meal_plans
-        start_dist[input$starting_meal_plan] <- 1
-      } else {
-        # Use current distribution
-        start_dist <- clean_data %>%
-          filter(Term.Session.Description == start_term) %>%
-          group_by(Meal.Plan.Description) %>%
-          summarise(Count = n(), .groups = 'drop') %>%
-          mutate(Proportion = Count / sum(Count)) %>%
-          select(Meal.Plan.Description, Proportion)
-        
-        start_dist_vec <- rep(0, length(meal_plans))
-        names(start_dist_vec) <- meal_plans
-        
-        for (i in 1:nrow(start_dist)) {
-          idx <- which(meal_plans == start_dist$Meal.Plan.Description[i])
-          if (length(idx) > 0) {
-            start_dist_vec[idx] <- start_dist$Proportion[i]
-          }
-        }
-        
-        start_dist <- start_dist_vec
-      }
-      
-      # Calculate steps (number of terms to project)
-      steps <- 5  # Default to 5 steps ahead
-      
-      # Generate forecast
-      forecast_data <- data.frame(
-        Step = 0,
-        Meal.Plan = meal_plans,
-        Probability = start_dist
-      )
-      
-      for (i in 1:steps) {
-        next_dist <- start_dist %*% (markov_model()@transitionMatrix ^ i)
-        next_dist <- as.vector(next_dist)
-        
-        step_data <- data.frame(
-          Step = i,
-          Meal.Plan = meal_plans,
-          Probability = next_dist
-        )
-        
-        forecast_data <- rbind(forecast_data, step_data)
-      }
-      
-      # Add term labels
-      term_idx <- start_idx
-      forecast_data$Term <- NA
-      
-      for (i in 0:steps) {
-        idx <- term_idx + i
-        if (idx <= length(term_order)) {
-          term <- term_order[idx]
-        } else {
-          # Project terms beyond our known list
-          if (grepl("Fall", term_order[length(term_order)])) {
-            term <- paste("Spring", as.numeric(substr(term_order[length(term_order)], 6, 9)) + floor((idx - length(term_order)) / 2))
-          } else {
-            term <- paste("Fall", as.numeric(substr(term_order[length(term_order)], 8, 11)) + floor((idx - length(term_order) + 1) / 2))
-          }
-        }
-        
-        forecast_data$Term[forecast_data$Step == i] <- term
-      }
-      
-      # Plot only top meal plans for clarity
-      top_meal_plans <- forecast_data %>%
-        filter(Step == 0) %>%
-        arrange(desc(Probability)) %>%
-        head(5) %>%
-        pull(Meal.Plan)
-      
-      forecast_data <- forecast_data %>%
-        filter(Meal.Plan %in% top_meal_plans)
-      
-      p <- ggplot(forecast_data, aes(x = Term, 
-                                     y = Probability, 
-                                     color = Meal.Plan, 
-                                     group = Meal.Plan,
-                                     text = paste0(
-                                       "Term: ", Term, "<br>",
-                                       "Meal Plan: ", Meal.Plan, "<br>",
-                                       "Probability: ", round(Probability * 100, 1), "%"
-                                     ))) +
-        geom_line(size = 1) +
-        geom_point(size = 3) +
-        scale_y_continuous(labels = scales::percent_format()) +
-        theme_minimal() +
-        labs(x = "Term", y = "Probability", color = "Meal Plan") +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-              legend.position = "bottom")
-      
-      ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = "h", y = -0.2))
-    })
-    
-    # Steady State Plot
     output$steady_state_plot <- renderPlotly({
-      # Calculate steady state distribution
-      steady_state <- steadyStates(markov_model())
+      steady <- steadyStates(planChain)
+      df <- data.frame(MealPlan = colnames(steady), Probability = as.numeric(steady))
       
-      if (is.null(steady_state) || nrow(steady_state) == 0) {
-        # If no steady state exists, use a long-term approximation
-        steady_state <- start_dist %*% (markov_model()@transitionMatrix ^ 10)
-        steady_state <- as.vector(steady_state)
-      } else {
-        steady_state <- as.vector(steady_state)
-      }
-      
-      # Create data frame for plotting
-      steady_df <- data.frame(
-        Meal.Plan = meal_plans,
-        Probability = steady_state
-      ) %>%
-        arrange(desc(Probability)) %>%
-        filter(Probability > 0.01)  # Filter out very small probabilities
-      
-      p <- ggplot(steady_df, aes(x = reorder(Meal.Plan, -Probability), 
-                                 y = Probability, 
-                                 fill = Probability,
-                                 text = paste0(
-                                   "Meal Plan: ", Meal.Plan, "<br>",
-                                   "Steady State Probability: ", round(Probability * 100, 1), "%"
-                                 ))) +
+      p <- ggplot(df, aes(x = reorder(MealPlan, Probability), y = Probability, fill = Probability)) +
         geom_bar(stat = "identity") +
+        coord_flip() +
         scale_fill_viridis_c() +
-        scale_y_continuous(labels = scales::percent_format()) +
+        labs(title = "Steady-State Distribution", x = "Meal Plan", y = "Probability") +
+        theme_minimal()
+      
+      ggplotly(p)
+    })
+    
+    output$retention_prob_plot <- renderPlotly({
+      diag_probs <- diag(transition)
+      df <- data.frame(MealPlan = states, Retention = diag_probs)
+      
+      p <- ggplot(df, aes(x = reorder(MealPlan, Retention), y = Retention, fill = Retention)) +
+        geom_col() +
+        scale_fill_viridis_c() +
         coord_flip() +
         theme_minimal() +
-        labs(x = "Meal Plan", y = "Steady State Probability", fill = "Probability") +
-        theme(legend.position = "none")
+        labs(title = "Retention Probabilities", x = "Meal Plan", y = "Probability")
       
-      ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
+      ggplotly(p)
     })
+    
   })
   
   # ===== CONCLUSION TAB OUTPUTS =====
