@@ -73,7 +73,7 @@ ctoc24_nona$Proportions <- ctoc24_nona$n/sum(ctoc24_nona$n)
 
 #Transition matrix of probabilities between states
 states <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA")
-matrix2 <- matrix(as.numeric(used_proportions$P  roportions), nrow = 7, byrow = TRUE)
+matrix2 <- matrix(as.numeric(used_proportions$Proportions), nrow = 7, byrow = TRUE)
 
 
 #Creating the markov chain
