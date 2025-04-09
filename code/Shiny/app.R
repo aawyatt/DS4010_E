@@ -19,8 +19,13 @@ library(tidyr)
 library(seqinr)
 
 # Load datasets
-clean_data <- read.csv("./data_folder/clean/CleanDiningData.csv")
-current_data <- read.csv("./data_folder/clean/CurrentDiningData.csv")
+path <- "../../data_folder/clean/"
+clean_data <- read.csv(paste0(path, "CleanDiningData.csv"))
+current_data <- read.csv(paste0(path, "CurrentDiningData.csv"))
+regents <- read.csv(paste0(path, "CleanRegents.csv"))
+used_proportions <- read.csv(paste0(path, "TransitionMatrix.csv"))
+
+
 # Define term order globally
 term_order <- c(
   "Fall 2021", "Spring 2022",
@@ -1496,7 +1501,7 @@ server <- function(input, output, session) {
   
   # ===== MARKOV MODEL TAB OUTPUTS =====
   states <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA")
-  used_proportions<-(read.csv("./data_folder/clean/TransitionMatrix.csv"))
+
   transition <- matrix(as.numeric(used_proportions$Proportions), nrow = 7, byrow = TRUE)
   
  
