@@ -5,12 +5,10 @@ library(MASS)
 library(ISLR2)
 library(glmnet)
 library(car)
-library(ggResidpanel)
 
 # read in the data
-dining <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CurrentDiningData.csv")
-regents <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CleanRegents.csv")
-
+dining <- read.csv("./data_folder/clean/CurrentDiningData.csv")
+regents <- read.csv("./data_folder/clean/CleanRegents.csv")
 # make `MealPlan` and `Term` factors, and `Term` numerical from 1-8 for their corresponding factor levels
 # calculate price for each semester (price.year/2)
 dining <- dining %>%
@@ -19,7 +17,7 @@ dining <- dining %>%
                                   levels = c("Fall 2021", "Spring 2022", "Fall 2022", "Spring 2023", 
                                              "Fall 2023", "Spring 2024", "Fall 2024", "Spring 2025"))),
          Price = Price.Year/2
-         )
+  )
 
 # make frequency table for MealPlan and Term
 
@@ -42,8 +40,8 @@ data.final <- counts %>%
   left_join(undergradCounts, by="Term") %>%
   mutate(Semester = ifelse(Term %% 2 == 0, "Spring", "Fall")) %>%
   dplyr::select(MealPlan, Term, Semester, Year, MealPlanCount, UndergradCount)
-  
-  
+
+
 numeric_data <- data.final %>%
   select_if(is.numeric)
 
@@ -80,15 +78,6 @@ resid_panel(m1,
             qqbands  = TRUE,
             smoother = TRUE)
 
-ggplot(data.final, aes(x = Year, y = MealPlanCount, color = MealPlan)) +
-  geom_point() +  # Plot actual data points
-  geom_smooth(method = "lm", se = FALSE) +  # Separate regression lines for each MealPlan
-  labs(title = "Linear Model Fit by Meal Plan",
-       x = "Year",
-       y = "Meal Plan Count") +
-  theme_minimal()
-
-
 ## diagnostic plots do not look good, take log of response variable
 
 #-------------------------------------------------------------------------------
@@ -116,7 +105,7 @@ summary(m3)
 anova(m2, m3) ## high p-value, interaction term is not significant
 
 resid_xpanel(m2,
-            smoother = TRUE)
+             smoother = TRUE)
 
 confint(m2)
 
@@ -170,21 +159,21 @@ exp(sqrt(mse2)) ## 1.35, the model predictions are off by about 35%
 #-------------------------------------------------------------------------------
 
 m.pois.full <- glm(MealPlanCount ~ .,
-               data=data.final,
-               family=poisson(link="log"))
-
-summary(m.pois.full)
-vif(m.pois.full) # doesn't work because two variables are highly correlated (Term and Year)
-
-m.pois.2 <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
                    data=data.final,
                    family=poisson(link="log"))
+
+summary(m.pois.full)
+#vif(m.pois.full) # doesn't work because two variables are highly correlated (Term and Year)
+
+m.pois.2 <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
+                data=data.final,
+                family=poisson(link="log"))
 summary(m.pois.2)
 vif(m.pois.2) # ideal VIF values meaning no multicollinearity
 
 m.pois.2log <- glm(MealPlanCount ~ MealPlan + Semester + Year + log(UndergradCount),
-               data=data.final,
-               family=poisson(link="log"))
+                   data=data.final,
+                   family=poisson(link="log"))
 
 summary(m.pois.2log)
 
@@ -238,6 +227,8 @@ library(caret)
 k <- 10 # number of folds/times to rerun the code
 
 folds <- sample(1:k,nrow(data.clean),replace=TRUE)
+rmse_log_linear <- c()
+rmse_poisson <- c()
 
 for(i in 1:k){
   test_index = folds[[i]]
@@ -256,4 +247,110 @@ for(i in 1:k){
   
 }
 
+## use GOF and pseudo Rsquare to test
+
+library(caret)
+
+k <- 10 # number of folds/times to rerun the code
+folds <- sample(1:k, nrow(data.clean), replace=TRUE)
+
+# Initialize vectors to store evaluation metrics for each fold
+rmse_log_linear <- c()
+rmse_poisson <- c()
+mae_log_linear <- c()
+mae_poisson <- c()
+r2_log_linear <- c()  # Only for the log-linear model
+deviance_poisson <- c()  # Only for the Poisson model
+
+for(i in 1:k) {
+  test_index <- which(folds == i)
+  
+  test <- data.clean[test_index,]
+  train <- data.clean[-test_index,]
+  
+  # Log-Linear Model (M1)
+  M1 <- lm(log(MealPlanCount) ~ MealPlan + Semester + UndergradCount, data=train)
+  M1_count <- exp(predict(M1, newdata=test[,-5]))
+  
+  # Poisson Model (M2)
+  M2 <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
+            data=train, family=poisson(link="log"))
+  M2_count <- predict(M2, newdata=test[,-5], type="response")
+  
+  # True values
+  true_values <- test[, 5]
+  
+  # Log-Linear Model Evaluation
+  rmse_log_linear[i] <- sqrt(mean((M1_count - true_values)^2))
+  mae_log_linear[i] <- mean(abs(M1_count - true_values))
+  r2_log_linear[i] <- summary(M1)$r.squared  # R-squared for the log-linear model
+  
+  # Poisson Model Evaluation
+  rmse_poisson[i] <- sqrt(mean((M2_count - true_values)^2))
+  mae_poisson[i] <- mean(abs(M2_count - true_values))
+  deviance_poisson[i] <- deviance(M2)  # Deviance for the Poisson model
+  
+  cat("Fold:", i, "\n")
+  cat("Log-Linear model: RMSE =", rmse_log_linear[i], " MAE =", mae_log_linear[i], " R-squared =", r2_log_linear[i], "\n")
+  cat("Poisson model: RMSE =", rmse_poisson[i], " MAE =", mae_poisson[i], " Deviance =", deviance_poisson[i], "\n")
+}
+
+# Calculate and print average metrics across all folds
+cat("\nAverage Metrics:\n")
+cat("Log-Linear model: RMSE =", mean(rmse_log_linear), " MAE =", mean(mae_log_linear), " R-squared =", mean(r2_log_linear), "\n")
+cat("Poisson model: RMSE =", mean(rmse_poisson), " MAE =", mean(mae_poisson), " Deviance =", mean(deviance_poisson), "\n")
+
+#-------------------------------------------------------------------------------
+# Final Model, Diagnostics, and Visualizations
+#-------------------------------------------------------------------------------
+
+finalModel <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
+                  data=data.clean, family=poisson(link="log"))
+
+summary(finalModel)
+
+predictions <- predict(finalModel, type="response", se.fit=TRUE)
+lower.ci <- predictions$fit - 1.96*predictions$se.fit
+upper.ci <- predictions$fit + 1.96*predictions$se.fit
+
+data.predict <- data.clean %>%
+  mutate(prediction = predictions$fit,
+         lower_ci = lower.ci,
+         upper_ci = upper.ci)
+
+plot(data.predict$MealPlanCount, data.predict$prediction)
+
+RMSE <- sqrt(mean((data.predict$prediction-data.predict$MealPlanCount)^2))
+
+plot(finalModel$residuals ~ fitted(finalModel))
+
+# plot residuals
+#ggplot(aes(x=predictions$fit, y=finalModel$residuals)) +
+#  geom_point(color="black", alpha=1) +
+#  geom_abline(slope=0, intercept = 0, color="blue", linetype="solid") +
+#  labs(
+#    title="Residuals vs Predicted",
+#    x = "Residuals",
+#    y = "Predicted Values"
+#  ) +
+#  theme_minimal()
+
+
+plot(predictions$fit, finalModel$residuals)
+abline(h=0, lty=2)
+
+qqnorm(res)
+qqline(res)
+
+## Plot actual vs predicted with confidence interavals
+ggplot(data.predict, aes(x = MealPlanCount, y = prediction)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2, color = "red") +
+  geom_abline(slope = 1, intercept = 0, color = "green", linetype = "dashed") + 
+  labs(
+    title = "Actual vs. Predicted Meal Plan Count",
+    x = "Actual Meal Plan Count",
+    y = "Predicted Meal Plan Count"
+  ) +
+  theme_minimal()
 

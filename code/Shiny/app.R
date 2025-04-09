@@ -455,49 +455,123 @@ ui <- dashboardPage(
       tabItem(
         tabName = "poisson_model",
         fluidRow(
-          box(
-            title = "Meal Plan Prediction Model (Linear Regression)",
-            status = "primary",
-            solidHeader = TRUE,
+          tabBox(
+            title = "Meal Plan Prediction",
             width = 12,
-            p("This model predicts the number of students who will select each meal plan in future terms based on historical data. It uses a linear regression model to forecast meal plan counts."),
-            p("The model considers factors such as term, meal plan type, and undergraduate counts to predict meal plan selections.")
-          )
-        ),
-        fluidRow(
-          box(
-            title = "Model Controls",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 3,
-            selectInput("future_terms", "Number of Future Terms to Predict:",
-                        choices = 1:10, selected = 2),
-            selectizeInput("selected_meal_plans", "Select Meal Plans:",
-                           choices = NULL, multiple = TRUE),
-            actionButton("run_prediction", "Run Prediction",
-                         icon = icon("calculator"),
-                         class = "btn-primary btn-block")
-          ),
-          box(
-            title = "Prediction Results",
-            status = "info",
-            solidHeader = TRUE,
-            width = 9,
-            plotlyOutput("prediction_plot", height = "400px")
-          )
-        ),
-        # New diagnostics box added below the prediction results
-        fluidRow(
-          box(
-            title = "Diagnostics",
-            status = "warning",
-            solidHeader = TRUE,
-            width = 12,
-            plotOutput("diagnostics_plot", height = "500px")
+            id = "mealPlanPredictionTabs",
+            # First subtab: Current Prediction Model content
+            tabPanel("Prediction Model",
+                     fluidRow(
+                       box(
+                         title = "Meal Plan Prediction Model (Linear Regression)",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 12,
+                         p("This model predicts the number of students who will select each meal plan in future terms based on historical data. It uses a linear regression model to forecast meal plan counts."),
+                         p("The model considers factors such as term, meal plan type, and undergraduate counts to predict meal plan selections.")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         title = "Model Controls",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 3,
+                         selectInput("future_terms", "Number of Future Terms to Predict:",
+                                     choices = 1:10, selected = 2),
+                         selectizeInput("selected_meal_plans", "Select Meal Plans:",
+                                        choices = NULL, multiple = TRUE),
+                         actionButton("run_prediction", "Run Prediction",
+                                      icon = icon("calculator"),
+                                      class = "btn-primary btn-block")
+                       ),
+                       box(
+                         title = "Prediction Results",
+                         status = "info",
+                         solidHeader = TRUE,
+                         width = 9,
+                         plotlyOutput("prediction_plot", height = "400px")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         title = "Diagnostics",
+                         status = "warning",
+                         solidHeader = TRUE,
+                         width = 12,
+                         plotOutput("diagnostics_plot", height = "500px")
+                       )
+                     )
+            ),
+            tabPanel("Price Model",
+                     fluidRow(
+                       box(
+                         title = "Meal Plan Price Forecasting (Linear Regression)",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 12,
+                         p("This tool forecasts the future cost of ISU meal plans using historical pricing data and linear regression."),
+                         p("It projects prices up to 10 years into the future while accounting for a fixed inflation rate per year. This helps ISU Dining anticipate financial trends and adjust pricing strategies.")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         title = "Model Controls",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 3,
+                         selectInput("years_ahead", "Years into the Future:",
+                                     choices = 1:10, selected = 4),
+                         selectizeInput("selected_price_meal_plans", "Select Meal Plans:",
+                                        choices = NULL, multiple = TRUE),
+                         actionButton("run_price_prediction", "Run Price Prediction",
+                                      icon = icon("calculator"),
+                                      class = "btn-primary btn-block")
+                       ),
+                       box(
+                         title = "Price Forecast Results",
+                         status = "info",
+                         solidHeader = TRUE,
+                         width = 9,
+                         plotlyOutput("price_model_plot", height = "400px")
+                       )
+                     )
+            ),
+            
+            
+            tabPanel("Income Forecast",
+                     fluidRow(
+                       box(
+                         title = "Model Controls",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 3,
+                         # Dropdown for how many years into the future (1 to 10)
+                         selectInput("income_years_ahead", 
+                                     "Years into the Future:",
+                                     choices = 1:10, 
+                                     selected = 4),
+                         # Single-select for the individual meal plan
+                         selectizeInput("selected_income_meal_plan", 
+                                        "Select Meal Plan for Income Forecast:",
+                                        choices = NULL, 
+                                        multiple = FALSE),
+                         actionButton("run_income_forecast", "Run Income Forecast",
+                                      icon = icon("calculator"),
+                                      class = "btn-primary btn-block")
+                       ),
+                       box(
+                         title = "Income Forecast Results",
+                         status = "info",
+                         solidHeader = TRUE,
+                         width = 9,
+                         plotlyOutput("income_model_plot", height = "400px")
+                       )
+                     )
+            )
           )
         )
       ),
-      
       
       # ===== MARKOV MODEL TAB =====
       tabItem(
@@ -638,6 +712,8 @@ ui <- dashboardPage(
 # Server Definition
 server <- function(input, output, session) {
   source("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Models/LinearModel.R")
+  source("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Models/priceModel.R")
+  
   # ===== REACTIVE DATA PROCESSING =====
   
   # Basic reactive dataset
@@ -1346,14 +1422,18 @@ server <- function(input, output, session) {
       group_by(MealPlan) %>% 
       filter(n() > 1) %>% 
       nest() %>% 
-      mutate(model = map(data, ~ lm(MealPlanCount ~ Term, data = .x)))
+      #mutate(model = map(data, ~ lm(MealPlanCount ~ Term, data = .x)))
+      #print(head(data))  
+      mutate(model = map(data, ~ glm(MealPlanCount ~ Term, data = .x, family = poisson(link = "log"))))
     
     # Create future predictions for each meal plan using explicit dplyr and tidyr functions
     future_data <- models %>% 
       mutate(future = map2(data, model, ~ {
         max_term <- max(.x$Term, na.rm = TRUE)
         new_terms <- seq(max_term + 1, max_term + as.numeric(input$future_terms))
-        predicted <- predict(.y, newdata = data.frame(Term = new_terms))
+        predicted <- predict(.y, 
+                             newdata = data.frame(Term = new_terms), 
+                             type = "response")
         tibble(Term = new_terms, count = predicted)
       })) %>% 
       tidyr::unnest(future) %>% 
@@ -1377,8 +1457,12 @@ server <- function(input, output, session) {
       geom_point(size = 2) +
       geom_line(aes(group = MealPlan)) +
       geom_smooth(data = historical_plot, 
-                  aes(x = Term, y = MealPlanCount, color = MealPlan), 
-                  method = "lm", se = FALSE, linetype = "dashed", size = 0.8) +
+                  aes(x = Term, y = MealPlanCount, color = MealPlan),
+                  method = "glm", 
+                  method.args = list(family = "poisson"),
+                  se = FALSE, 
+                  linetype = "dashed", 
+                  size = 0.8)+
       theme_minimal() +
       labs(x = "Term", y = "Meal Plan Count", color = "Meal Plan", shape = "Data Type") +
       scale_x_continuous(breaks = unique(combined_data$Term),
@@ -1388,6 +1472,7 @@ server <- function(input, output, session) {
       ggplotly(p)
     })
   })
+  
   output$diagnostics_plot <- renderPlot({
     # Fit the linear model and retrieve the processed data
     model_data <- fit_linear_model()
@@ -1399,6 +1484,67 @@ server <- function(input, output, session) {
                 qqbands  = TRUE,
                 smoother = TRUE)
   })
+  
+  
+  # ===== Price MODEL TAB ===========
+  
+  priceModelResults <- run_price_model()
+  
+  observe({
+    data <- load_meal_data()  # From priceModel.R
+    plans <- sort(unique(data$Meal.Plan.Description))
+    
+    updateSelectizeInput(session, "selected_price_meal_plans", 
+                         choices = plans,
+                         selected = plans[1])
+  })
+  
+  # When user clicks "Run Price Prediction"
+  observeEvent(input$run_price_prediction, {
+    # Ensure input$years_ahead is treated as numeric (since it comes from selectInput)
+    years_ahead <- as.numeric(input$years_ahead)
+    
+    # Run model using selected meal plans and number of future years
+    priceModelResults <- run_price_model(
+      selected_plans = input$selected_price_meal_plans,
+      years_ahead = years_ahead
+    )
+    
+    pred_df <- priceModelResults$predictions
+    
+    # Save predicted results to a CSV file.
+    write.csv(pred_df, file = "predicted_results.csv", row.names = FALSE)
+    
+    # Load historical data for the selected plans
+    hist_data <- load_meal_data()
+    hist_data <- hist_data[hist_data$Meal.Plan.Description %in% input$selected_price_meal_plans, ]
+    
+    # Get predicted data
+    pred_df <- priceModelResults$predictions
+    
+    # Create the combined ggplot
+    p <- ggplot() +
+      geom_point(data = hist_data, aes(x = Year, y = Price.Year, color = Meal.Plan.Description), size = 3) +
+      geom_line(data = hist_data, aes(x = Year, y = Price.Year, color = Meal.Plan.Description), size = 1) +
+      geom_point(data = pred_df, aes(x = Year, y = Adjusted.Price, color = Meal.Plan.Description),
+                 shape = 17, size = 3) +
+      geom_line(data = pred_df, aes(x = Year, y = Adjusted.Price, color = Meal.Plan.Description),
+                linetype = "dashed", size = 1) +
+      labs(
+        title = "Price Forecast for Selected Meal Plans",
+        x = "Year",
+        y = "Price ($)",
+        color = "Meal Plan"
+      ) +
+      theme_minimal()
+    
+    # Render the combined plot
+    output$price_model_plot <- renderPlotly({
+      ggplotly(p)
+    })
+  })
+  
+  # ===== INCOME Model Tab =====
   
   
   
