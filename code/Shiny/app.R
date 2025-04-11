@@ -18,9 +18,9 @@ library(MASS)                # For Poisson regression
 library(ggrepel)             # For non-overlapping text labels
 
 # Load datasets
-clean_data <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CleanDiningData.csv")
-current_data <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CurrentDiningData.csv")
-regents <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CleanRegents.csv")
+clean_data <- read.csv("../DS4010_E/code/Shiny/CleanDiningData.csv")
+current_data <- read.csv("../DS4010_E/code/Shiny/CurrentDiningData.csv")
+regents <- read.csv("../DS4010_E/code/Shiny/CleanRegents.csv")
 
 # Define term order globally
 term_order <- c(
@@ -713,8 +713,8 @@ ui <- dashboardPage(
 
 # Server Definition
 server <- function(input, output, session) {
-  source("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Models/LinearModel.R")
-  source("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Models/priceModel.R")
+  source("../DS4010_E/code/Models/LinearModel.R")
+  source("../DS4010_E/code/Models/priceModel.R")
   
   # ===== REACTIVE DATA PROCESSING =====
   
@@ -1558,11 +1558,9 @@ server <- function(input, output, session) {
   
   # Income Forecast Observer
   observeEvent(input$run_income_forecast, {
-    cat("run_income_forecast button pressed\n")
     req(input$selected_income_meal_plan, input$income_years_ahead)
     
     selected_plan <- input$selected_income_meal_plan
-    cat("Selected plan:", selected_plan, "\n")
     
     # Retrieve historical count data from data_final (from fit_linear_model())
     hist_data <- data_final %>% filter(MealPlan == selected_plan)
@@ -1582,9 +1580,6 @@ server <- function(input, output, session) {
       summarise(Cost = mean(Price.Year, na.rm = TRUE)) %>%
       ungroup()
     hist_data <- left_join(hist_data, cost_data, by = c("TermLabel" = "Term.Session.Description"))
-    
-    cat("Historical data after join:\n")
-    print(head(hist_data))
     
     # Fit the Poisson model using historical data
     model <- glm(MealPlanCount ~ Term, family = poisson(link = "log"), data = hist_data)
