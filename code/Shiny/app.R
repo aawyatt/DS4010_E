@@ -1386,7 +1386,7 @@ server <- function(input, output, session) {
   # ===== POISSON MODEL TAB OUTPUTS =====
   
   # Source the LinearModel.R file to load the fit_linear_model() function
-  source("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Models/LinearModel.R")
+  source("./code/Models/LinearModel.R")
   
   # Fit the linear model once at startup and get the processed data
   linear_results <- fit_linear_model()
