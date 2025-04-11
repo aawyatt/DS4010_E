@@ -18,9 +18,9 @@ library(MASS)                # For Poisson regression
 library(ggrepel)             # For non-overlapping text labels
 
 # Load datasets
-clean_data <- read.csv("../DS4010_E/code/Shiny/CleanDiningData.csv")
-current_data <- read.csv("../DS4010_E/code/Shiny/CurrentDiningData.csv")
-regents <- read.csv("../DS4010_E/code/Shiny/CleanRegents.csv")
+clean_data <- read.csv("./code/Shiny/CleanDiningData.csv")
+current_data <- read.csv("./code/Shiny/CurrentDiningData.csv")
+regents <- read.csv("./code/Shiny/CleanRegents.csv")
 
 # Define term order globally
 term_order <- c(
@@ -713,8 +713,8 @@ ui <- dashboardPage(
 
 # Server Definition
 server <- function(input, output, session) {
-  source("../DS4010_E/code/Models/LinearModel.R")
-  source("../DS4010_E/code/Models/priceModel.R")
+  source("./code/Models/LinearModel.R")
+  source("./code/Models/priceModel.R")
   
   # ===== REACTIVE DATA PROCESSING =====
   
