@@ -101,4 +101,8 @@ This tab gives a high-level overview and some numerical summaries of the selecte
 ### Conclusion:
 This tab gives overall trend observations and conclusions based on the results of the models and our exploratory analysis.  
 
+## 2025-04-6: Minimum Viable Dashboard
+
+Link to Dashboard: https://ds4010groupe.shinyapps.io/shiny/
+For our dashboard, we have already inserted our exploratory data into our dashboard and have allowed for user customization where a user can choose different periods and meal plans while the dashboard will adjust the graphs accordingly. In addition to this, we are currently in the process of integrating our Markov, Poisson, and linear price prediction models into the dashboard. The plan for these is that users will have the ability to have some input into the models, whether it is a starting meal plan, time period, or meal plan type, and then the dashboard will output the results of the models as well as some diagnostics for people who may be more advanced in data science. Finally, we have been discussing the idea of implementing an LLM into the dashboard that could take a graph and output a simplified summary of what the plot is depicting and what the diagnostics are telling us about the model. This will allow for more novice users to gain a better understanding of the results as well as how the model works but will be implemented in the final dashboard if time allows for us to complete it.
 
