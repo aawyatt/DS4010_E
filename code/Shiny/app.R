@@ -546,16 +546,17 @@ ui <- dashboardPage(
                          status = "primary",
                          solidHeader = TRUE,
                          width = 3,
-                         # Dropdown for how many years into the future (1 to 10)
+                         # Dropdown for how many terms into the future to predict
                          selectInput("income_years_ahead", 
                                      "Years into the Future:",
                                      choices = 1:10, 
                                      selected = 4),
-                         # Single-select for the individual meal plan
+                         # Single-select to choose the meal plan for forecasting income
                          selectizeInput("selected_income_meal_plan", 
                                         "Select Meal Plan for Income Forecast:",
                                         choices = NULL, 
                                         multiple = FALSE),
+                         # Button to run the income forecast calculation
                          actionButton("run_income_forecast", "Run Income Forecast",
                                       icon = icon("calculator"),
                                       class = "btn-primary btn-block")
@@ -565,6 +566,7 @@ ui <- dashboardPage(
                          status = "info",
                          solidHeader = TRUE,
                          width = 9,
+                         # Plotly output that will display the income forecast plot
                          plotlyOutput("income_model_plot", height = "400px")
                        )
                      )
@@ -1546,6 +1548,105 @@ server <- function(input, output, session) {
   
   # ===== INCOME Model Tab =====
   
+  # Update Income Forecast meal plan choices (similar to other sections)
+  observe({
+    meal_plans <- sort(unique(data_final$MealPlan))
+    updateSelectizeInput(session, "selected_income_meal_plan", 
+                         choices = meal_plans,
+                         selected = meal_plans[1])
+  })
+  
+  # Income Forecast Observer
+  observeEvent(input$run_income_forecast, {
+    cat("run_income_forecast button pressed\n")
+    req(input$selected_income_meal_plan, input$income_years_ahead)
+    
+    selected_plan <- input$selected_income_meal_plan
+    cat("Selected plan:", selected_plan, "\n")
+    
+    # Retrieve historical count data from data_final (from fit_linear_model())
+    hist_data <- data_final %>% filter(MealPlan == selected_plan)
+    if (nrow(hist_data) < 2) {
+      cat("Not enough historical data to fit model\n")
+      output$income_model_plot <- renderPlotly({ NULL })
+      return()
+    }
+    
+    # Map numeric Term to term labels using global term_order
+    hist_data <- hist_data %>% mutate(TermLabel = term_order[Term])
+    
+    # Incorporate cost data from filtered_data()
+    cost_data <- filtered_data() %>%
+      filter(Meal.Plan.Description == selected_plan) %>%
+      group_by(Term.Session.Description) %>%
+      summarise(Cost = mean(Price.Year, na.rm = TRUE)) %>%
+      ungroup()
+    hist_data <- left_join(hist_data, cost_data, by = c("TermLabel" = "Term.Session.Description"))
+    
+    cat("Historical data after join:\n")
+    print(head(hist_data))
+    
+    # Fit the Poisson model using historical data
+    model <- glm(MealPlanCount ~ Term, family = poisson(link = "log"), data = hist_data)
+    
+    # Forecast future counts using the user-specified number of future terms
+    last_term <- max(hist_data$Term, na.rm = TRUE)
+    future_range <- as.numeric(input$income_years_ahead)
+    future_terms <- seq(last_term + 1, last_term + future_range)
+    
+    predicted_counts <- predict(model, newdata = data.frame(Term = future_terms), type = "response")
+    avg_cost <- mean(hist_data$Cost, na.rm = TRUE)
+    future_income <- predicted_counts * avg_cost
+    
+    future_df <- data.frame(
+      Term = future_terms,
+      MealPlanCount = predicted_counts,
+      Cost = avg_cost,
+      Income = future_income,
+      Type = "Future"
+    ) %>% mutate(TermLabel = sapply(Term, function(t) {
+      if (t <= length(term_order)) {
+        term_order[t]
+      } else {
+        last_term_str <- term_order[length(term_order)]
+        base_year <- as.numeric(gsub("\\D", "", last_term_str))
+        season <- ifelse(grepl("Fall", last_term_str), "Spring", "Fall")
+        paste(season, base_year + (t - length(term_order)))
+      }
+    }))
+    
+    # Prepare the historical data for plotting
+    hist_data <- hist_data %>%
+      mutate(Type = "Actual") %>%
+      mutate(Income = MealPlanCount * Cost) %>%
+      dplyr::select(Term, TermLabel, MealPlanCount, Cost, Income, Type)
+    
+    # Combine historical and forecast data
+    combined_df <- bind_rows(hist_data, future_df)
+    
+    # Sort by the numeric Term value and convert TermLabel to an ordered factor
+    combined_df <- combined_df %>% arrange(Term)
+    combined_df$TermLabel <- factor(combined_df$TermLabel, levels = unique(combined_df$TermLabel))
+    
+    cat("Combined data for plotting:\n")
+    print(head(combined_df))
+    
+    # Plot the combined income forecast data
+    p <- ggplot(combined_df, aes(x = TermLabel, y = Income, group = Type, color = Type,
+                                 text = paste0(
+                                   "Term: ", TermLabel, "<br>",
+                                   "Income: $", scales::dollar(Income), "<br>",
+                                   "Meal Plan Count: ", round(MealPlanCount, 0), "<br>",
+                                   "Cost per Plan: $", round(Cost, 2)
+                                 ))) +
+      geom_line(size = 1) +
+      geom_point(size = 2) +
+      labs(x = "Term", y = "Income ($)", title = paste("Income Forecast for", selected_plan)) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    
+    output$income_model_plot <- renderPlotly({ ggplotly(p, tooltip = "text") })
+  })
   
   
   
