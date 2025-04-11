@@ -9,6 +9,7 @@ library(plotly)
 library(dplyr)
 library(DT)                  # For interactive tables
 library(tidyr)
+library(purrr)
 library(scales)
 library(forcats)
 library(viridis)
@@ -24,7 +25,6 @@ clean_data <- read.csv(paste0(path, "CleanDiningData.csv"))
 current_data <- read.csv(paste0(path, "CurrentDiningData.csv"))
 regents <- read.csv(paste0(path, "CleanRegents.csv"))
 used_proportions <- read.csv(paste0(path, "TransitionMatrix.csv"))
-
 
 # Define term order globally
 term_order <- c(
@@ -442,53 +442,122 @@ ui <- dashboardPage(
       tabItem(
         tabName = "poisson_model",
         fluidRow(
-          box(
-            title = "Meal Plan Prediction Model (Poisson Regression)",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            p("This model predicts the number of students who will select each meal plan in future terms based on historical data. It uses a Poisson regression model, which is appropriate for count data."),
-            p("The model considers factors such as term, housing location, and price to predict meal plan selections.")
-          )
-        ),
-        fluidRow(
-          box(
-            title = "Model Controls",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 3,
-            selectInput("poisson_predict_term", "Predict for Term:",
-                        choices = c("Fall 2025", "Spring 2026"),
-                        selected = "Fall 2025"),
-            sliderInput("price_change", "Price Change (%)",
-                        min = -20, max = 20, value = 0, step = 1),
-            checkboxInput("use_housing_trend", "Use Housing Trends", value = TRUE),
-            actionButton("run_prediction", "Run Prediction",
-                         icon = icon("calculator"),
-                         class = "btn-primary btn-block")
-          ),
-          box(
-            title = "Prediction Results",
-            status = "info",
-            solidHeader = TRUE,
-            width = 9,
-            plotlyOutput("prediction_plot", height = "300px"),
-            verbatimTextOutput("model_summary"),
-            h4("Model Accuracy Metrics:"),
-            tableOutput("accuracy_metrics")
-          )
-        ),
-        fluidRow(
           tabBox(
-            title = "Model Visualization",
-            id = "poissonTabs",
+            title = "Meal Plan Prediction",
             width = 12,
-            tabPanel("Predicted vs. Actual",
-                     plotlyOutput("predicted_vs_actual_plot", height = "350px")),
-            tabPanel("Price Sensitivity",
-                     plotlyOutput("price_sensitivity_plot", height = "350px")),
-            tabPanel("Housing Impact",
-                     plotlyOutput("housing_impact_plot", height = "350px"))
+            id = "mealPlanPredictionTabs",
+            # First subtab: Current Prediction Model content
+            tabPanel("Prediction Model",
+                     fluidRow(
+                       box(
+                         title = "Meal Plan Prediction Model (Linear Regression)",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 12,
+                         p("This model predicts the number of students who will select each meal plan in future terms based on historical data. It uses a linear regression model to forecast meal plan counts."),
+                         p("The model considers factors such as term, meal plan type, and undergraduate counts to predict meal plan selections.")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         title = "Model Controls",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 3,
+                         selectInput("future_terms", "Number of Future Terms to Predict:",
+                                     choices = 1:10, selected = 2),
+                         selectizeInput("selected_meal_plans", "Select Meal Plans:",
+                                        choices = NULL, multiple = TRUE),
+                         actionButton("run_prediction", "Run Prediction",
+                                      icon = icon("calculator"),
+                                      class = "btn-primary btn-block")
+                       ),
+                       box(
+                         title = "Prediction Results",
+                         status = "info",
+                         solidHeader = TRUE,
+                         width = 9,
+                         plotlyOutput("prediction_plot", height = "400px")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         title = "Diagnostics",
+                         status = "warning",
+                         solidHeader = TRUE,
+                         width = 12,
+                         plotOutput("diagnostics_plot", height = "500px")
+                       )
+                     )
+            ),
+            tabPanel("Price Model",
+                     fluidRow(
+                       box(
+                         title = "Meal Plan Price Forecasting (Linear Regression)",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 12,
+                         p("This tool forecasts the future cost of ISU meal plans using historical pricing data and linear regression."),
+                         p("It projects prices up to 10 years into the future while accounting for a fixed inflation rate per year. This helps ISU Dining anticipate financial trends and adjust pricing strategies.")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         title = "Model Controls",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 3,
+                         selectInput("years_ahead", "Years into the Future:",
+                                     choices = 1:10, selected = 4),
+                         selectizeInput("selected_price_meal_plans", "Select Meal Plans:",
+                                        choices = NULL, multiple = TRUE),
+                         actionButton("run_price_prediction", "Run Price Prediction",
+                                      icon = icon("calculator"),
+                                      class = "btn-primary btn-block")
+                       ),
+                       box(
+                         title = "Price Forecast Results",
+                         status = "info",
+                         solidHeader = TRUE,
+                         width = 9,
+                         plotlyOutput("price_model_plot", height = "400px")
+                       )
+                     )
+            ),
+            
+            
+            tabPanel("Income Forecast",
+                     fluidRow(
+                       box(
+                         title = "Model Controls",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 3,
+                         # Dropdown for how many terms into the future to predict
+                         selectInput("income_years_ahead", 
+                                     "Years into the Future:",
+                                     choices = 1:10, 
+                                     selected = 4),
+                         # Single-select to choose the meal plan for forecasting income
+                         selectizeInput("selected_income_meal_plan", 
+                                        "Select Meal Plan for Income Forecast:",
+                                        choices = NULL, 
+                                        multiple = FALSE),
+                         # Button to run the income forecast calculation
+                         actionButton("run_income_forecast", "Run Income Forecast",
+                                      icon = icon("calculator"),
+                                      class = "btn-primary btn-block")
+                       ),
+                       box(
+                         title = "Income Forecast Results",
+                         status = "info",
+                         solidHeader = TRUE,
+                         width = 9,
+                         # Plotly output that will display the income forecast plot
+                         plotlyOutput("income_model_plot", height = "400px")
+                       )
+                     )
+            )
           )
         )
       ),
@@ -620,6 +689,8 @@ ui <- dashboardPage(
 
 # Server Definition
 server <- function(input, output, session) {
+  source("./code/Models/LinearModel.R")
+  source("./code/Models/priceModel.R")
   
   # ===== REACTIVE DATA PROCESSING =====
   
@@ -1188,197 +1259,265 @@ server <- function(input, output, session) {
   
   # ===== POISSON MODEL TAB OUTPUTS =====
   
-  # Create and store the Poisson model
-  poisson_model <- reactiveVal(NULL)
+  # Source the LinearModel.R file to load the fit_linear_model() function
+  source("./code/Models/LinearModel.R")
   
-  # Run the Poisson model when button is clicked
+  # Fit the linear model once at startup and get the processed data
+  linear_results <- fit_linear_model()
+  data_final <- linear_results$data
+  
+  # Update the selectizeInput choices for meal plans based on the model data
+  observe({
+    meal_plans <- sort(unique(data_final$MealPlan))
+    updateSelectizeInput(session, "selected_meal_plans", 
+                         choices = meal_plans, 
+                         selected = meal_plans[1:min(5, length(meal_plans))])
+  })
+  
   observeEvent(input$run_prediction, {
-    # Get data for model
-    model_data <- clean_data %>%
-      filter(!is.na(Price.Year)) %>%
-      group_by(Term.Session.Description, Meal.Plan.Description) %>%
-      summarise(
-        count = n(),
-        avg_price = mean(Price.Year, na.rm = TRUE),
-        .groups = 'drop'
-      ) %>%
-      # Add term number for trend analysis
-      mutate(
-        term_num = match(Term.Session.Description, term_order)
-      )
+    # Get the selected meal plan types from the UI
+    selected_meal_plans <- input$selected_meal_plans
     
-    # Fit Poisson model
-    model <- glm(count ~ Meal.Plan.Description + term_num + avg_price, 
-                 family = poisson(link = "log"), 
-                 data = model_data)
+    # Validate that at least one meal plan is selected
+    if (is.null(selected_meal_plans) || length(selected_meal_plans) == 0) {
+      output$prediction_plot <- renderPlotly({ NULL })
+      return()
+    }
     
-    # Store the model
-    poisson_model(model)
+    # Filter the historical data for the selected meal plans
+    historical_data <- data_final %>% 
+      filter(MealPlan %in% selected_meal_plans)
     
-    # Create prediction data
-    new_term <- input$poisson_predict_term
-    price_change_factor <- 1 + (input$price_change / 100)
+    if (nrow(historical_data) == 0) {
+      output$prediction_plot <- renderPlotly({ NULL })
+      return()
+    }
     
-    prediction_data <- model_data %>%
-      filter(Term.Session.Description == term_order[length(term_order)]) %>%
-      mutate(
-        Term.Session.Description = new_term,
-        term_num = length(term_order) + 1,
-        avg_price = avg_price * price_change_factor
-      )
+    # Fit a linear model for each meal plan (if there are at least 2 points)
+    models <- historical_data %>% 
+      group_by(MealPlan) %>% 
+      filter(n() > 1) %>% 
+      nest() %>% 
+      #mutate(model = map(data, ~ lm(MealPlanCount ~ Term, data = .x)))
+      #print(head(data))  
+      mutate(model = map(data, ~ glm(MealPlanCount ~ Term, data = .x, family = poisson(link = "log"))))
     
-    # Generate predictions
-    prediction_data$predicted_count <- predict(model, newdata = prediction_data, type = "response")
+    # Create future predictions for each meal plan using explicit dplyr and tidyr functions
+    future_data <- models %>% 
+      mutate(future = map2(data, model, ~ {
+        max_term <- max(.x$Term, na.rm = TRUE)
+        new_terms <- seq(max_term + 1, max_term + as.numeric(input$future_terms))
+        predicted <- predict(.y, 
+                             newdata = data.frame(Term = new_terms), 
+                             type = "response")
+        tibble(Term = new_terms, count = predicted)
+      })) %>% 
+      tidyr::unnest(future) %>% 
+      dplyr::select(MealPlan, Term, count) %>% 
+      mutate(Type = "Future")
     
-    # Store predicted counts
-    predicted_counts <- prediction_data %>%
-      select(Meal.Plan.Description, count, predicted_count, avg_price)
+    # Prepare the historical data for plotting: explicitly select the same columns
+    historical_plot <- historical_data %>% 
+      dplyr::select(MealPlan, Term, MealPlanCount) %>% 
+      mutate(count = MealPlanCount,
+             Type = "Actual")
     
-    # Update plots and outputs
-    # Prediction Plot
+    # Combine historical and future data and ensure the 'Type' column exists
+    combined_data <- dplyr::bind_rows(historical_plot, future_data)
+    combined_data <- combined_data %>% mutate(Type = factor(Type, levels = c("Actual", "Future")))
+    
+    # Create the plot:
+    # - Plot actual data and future predictions as points, and connect by a line.
+    # - Draw the dashed trendline on historical data only.
+    p <- ggplot(combined_data, aes(x = Term, y = count, color = MealPlan, shape = Type)) +
+      geom_point(size = 2) +
+      geom_line(aes(group = MealPlan)) +
+      geom_smooth(data = historical_plot, 
+                  aes(x = Term, y = MealPlanCount, color = MealPlan),
+                  method = "glm", 
+                  method.args = list(family = "poisson"),
+                  se = FALSE, 
+                  linetype = "dashed", 
+                  size = 0.8)+
+      theme_minimal() +
+      labs(x = "Term", y = "Meal Plan Count", color = "Meal Plan", shape = "Data Type") +
+      scale_x_continuous(breaks = unique(combined_data$Term),
+                         labels = unique(combined_data$Term))
+    
     output$prediction_plot <- renderPlotly({
-      p <- ggplot(predicted_counts, aes(x = reorder(Meal.Plan.Description, -predicted_count))) +
-        geom_bar(aes(y = count, fill = "Current Count"), stat = "identity", alpha = 0.7) +
-        geom_bar(aes(y = predicted_count, fill = "Predicted Count"), stat = "identity", alpha = 0.7) +
-        scale_fill_manual(values = c("Current Count" = theme_colors$info, 
-                                     "Predicted Count" = theme_colors$warning)) +
-        coord_flip() +
-        theme_minimal() +
-        labs(x = "Meal Plan", y = "Number of Students", fill = "") +
-        theme(legend.position = "bottom")
-      
-      ggplotly(p) %>% layout(legend = list(orientation = "h", y = -0.2))
-    })
-    
-    # Model Summary
-    output$model_summary <- renderPrint({
-      summary(poisson_model())
-    })
-    
-    # Accuracy Metrics
-    output$accuracy_metrics <- renderTable({
-      # Calculate metrics
-      actual <- model_data$count
-      fitted <- fitted(poisson_model())
-      
-      # Calculate accuracy metrics
-      mae <- mean(abs(actual - fitted))
-      rmse <- sqrt(mean((actual - fitted)^2))
-      mape <- mean(abs((actual - fitted) / actual)) * 100
-      
-      data.frame(
-        Metric = c("Mean Absolute Error (MAE)", "Root Mean Square Error (RMSE)", 
-                   "Mean Absolute Percentage Error (MAPE)"),
-        Value = c(round(mae, 2), round(rmse, 2), paste0(round(mape, 2), "%"))
-      )
-    }, colnames = FALSE)
-    
-    # Predicted vs Actual Plot
-    output$predicted_vs_actual_plot <- renderPlotly({
-      model_data$fitted <- fitted(poisson_model())
-      
-      p <- ggplot(model_data, aes(x = count, y = fitted, color = Meal.Plan.Description)) +
-        geom_point(size = 3, alpha = 0.7) +
-        geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "gray50") +
-        theme_minimal() +
-        labs(x = "Actual Count", y = "Predicted Count", color = "Meal Plan") +
-        theme(legend.position = "bottom")
-      
-      ggplotly(p) %>% layout(legend = list(orientation = "h", y = -0.2))
-    })
-    
-    # Price Sensitivity Plot
-    output$price_sensitivity_plot <- renderPlotly({
-      # Create data for price sensitivity analysis
-      price_range <- seq(0.8, 1.2, by = 0.05) # -20% to +20%
-      
-      base_data <- model_data %>%
-        filter(Term.Session.Description == term_order[length(term_order)])
-      
-      sensitivity_data <- data.frame()
-      
-      for (price_factor in price_range) {
-        temp_data <- base_data %>%
-          mutate(
-            price_change = paste0(round((price_factor - 1) * 100), "%"),
-            avg_price = avg_price * price_factor
-          )
-        
-        temp_data$predicted_count <- predict(poisson_model(), newdata = temp_data, type = "response")
-        
-        sensitivity_data <- rbind(sensitivity_data, temp_data)
-      }
-      
-      # Plot for top meal plans only
-      top_plans <- base_data %>%
-        arrange(desc(count)) %>%
-        head(5) %>%
-        pull(Meal.Plan.Description)
-      
-      sensitivity_data <- sensitivity_data %>%
-        filter(Meal.Plan.Description %in% top_plans)
-      
-      p <- ggplot(sensitivity_data, aes(x = price_change, 
-                                        y = predicted_count, 
-                                        color = Meal.Plan.Description, 
-                                        group = Meal.Plan.Description)) +
-        geom_line(size = 1) +
-        geom_point(size = 3) +
-        theme_minimal() +
-        labs(x = "Price Change", y = "Predicted Count", color = "Meal Plan") +
-        theme(legend.position = "bottom")
-      
-      ggplotly(p) %>% layout(legend = list(orientation = "h", y = -0.2))
-    })
-    
-    # Housing Impact Plot
-    output$housing_impact_plot <- renderPlotly({
-      # Analyze how housing location affects meal plan choices
-      housing_impact <- clean_data %>%
-        filter(Term.Session.Description == term_order[length(term_order)]) %>%
-        group_by(Room.Location.Description, Meal.Plan.Description) %>%
-        summarise(count = n(), .groups = 'drop') %>%
-        group_by(Room.Location.Description) %>%
-        mutate(percentage = count / sum(count) * 100) %>%
-        ungroup()
-      
-      # Filter to top housing locations and meal plans
-      top_housing <- housing_impact %>%
-        group_by(Room.Location.Description) %>%
-        summarise(total = sum(count), .groups = 'drop') %>%
-        arrange(desc(total)) %>%
-        head(5) %>%
-        pull(Room.Location.Description)
-      
-      top_plans <- housing_impact %>%
-        group_by(Meal.Plan.Description) %>%
-        summarise(total = sum(count), .groups = 'drop') %>%
-        arrange(desc(total)) %>%
-        head(5) %>%
-        pull(Meal.Plan.Description)
-      
-      housing_impact <- housing_impact %>%
-        filter(Room.Location.Description %in% top_housing,
-               Meal.Plan.Description %in% top_plans)
-      
-      p <- ggplot(housing_impact, aes(x = Room.Location.Description, 
-                                      y = Meal.Plan.Description, 
-                                      fill = percentage,
-                                      text = paste0(
-                                        "Housing Location: ", Room.Location.Description, "<br>",
-                                        "Meal Plan: ", Meal.Plan.Description, "<br>",
-                                        "Count: ", count, "<br>",
-                                        "Percentage: ", round(percentage, 1), "%"
-                                      ))) +
-        geom_tile() +
-        scale_fill_viridis_c() +
-        theme_minimal() +
-        labs(x = "Housing Location", y = "Meal Plan", fill = "Percentage") +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
-      
-      ggplotly(p, tooltip = "text")
+      ggplotly(p)
     })
   })
+  
+  output$diagnostics_plot <- renderPlot({
+    # Fit the linear model and retrieve the processed data
+    model_data <- fit_linear_model()
+    m1 <- model_data$model
+    
+    # Create diagnostic plots (residuals, index, qq, and Cook's distance)
+    resid_panel(m1,
+                plots    = c("resid", "index", "qq", "cookd"),
+                qqbands  = TRUE,
+                smoother = TRUE)
+  })
+  
+  
+  # ===== Price MODEL TAB ===========
+  
+  priceModelResults <- run_price_model()
+  
+  observe({
+    data <- load_meal_data()  # From priceModel.R
+    plans <- sort(unique(data$Meal.Plan.Description))
+    
+    updateSelectizeInput(session, "selected_price_meal_plans", 
+                         choices = plans,
+                         selected = plans[1])
+  })
+  
+  # When user clicks "Run Price Prediction"
+  observeEvent(input$run_price_prediction, {
+    # Ensure input$years_ahead is treated as numeric (since it comes from selectInput)
+    years_ahead <- as.numeric(input$years_ahead)
+    
+    # Run model using selected meal plans and number of future years
+    priceModelResults <- run_price_model(
+      selected_plans = input$selected_price_meal_plans,
+      years_ahead = years_ahead
+    )
+    
+    pred_df <- priceModelResults$predictions
+    
+    # Save predicted results to a CSV file.
+    write.csv(pred_df, file = "predicted_results.csv", row.names = FALSE)
+    
+    # Load historical data for the selected plans
+    hist_data <- load_meal_data()
+    hist_data <- hist_data[hist_data$Meal.Plan.Description %in% input$selected_price_meal_plans, ]
+    
+    # Get predicted data
+    pred_df <- priceModelResults$predictions
+    
+    # Create the combined ggplot
+    p <- ggplot() +
+      geom_point(data = hist_data, aes(x = Year, y = Price.Year, color = Meal.Plan.Description), size = 3) +
+      geom_line(data = hist_data, aes(x = Year, y = Price.Year, color = Meal.Plan.Description), size = 1) +
+      geom_point(data = pred_df, aes(x = Year, y = Adjusted.Price, color = Meal.Plan.Description),
+                 shape = 17, size = 3) +
+      geom_line(data = pred_df, aes(x = Year, y = Adjusted.Price, color = Meal.Plan.Description),
+                linetype = "dashed", size = 1) +
+      labs(
+        title = "Price Forecast for Selected Meal Plans",
+        x = "Year",
+        y = "Price ($)",
+        color = "Meal Plan"
+      ) +
+      theme_minimal()
+    
+    # Render the combined plot
+    output$price_model_plot <- renderPlotly({
+      ggplotly(p)
+    })
+  })
+  
+  # ===== INCOME Model Tab =====
+  
+  # Update Income Forecast meal plan choices (similar to other sections)
+  observe({
+    meal_plans <- sort(unique(data_final$MealPlan))
+    updateSelectizeInput(session, "selected_income_meal_plan", 
+                         choices = meal_plans,
+                         selected = meal_plans[1])
+  })
+  
+  # Income Forecast Observer
+  observeEvent(input$run_income_forecast, {
+    req(input$selected_income_meal_plan, input$income_years_ahead)
+    
+    selected_plan <- input$selected_income_meal_plan
+    
+    # Retrieve historical count data from data_final (from fit_linear_model())
+    hist_data <- data_final %>% filter(MealPlan == selected_plan)
+    if (nrow(hist_data) < 2) {
+      cat("Not enough historical data to fit model\n")
+      output$income_model_plot <- renderPlotly({ NULL })
+      return()
+    }
+    
+    # Map numeric Term to term labels using global term_order
+    hist_data <- hist_data %>% mutate(TermLabel = term_order[Term])
+    
+    # Incorporate cost data from filtered_data()
+    cost_data <- filtered_data() %>%
+      filter(Meal.Plan.Description == selected_plan) %>%
+      group_by(Term.Session.Description) %>%
+      summarise(Cost = mean(Price.Year, na.rm = TRUE)) %>%
+      ungroup()
+    hist_data <- left_join(hist_data, cost_data, by = c("TermLabel" = "Term.Session.Description"))
+    
+    # Fit the Poisson model using historical data
+    model <- glm(MealPlanCount ~ Term, family = poisson(link = "log"), data = hist_data)
+    
+    # Forecast future counts using the user-specified number of future terms
+    last_term <- max(hist_data$Term, na.rm = TRUE)
+    future_range <- as.numeric(input$income_years_ahead)
+    future_terms <- seq(last_term + 1, last_term + future_range)
+    
+    predicted_counts <- predict(model, newdata = data.frame(Term = future_terms), type = "response")
+    avg_cost <- mean(hist_data$Cost, na.rm = TRUE)
+    future_income <- predicted_counts * avg_cost
+    
+    future_df <- data.frame(
+      Term = future_terms,
+      MealPlanCount = predicted_counts,
+      Cost = avg_cost,
+      Income = future_income,
+      Type = "Future"
+    ) %>% mutate(TermLabel = sapply(Term, function(t) {
+      if (t <= length(term_order)) {
+        term_order[t]
+      } else {
+        last_term_str <- term_order[length(term_order)]
+        base_year <- as.numeric(gsub("\\D", "", last_term_str))
+        season <- ifelse(grepl("Fall", last_term_str), "Spring", "Fall")
+        paste(season, base_year + (t - length(term_order)))
+      }
+    }))
+    
+    # Prepare the historical data for plotting
+    hist_data <- hist_data %>%
+      mutate(Type = "Actual") %>%
+      mutate(Income = MealPlanCount * Cost) %>%
+      dplyr::select(Term, TermLabel, MealPlanCount, Cost, Income, Type)
+    
+    # Combine historical and forecast data
+    combined_df <- bind_rows(hist_data, future_df)
+    
+    # Sort by the numeric Term value and convert TermLabel to an ordered factor
+    combined_df <- combined_df %>% arrange(Term)
+    combined_df$TermLabel <- factor(combined_df$TermLabel, levels = unique(combined_df$TermLabel))
+    
+    cat("Combined data for plotting:\n")
+    print(head(combined_df))
+    
+    # Plot the combined income forecast data
+    p <- ggplot(combined_df, aes(x = TermLabel, y = Income, group = Type, color = Type,
+                                 text = paste0(
+                                   "Term: ", TermLabel, "<br>",
+                                   "Income: $", scales::dollar(Income), "<br>",
+                                   "Meal Plan Count: ", round(MealPlanCount, 0), "<br>",
+                                   "Cost per Plan: $", round(Cost, 2)
+                                 ))) +
+      geom_line(size = 1) +
+      geom_point(size = 2) +
+      labs(x = "Term", y = "Income ($)", title = paste("Income Forecast for", selected_plan)) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    
+    output$income_model_plot <- renderPlotly({ ggplotly(p, tooltip = "text") })
+  })
+  
+  
   
   # ===== MARKOV MODEL TAB OUTPUTS =====
   states <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA")
@@ -1503,3 +1642,4 @@ server <- function(input, output, session) {
 
 # Run the application
 shinyApp(ui = ui, server = server)
+

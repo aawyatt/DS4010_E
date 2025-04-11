@@ -9,6 +9,7 @@ load_meal_data <- function() {
   meal_prices <- read_csv("./data_folder/transformed_data/Clean_Meal_Plan_Prices.csv")
   combined_data <- read_csv("./data_folder/clean/CurrentDiningData.csv")
   regents <- read.csv("./data_folder/clean/CleanRegents.csv")
+
   
   fall_2024_meal_plans <- unique(combined_data$Meal.Plan.Description)
   
@@ -20,9 +21,28 @@ load_meal_data <- function() {
     dplyr::select(Meal.Plan.Description, Year, Price.Year)
 }
 
-#-------------------------------------------------
-# Predict & Plot Prices with Optional Inflation
-#-------------------------------------------------
+run_price_model <- function(selected_plans = NULL, years_ahead = 4) {
+  
+  data <- load_meal_data()
+  # Get the last available year in the data:
+  current_max <- max(data$Year, na.rm = TRUE)
+  # Create a sequence of future years (for example, if current_max is 2023 and years_ahead is 4, then future_years: 2024,2025,2026,2027)
+  future_years <- seq(current_max + 1, current_max + years_ahead)
+  
+  # For simplicity, use a fixed inflation rate for each future year (this can be adjusted if desired)
+  inflation_rate <- rep(0.03, length(future_years))
+  
+  results <- predict_and_plot_prices(data, future_years, inflation_rate)
+  
+  # If the user selected specific meal plans, filter the results to only include those:
+  if (!is.null(selected_plans)) {
+    results$plots <- results$plots[selected_plans]
+    results$predictions <- results$predictions[results$predictions$Meal.Plan.Description %in% selected_plans, ]
+  }
+  
+  return(results)
+}
+
 predict_and_plot_prices <- function(data, future_years, inflation_rate = 0) {
   future_df <- data.frame(Year = future_years)
   predictions <- data.frame()
@@ -95,7 +115,11 @@ inflation_rate <- c(0.02,0.03,0.03,0.01)  # 3% annual inflation
 result <- predict_and_plot_prices(data, future_years, inflation_rate)
 
 # View predictions
-print(result$predictions)
+#print(result$predictions)
 
 # View one plot
-print(result$plots[["Cardinal"]])
+#print(result$plots[["Cardinal"]])
+
+
+
+

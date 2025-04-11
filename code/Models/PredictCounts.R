@@ -9,7 +9,6 @@ library(car)
 # read in the data
 dining <- read.csv("./data_folder/clean/CurrentDiningData.csv")
 regents <- read.csv("./data_folder/clean/CleanRegents.csv")
-
 # make `MealPlan` and `Term` factors, and `Term` numerical from 1-8 for their corresponding factor levels
 # calculate price for each semester (price.year/2)
 dining <- dining %>%
@@ -18,7 +17,7 @@ dining <- dining %>%
                                   levels = c("Fall 2021", "Spring 2022", "Fall 2022", "Spring 2023", 
                                              "Fall 2023", "Spring 2024", "Fall 2024", "Spring 2025"))),
          Price = Price.Year/2
-         )
+  )
 
 # make frequency table for MealPlan and Term
 
@@ -41,8 +40,8 @@ data.final <- counts %>%
   left_join(undergradCounts, by="Term") %>%
   mutate(Semester = ifelse(Term %% 2 == 0, "Spring", "Fall")) %>%
   dplyr::select(MealPlan, Term, Semester, Year, MealPlanCount, UndergradCount)
-  
-  
+
+
 numeric_data <- data.final %>%
   select_if(is.numeric)
 
@@ -106,7 +105,7 @@ summary(m3)
 anova(m2, m3) ## high p-value, interaction term is not significant
 
 resid_xpanel(m2,
-            smoother = TRUE)
+             smoother = TRUE)
 
 confint(m2)
 
@@ -160,21 +159,21 @@ exp(sqrt(mse2)) ## 1.35, the model predictions are off by about 35%
 #-------------------------------------------------------------------------------
 
 m.pois.full <- glm(MealPlanCount ~ .,
-               data=data.final,
-               family=poisson(link="log"))
+                   data=data.final,
+                   family=poisson(link="log"))
 
 summary(m.pois.full)
 #vif(m.pois.full) # doesn't work because two variables are highly correlated (Term and Year)
 
 m.pois.2 <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
-                   data=data.final,
-                   family=poisson(link="log"))
+                data=data.final,
+                family=poisson(link="log"))
 summary(m.pois.2)
 vif(m.pois.2) # ideal VIF values meaning no multicollinearity
 
 m.pois.2log <- glm(MealPlanCount ~ MealPlan + Semester + Year + log(UndergradCount),
-               data=data.final,
-               family=poisson(link="log"))
+                   data=data.final,
+                   family=poisson(link="log"))
 
 summary(m.pois.2log)
 
@@ -354,5 +353,4 @@ ggplot(data.predict, aes(x = MealPlanCount, y = prediction)) +
     y = "Predicted Meal Plan Count"
   ) +
   theme_minimal()
-
 
