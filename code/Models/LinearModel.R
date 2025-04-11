@@ -2,8 +2,8 @@ library(dplyr)
 
 fit_linear_model <- function() {
   # Read data
-  dining <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CurrentDiningData.csv")
-  regents <- read.csv("C:/Users/landa/Documents/DS 401 Project/DS4010_E/code/Shiny/CleanRegents.csv")
+  dining <- read.csv("../../data_folder/clean/CurrentDiningData.csv")
+  regents <- read.csv("../../code/Shiny/CleanRegents.csv")
   
   dining <- dining %>%
     mutate(MealPlan = factor(dining$Meal.Plan.Description),
