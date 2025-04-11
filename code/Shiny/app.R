@@ -429,23 +429,6 @@ ui <- dashboardPage(
         ),
         fluidRow(
           box(
-            title = "Top Housing Locations",
-            status = "info",
-            solidHeader = TRUE,
-            width = 6,
-            plotlyOutput("top_housing_locations_plot", height = "350px")
-          ),
-          box(
-            title = "Optional Meal Plan Adoption Rate",
-            status = "info",
-            solidHeader = TRUE,
-            width = 6,
-            plotlyOutput("optional_meal_plan_plot", height = "350px"),
-            helpText("This shows the percentage of students in locations where meal plans are optional who still purchase a meal plan.")
-          )
-        ),
-        fluidRow(
-          box(
             title = "Detailed Housing Data",
             status = "primary",
             solidHeader = TRUE,
@@ -1023,8 +1006,8 @@ server <- function(input, output, session) {
       group_by(Term.Session.Description, Meal.Plan.Description) %>%
       summarise(
         Students = n(),
+        `Unique Housing Locations` = n_distinct(Room.Location.Description),
         `Avg Yearly Price` = mean(Price.Year, na.rm = TRUE),
-        `Avg Semester Price` = mean(Price.Semester, na.rm = TRUE),
         .groups = 'drop'
       ) %>%
       arrange(Term.Session.Description, desc(Students))
@@ -1034,11 +1017,12 @@ server <- function(input, output, session) {
       options = list(
         pageLength = 10,
         dom = 'Bfrtip',
-        buttons = c('copy', 'csv', 'excel')
+        buttons = c('copy', 'csv', 'excel'),
+        scrollX = TRUE
       ),
       rownames = FALSE
     ) %>%
-      formatCurrency(columns = c("Avg Yearly Price", "Avg Semester Price"), digits = 0)
+      formatCurrency(columns = "Avg Yearly Price", digits = 0)
   })
   
   # ===== HOUSING TAB OUTPUTS =====
@@ -1171,109 +1155,6 @@ server <- function(input, output, session) {
       geom_point(size = 3) +
       theme_minimal() +
       labs(x = "Term", y = y_label, color = "Housing Location") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),
-            legend.position = "bottom")
-    
-    ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = "h", y = -0.2))
-  })
-  
-  # Top Housing Locations Plot
-  output$top_housing_locations_plot <- renderPlotly({
-    data <- housing_data() %>%
-      group_by(Room.Location.Description) %>%
-      summarise(
-        Students = n(),
-        `Unique Meal Plans` = n_distinct(Meal.Plan.Description),
-        `Avg Yearly Price` = mean(Price.Year, na.rm = TRUE),
-        .groups = 'drop'
-      ) %>%
-      arrange(desc(Students)) %>%
-      head(10)
-    
-    p <- ggplot(data, aes(x = reorder(Room.Location.Description, Students), 
-                          y = Students, 
-                          fill = `Unique Meal Plans`,
-                          text = paste0(
-                            "Housing Location: ", Room.Location.Description, "<br>",
-                            "Students: ", Students, "<br>",
-                            "Unique Meal Plans: ", `Unique Meal Plans`, "<br>",
-                            "Avg Yearly Price: $", round(`Avg Yearly Price`, 2)
-                          ))) +
-      geom_bar(stat = "identity") +
-      scale_fill_viridis_c() +
-      coord_flip() +
-      theme_minimal() +
-      labs(x = "Housing Location", y = "Number of Students") +
-      theme(legend.position = "right")
-    
-    ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
-  })
-  
-  # Optional Meal Plan Adoption Rate
-  output$optional_meal_plan_plot <- renderPlotly({
-    # For this example, we're assuming apartments have optional meal plans
-    # In a real implementation, you'd need to define which locations have optional plans
-    optional_locations <- c("University Village", "Frederiksen Court", "Schilletter Village")
-    
-    # Check if data exists for these locations
-    if(!any(housing_data()$Room.Location.Description %in% optional_locations)) {
-      # Return an empty plot with a message if no data
-      p <- ggplot() + 
-        annotate("text", x = 0.5, y = 0.5, label = "No data available for optional meal plan locations") +
-        theme_void()
-      return(ggplotly(p))
-    }
-    
-    data <- housing_data() %>%
-      filter(Room.Location.Description %in% optional_locations)
-    
-    # Check if we have the "No Meal Plan" category, if not, assume all have meal plans
-    if("No Meal Plan" %in% unique(data$Meal.Plan.Description)) {
-      data <- data %>%
-        group_by(Term.Session.Description, Room.Location.Description) %>%
-        summarise(
-          total_students = n(),
-          students_with_plans = sum(Meal.Plan.Description != "No Meal Plan"),
-          .groups = 'drop'
-        ) %>%
-        mutate(
-          adoption_rate = (students_with_plans / total_students) * 100
-        )
-    } else {
-      # If "No Meal Plan" category doesn't exist, create dummy data
-      data <- data %>%
-        group_by(Term.Session.Description, Room.Location.Description) %>%
-        summarise(
-          total_students = n(),
-          students_with_plans = n(), # Assuming all have plans
-          adoption_rate = 100, # 100% adoption rate
-          .groups = 'drop'
-        )
-    }
-    
-    # Ensure we have data to plot
-    if(nrow(data) == 0) {
-      # Return an empty plot with a message
-      p <- ggplot() + 
-        annotate("text", x = 0.5, y = 0.5, label = "No data available for optional meal plan locations") +
-        theme_void()
-      return(ggplotly(p))
-    }
-    
-    p <- ggplot(data, aes(x = Term.Session.Description, 
-                          y = adoption_rate, 
-                          color = Room.Location.Description, 
-                          group = Room.Location.Description,
-                          text = paste0(
-                            "Term: ", Term.Session.Description, "<br>",
-                            "Housing Location: ", Room.Location.Description, "<br>",
-                            "Adoption Rate: ", round(adoption_rate, 1), "%", "<br>",
-                            "Students with Plans: ", students_with_plans, "/", total_students
-                          ))) +
-      geom_line(size = 1) +
-      geom_point(size = 3) +
-      theme_minimal() +
-      labs(x = "Term", y = "Adoption Rate (%)", color = "Housing Location") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1),
             legend.position = "bottom")
     
