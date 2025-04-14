@@ -573,7 +573,7 @@ ui <- dashboardPage(
             
             width = 12,
             p("A Markov Chain is a statistical model that describes a sequence of possible events, where the probability of each event depends only on the state attained in the previous event."),
-            p("In this dashboard, it helps us model how students switch between meal plans across semesters and forecast retention and churn.")
+            p("In this dashboard, it helps us model and simulate how a student will change between meal plans during their time at ISU.")
             
           ),
           column(
