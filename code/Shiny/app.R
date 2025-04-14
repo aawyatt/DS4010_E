@@ -598,7 +598,7 @@ ui <- dashboardPage(
           column(
             width = 8,
             box(
-              title = "Retention Forecast (Simulation)",
+              title = "Markov Simulation of Student",
               status = "info",
               solidHeader = TRUE,
               width = 12,
