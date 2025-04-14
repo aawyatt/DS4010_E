@@ -118,7 +118,7 @@ result <- predict_and_plot_prices(data, future_years, inflation_rate)
 #print(result$predictions)
 
 # View one plot
-#print(result$plots[["Cardinal"]])
+print(result$plots[["Cardinal"]])
 
 
 

@@ -447,80 +447,95 @@ ui <- dashboardPage(
             width = 12,
             id = "mealPlanPredictionTabs",
             # First subtab: Current Prediction Model content
-            tabPanel("Prediction Model",
+            # In your POISSON MODEL TAB section of app.R
+            # In your POISSON MODEL TAB section, add the prediction controls and plot as before:
+            tabPanel("Poisson Model",
                      fluidRow(
                        box(
-                         title = "Meal Plan Prediction Model (Linear Regression)",
-                         status = "primary",
-                         solidHeader = TRUE,
-                         width = 12,
-                         p("This model predicts the number of students who will select each meal plan in future terms based on historical data. It uses a linear regression model to forecast meal plan counts."),
-                         p("The model considers factors such as term, meal plan type, and undergraduate counts to predict meal plan selections.")
-                       )
-                     ),
-                     fluidRow(
-                       box(
-                         title = "Model Controls",
+                         title = "Poisson Model Controls",
                          status = "primary",
                          solidHeader = TRUE,
                          width = 3,
-                         selectInput("future_terms", "Number of Future Terms to Predict:",
-                                     choices = 1:10, selected = 2),
-                         selectizeInput("selected_meal_plans", "Select Meal Plans:",
-                                        choices = NULL, multiple = TRUE),
-                         actionButton("run_prediction", "Run Prediction",
+                         selectInput("poisson_mealplan", "Meal Plan:",
+                                     choices = NULL),  # will be updated in server
+                         selectInput("poisson_semester", "Semester:",
+                                     choices = c("Fall", "Spring"),
+                                     selected = "Fall"),
+                         numericInput("poisson_year", "Year:",
+                                      value = 2025, min = 2021, max = 2040, step = 1),
+                         numericInput("poisson_undergrad", "Undergrad Count:",
+                                      value = 25500, min = 0, step = 1),
+                         actionButton("run_poisson", "Run Poisson Prediction",
                                       icon = icon("calculator"),
                                       class = "btn-primary btn-block")
                        ),
                        box(
-                         title = "Prediction Results",
+                         title = "Poisson Prediction Plot",
                          status = "info",
                          solidHeader = TRUE,
                          width = 9,
-                         plotlyOutput("prediction_plot", height = "400px")
+                         plotlyOutput("poisson_plot", height = "400px")
                        )
                      ),
+                     # Add a new fluidRow with two boxes for diagnostic plots:
                      fluidRow(
                        box(
-                         title = "Diagnostics",
+                         title = "Residual vs. Fitted Plot",
                          status = "warning",
                          solidHeader = TRUE,
-                         width = 12,
-                         plotOutput("diagnostics_plot", height = "500px")
+                         width = 6,
+                         plotOutput("residual_plot", height = "300px")
+                       ),
+                       box(
+                         title = "Actual vs. Predicted with Confidence Intervals",
+                         status = "warning",
+                         solidHeader = TRUE,
+                         width = 6,
+                         plotlyOutput("actual_vs_pred_plot", height = "300px")
                        )
                      )
             ),
+            # In your Price Model Tab (within the tabPanel for Price Model)
             tabPanel("Price Model",
                      fluidRow(
                        box(
-                         title = "Meal Plan Price Forecasting (Linear Regression)",
-                         status = "primary",
-                         solidHeader = TRUE,
-                         width = 12,
-                         p("This tool forecasts the future cost of ISU meal plans using historical pricing data and linear regression."),
-                         p("It projects prices up to 10 years into the future while accounting for a fixed inflation rate per year. This helps ISU Dining anticipate financial trends and adjust pricing strategies.")
-                       )
-                     ),
-                     fluidRow(
-                       box(
-                         title = "Model Controls",
+                         title = "Price Model Controls",
                          status = "primary",
                          solidHeader = TRUE,
                          width = 3,
-                         selectInput("years_ahead", "Years into the Future:",
-                                     choices = 1:10, selected = 4),
-                         selectizeInput("selected_price_meal_plans", "Select Meal Plans:",
-                                        choices = NULL, multiple = TRUE),
-                         actionButton("run_price_prediction", "Run Price Prediction",
+                         # Select the meal plan from available choices
+                         selectInput("price_meal_plan", "Meal Plan:", choices = NULL),
+                         # Numeric input for the forecast year (user specifies desired future year)
+                         numericInput("forecast_year", "Forecast Year:", value = 2025, min = 2000, max = 2100, step = 1),
+                         # Numeric input for inflation rate (as a percentage)
+                         numericInput("price_inflation", "Inflation Rate (%)", value = 3, step = 0.1),
+                         actionButton("run_price_model", "Run Price Prediction",
                                       icon = icon("calculator"),
                                       class = "btn-primary btn-block")
                        ),
                        box(
-                         title = "Price Forecast Results",
+                         title = "Price Forecast Plot",
                          status = "info",
                          solidHeader = TRUE,
                          width = 9,
-                         plotlyOutput("price_model_plot", height = "400px")
+                         plotlyOutput("price_forecast_plot", height = "400px")
+                       )
+                     ),
+                     # Diagnostic plots
+                     fluidRow(
+                       box(
+                         title = "Residual vs. Fitted Plot",
+                         status = "warning",
+                         solidHeader = TRUE,
+                         width = 6,
+                         plotOutput("price_residual_plot", height = "300px")
+                       ),
+                       box(
+                         title = "Actual vs. Predicted with Confidence Intervals",
+                         status = "warning",
+                         solidHeader = TRUE,
+                         width = 6,
+                         plotlyOutput("price_actual_vs_pred_plot", height = "300px")
                        )
                      )
             ),
@@ -529,32 +544,42 @@ ui <- dashboardPage(
             tabPanel("Income Forecast",
                      fluidRow(
                        box(
-                         title = "Model Controls",
+                         title = "Income Forecast Controls",
                          status = "primary",
                          solidHeader = TRUE,
                          width = 3,
-                         # Dropdown for how many terms into the future to predict
-                         selectInput("income_years_ahead", 
-                                     "Years into the Future:",
-                                     choices = 1:10, 
-                                     selected = 4),
-                         # Single-select to choose the meal plan for forecasting income
-                         selectizeInput("selected_income_meal_plan", 
-                                        "Select Meal Plan for Income Forecast:",
-                                        choices = NULL, 
-                                        multiple = FALSE),
-                         # Button to run the income forecast calculation
+                         # These inputs apply to both sub-models
+                         selectInput("income_mealplan", "Meal Plan:", choices = NULL),
+                         selectInput("income_semester", "Semester:", choices = c("Fall", "Spring"), selected = "Fall"),
+                         numericInput("income_forecast_year", "Forecast Year:", value = 2025, min = 2021, max = 2040, step = 1),
+                         numericInput("income_undergrad", "Undergrad Count:", value = 25500, min = 0, step = 1),
+                         numericInput("income_inflation", "Inflation Rate (%)", value = 3, step = 0.1),
                          actionButton("run_income_forecast", "Run Income Forecast",
                                       icon = icon("calculator"),
                                       class = "btn-primary btn-block")
                        ),
                        box(
-                         title = "Income Forecast Results",
+                         title = "Income Forecast Plot",
                          status = "info",
                          solidHeader = TRUE,
                          width = 9,
-                         # Plotly output that will display the income forecast plot
-                         plotlyOutput("income_model_plot", height = "400px")
+                         plotlyOutput("income_forecast_plot", height = "400px")
+                       )
+                     ),
+                     fluidRow(
+                       box(
+                         title = "Poisson Model Diagnostic: Residual vs. Fitted",
+                         status = "warning",
+                         solidHeader = TRUE,
+                         width = 6,
+                         plotOutput("income_poisson_resid_plot", height = "300px")
+                       ),
+                       box(
+                         title = "Price Model Diagnostic: Residual vs. Fitted",
+                         status = "warning",
+                         solidHeader = TRUE,
+                         width = 6,
+                         plotOutput("income_price_resid_plot", height = "300px")
                        )
                      )
             )
@@ -1262,260 +1287,338 @@ server <- function(input, output, session) {
   # Source the LinearModel.R file to load the fit_linear_model() function
   source("../../code/Models/LinearModel.R")
   
-  # Fit the linear model once at startup and get the processed data
+  # After sourcing LinearModel.R and fitting the model once…
+  # Fit the linear model once at startup (from LinearModel.R)
   linear_results <- fit_linear_model()
   data_final <- linear_results$data
+  m1 <- linear_results$model
   
-  # Update the selectizeInput choices for meal plans based on the model data
+  # Ensure that the 'poisson_mealplan' input is populated using data_final
   observe({
+    # Require that the global model data is available.
+    req(data_final)
+    # Check that the MealPlan column contains data.
     meal_plans <- sort(unique(data_final$MealPlan))
-    updateSelectizeInput(session, "selected_meal_plans", 
-                         choices = meal_plans, 
-                         selected = meal_plans[1:min(5, length(meal_plans))])
-  })
-  
-  observeEvent(input$run_prediction, {
-    # Get the selected meal plan types from the UI
-    selected_meal_plans <- input$selected_meal_plans
-    
-    # Validate that at least one meal plan is selected
-    if (is.null(selected_meal_plans) || length(selected_meal_plans) == 0) {
-      output$prediction_plot <- renderPlotly({ NULL })
-      return()
+    if(length(meal_plans) > 0){
+      updateSelectInput(session, "poisson_mealplan", 
+                        choices = meal_plans,
+                        selected = meal_plans[1])
     }
-    
-    # Filter the historical data for the selected meal plans
-    historical_data <- data_final %>% 
-      filter(MealPlan %in% selected_meal_plans)
-    
-    if (nrow(historical_data) == 0) {
-      output$prediction_plot <- renderPlotly({ NULL })
-      return()
-    }
-    
-    # Fit a linear model for each meal plan (if there are at least 2 points)
-    models <- historical_data %>% 
-      group_by(MealPlan) %>% 
-      filter(n() > 1) %>% 
-      nest() %>% 
-      #mutate(model = map(data, ~ lm(MealPlanCount ~ Term, data = .x)))
-      #print(head(data))  
-      mutate(model = map(data, ~ glm(MealPlanCount ~ Term, data = .x, family = poisson(link = "log"))))
-    
-    # Create future predictions for each meal plan using explicit dplyr and tidyr functions
-    future_data <- models %>% 
-      mutate(future = map2(data, model, ~ {
-        max_term <- max(.x$Term, na.rm = TRUE)
-        new_terms <- seq(max_term + 1, max_term + as.numeric(input$future_terms))
-        predicted <- predict(.y, 
-                             newdata = data.frame(Term = new_terms), 
-                             type = "response")
-        tibble(Term = new_terms, count = predicted)
-      })) %>% 
-      tidyr::unnest(future) %>% 
-      dplyr::select(MealPlan, Term, count) %>% 
-      mutate(Type = "Future")
-    
-    # Prepare the historical data for plotting: explicitly select the same columns
-    historical_plot <- historical_data %>% 
-      dplyr::select(MealPlan, Term, MealPlanCount) %>% 
-      mutate(count = MealPlanCount,
-             Type = "Actual")
-    
-    # Combine historical and future data and ensure the 'Type' column exists
-    combined_data <- dplyr::bind_rows(historical_plot, future_data)
-    combined_data <- combined_data %>% mutate(Type = factor(Type, levels = c("Actual", "Future")))
-    
-    # Create the plot:
-    # - Plot actual data and future predictions as points, and connect by a line.
-    # - Draw the dashed trendline on historical data only.
-    p <- ggplot(combined_data, aes(x = Term, y = count, color = MealPlan, shape = Type)) +
-      geom_point(size = 2) +
-      geom_line(aes(group = MealPlan)) +
-      geom_smooth(data = historical_plot, 
-                  aes(x = Term, y = MealPlanCount, color = MealPlan),
-                  method = "glm", 
-                  method.args = list(family = "poisson"),
-                  se = FALSE, 
-                  linetype = "dashed", 
-                  size = 0.8)+
-      theme_minimal() +
-      labs(x = "Term", y = "Meal Plan Count", color = "Meal Plan", shape = "Data Type") +
-      scale_x_continuous(breaks = unique(combined_data$Term),
-                         labels = unique(combined_data$Term))
-    
-    output$prediction_plot <- renderPlotly({
-      ggplotly(p)
-    })
   })
   
-  output$diagnostics_plot <- renderPlot({
-    # Fit the linear model and retrieve the processed data
-    model_data <- fit_linear_model()
-    m1 <- model_data$model
+  # Wrap the Poisson Model computations in an eventReactive that runs immediately with default inputs.
+  poisson_model_results <- eventReactive(input$run_poisson, {
+    req(input$poisson_mealplan)  # Ensure a valid meal plan is selected
     
-    # Create diagnostic plots (residuals, index, qq, and Cook's distance)
-    resid_panel(m1,
-                plots    = c("resid", "index", "qq", "cookd"),
-                qqbands  = TRUE,
-                smoother = TRUE)
-  })
-  
-  
-  # ===== Price MODEL TAB ===========
-  
-  priceModelResults <- run_price_model()
-  
-  observe({
-    data <- load_meal_data()  # From priceModel.R
-    plans <- sort(unique(data$Meal.Plan.Description))
-    
-    updateSelectizeInput(session, "selected_price_meal_plans", 
-                         choices = plans,
-                         selected = plans[1])
-  })
-  
-  # When user clicks "Run Price Prediction"
-  observeEvent(input$run_price_prediction, {
-    # Ensure input$years_ahead is treated as numeric (since it comes from selectInput)
-    years_ahead <- as.numeric(input$years_ahead)
-    
-    # Run model using selected meal plans and number of future years
-    priceModelResults <- run_price_model(
-      selected_plans = input$selected_price_meal_plans,
-      years_ahead = years_ahead
+    # Build prediction data frame using user inputs.
+    pred_input <- data.frame(
+      MealPlan = factor(input$poisson_mealplan, levels = levels(data_final$MealPlan)),
+      Semester = input$poisson_semester,
+      Year = input$poisson_year,
+      UndergradCount = input$poisson_undergrad
     )
+    # Get the predicted count from the global Poisson model 'm1'
+    predicted_count <- predict(m1, newdata = pred_input, type = "response")
     
-    pred_df <- priceModelResults$predictions
+    # Filter historical data for the selected meal plan (includes all semesters)
+    hist_data <- data_final %>% filter(MealPlan == input$poisson_mealplan)
     
-    # Save predicted results to a CSV file.
-    write.csv(pred_df, file = "predicted_results.csv", row.names = FALSE)
-    
-    # Load historical data for the selected plans
-    hist_data <- load_meal_data()
-    hist_data <- hist_data[hist_data$Meal.Plan.Description %in% input$selected_price_meal_plans, ]
-    
-    # Get predicted data
-    pred_df <- priceModelResults$predictions
-    
-    # Create the combined ggplot
-    p <- ggplot() +
-      geom_point(data = hist_data, aes(x = Year, y = Price.Year, color = Meal.Plan.Description), size = 3) +
-      geom_line(data = hist_data, aes(x = Year, y = Price.Year, color = Meal.Plan.Description), size = 1) +
-      geom_point(data = pred_df, aes(x = Year, y = Adjusted.Price, color = Meal.Plan.Description),
-                 shape = 17, size = 3) +
-      geom_line(data = pred_df, aes(x = Year, y = Adjusted.Price, color = Meal.Plan.Description),
-                linetype = "dashed", size = 1) +
-      labs(
-        title = "Price Forecast for Selected Meal Plans",
-        x = "Year",
-        y = "Price ($)",
-        color = "Meal Plan"
-      ) +
+    # Build the main Poisson prediction ggplot:
+    p_main <- ggplot(hist_data, aes(x = Year, y = MealPlanCount, color = Semester)) +
+      geom_point(size = 3) +
+      geom_line(aes(group = Semester), size = 1) +
+      # Overlay the prediction as a red diamond:
+      geom_point(aes(x = input$poisson_year, y = predicted_count),
+                 color = "red", size = 4, shape = 18) +
+      labs(title = paste("Poisson Prediction for", input$poisson_mealplan, "(", input$poisson_semester, ")"),
+           x = "Year", y = "Meal Plan Count") +
       theme_minimal()
     
-    # Render the combined plot
-    output$price_model_plot <- renderPlotly({
-      ggplotly(p)
+    # Capture Diagnostic Plot 1: Residual vs. Fitted Plot (base R)
+    p_resid <- recordPlot({
+      fitted_vals <- fitted(m1)
+      resid_vals <- resid(m1)
+      plot(fitted_vals, resid_vals,
+           xlab = "Fitted Values", ylab = "Residuals",
+           main = paste("Residual vs. Fitted for", input$poisson_mealplan),
+           pch = 19, col = "blue")
+      abline(h = 0, lty = 2, col = "red")
     })
+    
+    # Diagnostic Plot 2: Actual vs. Predicted with 95% CI
+    pred_results <- predict(m1, newdata = hist_data, se.fit = TRUE, type = "response")
+    hist_data$pred <- pred_results$fit
+    hist_data$lower_ci <- pred_results$fit - 1.96 * pred_results$se.fit
+    hist_data$upper_ci <- pred_results$fit + 1.96 * pred_results$se.fit
+    
+    p_ci <- ggplot(hist_data, aes(x = MealPlanCount, y = pred)) +
+      geom_point(color = "blue", alpha = 0.6) +
+      geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2, color = "red") +
+      geom_abline(slope = 1, intercept = 0, color = "green", linetype = "dashed") +
+      labs(title = "Actual vs. Predicted Meal Plan Count",
+           x = "Actual Meal Plan Count", y = "Predicted Meal Plan Count") +
+      theme_minimal()
+    
+    list(
+      p_main = p_main,
+      p_resid = p_resid,
+      p_ci = p_ci
+    )
+  }, ignoreNULL = FALSE)
+  
+  # Render the main Poisson prediction plot as a Plotly object
+  output$poisson_plot <- renderPlotly({
+    req(poisson_model_results())
+    ggplotly(poisson_model_results()$p_main)
   })
+  
+  # Render the Poisson Residual Plot (base R plot)
+  output$residual_plot <- renderPlot({
+    req(poisson_model_results())
+    poisson_model_results()$p_resid
+  })
+  
+  # Render the Actual vs. Predicted Diagnostic Plot as a Plotly object
+  output$actual_vs_pred_plot <- renderPlotly({
+    req(poisson_model_results())
+    ggplotly(poisson_model_results()$p_ci)
+  })
+  
+  
+
+  # ===== Price MODEL TAB ===========
+  
+  # Ensure that the 'price_meal_plan' input is populated using the pricing data.
+  observe({
+    req(load_meal_data())
+    data_price <- load_meal_data()
+    plans <- sort(unique(data_price$`Meal.Plan.Description`))
+    if(length(plans) > 0){
+      updateSelectInput(session, "price_meal_plan", 
+                        choices = plans,
+                        selected = plans[1])
+    }
+  })
+  
+  # Wrap the Price Model computations in an eventReactive that runs automatically on tab load and when button is pressed.
+  price_model_results <- eventReactive(input$run_price_model, {
+    req(input$price_meal_plan)  # Wait until a valid meal plan is selected
+    
+    # Load the pricing data and filter for the selected meal plan:
+    data_price <- load_meal_data()
+    plan_data <- data_price %>% filter(`Meal.Plan.Description` == input$price_meal_plan)
+    
+    # Ensure sufficient historical data is present.
+    if(nrow(plan_data) < 2){
+      showNotification("Not enough historical data for this meal plan.", type = "error")
+      return(NULL)
+    }
+    
+    # Fit a linear regression model for Price.Year ~ Year:
+    model_price <- lm(Price.Year ~ Year, data = plan_data)
+    current_max <- max(plan_data$Year, na.rm = TRUE)
+    years_diff <- input$forecast_year - current_max
+    
+    newdata <- data.frame(Year = input$forecast_year)
+    raw_pred <- predict(model_price, newdata = newdata, type = "response")
+    
+    # Adjust the predicted price for inflation.
+    inflation_rate <- input$price_inflation / 100
+    adjusted_pred <- raw_pred * (1 + inflation_rate)^years_diff
+    
+    # Build the main Price Forecast Plot:
+    p_forecast <- ggplot() +
+      geom_point(data = plan_data, aes(x = Year, y = Price.Year), color = "blue", size = 3) +
+      geom_line(data = plan_data, aes(x = Year, y = Price.Year), color = "blue", size = 1) +
+      geom_point(aes(x = input$forecast_year, y = adjusted_pred), color = "red", shape = 18, size = 4) +
+      labs(title = paste("Price Forecast for", input$price_meal_plan),
+           subtitle = paste("Forecast Year:", input$forecast_year, "| Inflation Rate:", input$price_inflation, "%"),
+           x = "Year", y = "Yearly Price ($)") +
+      theme_minimal()
+    
+    # Capture Diagnostic Plot 1: Residual vs. Fitted for Price Model.
+    p_resid <- recordPlot({
+      fitted_vals <- fitted(model_price)
+      resid_vals <- resid(model_price)
+      plot(fitted_vals, resid_vals,
+           xlab = "Fitted Values", ylab = "Residuals",
+           main = paste("Residual vs. Fitted for", input$price_meal_plan),
+           pch = 19, col = "blue")
+      abline(h = 0, lty = 2, col = "red")
+    })
+    
+    # Diagnostic Plot 2: Actual vs. Predicted with Confidence Intervals.
+    pred_results <- predict(model_price, newdata = plan_data, interval = "confidence")
+    plan_data$predicted <- pred_results[, "fit"]
+    plan_data$lower_ci <- pred_results[, "lwr"]
+    plan_data$upper_ci <- pred_results[, "upr"]
+    
+    p_diag <- ggplot(plan_data, aes(x = Price.Year, y = predicted)) +
+      geom_point(color = "blue", alpha = 0.6) +
+      geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2, color = "red") +
+      geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "green") +
+      labs(title = paste("Actual vs. Predicted Price for", input$price_meal_plan),
+           x = "Actual Price", y = "Predicted Price") +
+      theme_minimal()
+    
+    # Return a list with the forecast plot and the diagnostic components.
+    list(
+      p_forecast = p_forecast,
+      p_resid = p_resid,
+      p_diag = p_diag
+    )
+  }, ignoreNULL = FALSE)
+  
+  # Render the main Price Forecast Plot as a Plotly object:
+  output$price_forecast_plot <- renderPlotly({
+    req(price_model_results())
+    ggplotly(price_model_results()$p_forecast)
+  })
+  
+  # Render the Price Model Residual Plot (base R plot):
+  output$price_residual_plot <- renderPlot({
+    req(price_model_results())
+    price_model_results()$p_resid
+  })
+  
+  # Render the Actual vs. Predicted Diagnostic Plot as a Plotly object:
+  output$price_actual_vs_pred_plot <- renderPlotly({
+    req(price_model_results())
+    ggplotly(price_model_results()$p_diag)
+  })
+  
+  
+  
   
   # ===== INCOME Model Tab =====
   
-  # Update Income Forecast meal plan choices (similar to other sections)
+  source("../../code/Models/LinearModel.R")
+  linear_results <- fit_linear_model()
+  data_final <- linear_results$data
+  m1 <- linear_results$model
+  
+  source("../../code/Models/priceModel.R")
+  # Update choices for the Income Forecast meal plan from the Poisson model data (from LinearModel.R)
+
+  
+  # Update the Income Forecast Meal Plan selectInput if not already done:
   observe({
-    meal_plans <- sort(unique(data_final$MealPlan))
-    updateSelectizeInput(session, "selected_income_meal_plan", 
-                         choices = meal_plans,
-                         selected = meal_plans[1])
+    req(data_final)  # Ensure data_final is available
+    meal_plans_income <- sort(unique(data_final$MealPlan))
+    # Check that meal_plans_income is non-empty before updating
+    if(length(meal_plans_income) > 0){
+      updateSelectInput(session, "income_mealplan",
+                        choices = meal_plans_income,
+                        selected = meal_plans_income[1])
+    }
   })
   
-  # Income Forecast Observer
-  observeEvent(input$run_income_forecast, {
-    req(input$selected_income_meal_plan, input$income_years_ahead)
+  # Wrap the entire computation in an eventReactive expression.
+  income_forecast_data <- eventReactive(input$run_income_forecast, {
+    # Ensure a valid meal plan is selected first
+    req(input$income_mealplan)
     
-    selected_plan <- input$selected_income_meal_plan
+    ## --- Poisson Model Prediction (using global m1 from LinearModel.R) ---
+    poisson_input <- data.frame(
+      MealPlan = factor(input$income_mealplan, levels = levels(data_final$MealPlan)),
+      Semester = input$income_semester,
+      Year = input$income_forecast_year,
+      UndergradCount = input$income_undergrad
+    )
+    predicted_count <- predict(m1, newdata = poisson_input, type = "response")
     
-    # Retrieve historical count data from data_final (from fit_linear_model())
-    hist_data <- data_final %>% filter(MealPlan == selected_plan)
-    if (nrow(hist_data) < 2) {
-      cat("Not enough historical data to fit model\n")
-      output$income_model_plot <- renderPlotly({ NULL })
-      return()
+    ## --- Price Model Prediction (from priceModel.R) ---
+    data_price <- load_meal_data()
+    plan_price_data <- data_price %>% filter(`Meal.Plan.Description` == input$income_mealplan)
+    
+    if(nrow(plan_price_data) < 2){
+      showNotification("Not enough pricing data for this meal plan.", type = "error")
+      return(NULL)
     }
     
-    # Map numeric Term to term labels using global term_order
-    hist_data <- hist_data %>% mutate(TermLabel = term_order[Term])
+    price_model <- lm(Price.Year ~ Year, data = plan_price_data)
+    current_max_year <- max(plan_price_data$Year, na.rm = TRUE)
+    years_diff <- input$income_forecast_year - current_max_year
+    newdata_price <- data.frame(Year = input$income_forecast_year)
+    raw_price <- predict(price_model, newdata = newdata_price, type = "response")
+    inflation_rate <- input$income_inflation / 100
+    predicted_price <- raw_price * (1 + inflation_rate)^years_diff
     
-    # Incorporate cost data from filtered_data()
-    cost_data <- filtered_data() %>%
-      filter(Meal.Plan.Description == selected_plan) %>%
-      group_by(Term.Session.Description) %>%
-      summarise(Cost = mean(Price.Year, na.rm = TRUE)) %>%
-      ungroup()
-    hist_data <- left_join(hist_data, cost_data, by = c("TermLabel" = "Term.Session.Description"))
+    ## --- Compute Forecast Income ---
+    forecast_income <- predicted_count * predicted_price
     
-    # Fit the Poisson model using historical data
-    model <- glm(MealPlanCount ~ Term, family = poisson(link = "log"), data = hist_data)
+    ## --- Build Historical Income for Plotting ---
+    hist_counts <- data_final %>%
+      filter(MealPlan == input$income_mealplan) %>%
+      dplyr::select(Term, MealPlanCount)
     
-    # Forecast future counts using the user-specified number of future terms
-    last_term <- max(hist_data$Term, na.rm = TRUE)
-    future_range <- as.numeric(input$income_years_ahead)
-    future_terms <- seq(last_term + 1, last_term + future_range)
+    avg_price <- mean(plan_price_data$Price.Year, na.rm = TRUE)
+    hist_income <- hist_counts %>% mutate(Income = MealPlanCount * avg_price)
     
-    predicted_counts <- predict(model, newdata = data.frame(Term = future_terms), type = "response")
-    avg_cost <- mean(hist_data$Cost, na.rm = TRUE)
-    future_income <- predicted_counts * avg_cost
+    hist_plot <- hist_income %>%
+      group_by(Term) %>%
+      summarise(Income = mean(Income, na.rm = TRUE)) %>%
+      arrange(Term) %>%
+      mutate(Type = "Historical")
     
-    future_df <- data.frame(
-      Term = future_terms,
-      MealPlanCount = predicted_counts,
-      Cost = avg_cost,
-      Income = future_income,
-      Type = "Future"
-    ) %>% mutate(TermLabel = sapply(Term, function(t) {
-      if (t <= length(term_order)) {
-        term_order[t]
-      } else {
-        last_term_str <- term_order[length(term_order)]
-        base_year <- as.numeric(gsub("\\D", "", last_term_str))
-        season <- ifelse(grepl("Fall", last_term_str), "Spring", "Fall")
-        paste(season, base_year + (t - length(term_order)))
-      }
-    }))
+    future_df <- data.frame(Term = input$income_forecast_year, Income = forecast_income, Type = "Forecast")
     
-    # Prepare the historical data for plotting
-    hist_data <- hist_data %>%
-      mutate(Type = "Actual") %>%
-      mutate(Income = MealPlanCount * Cost) %>%
-      dplyr::select(Term, TermLabel, MealPlanCount, Cost, Income, Type)
+    combined_income <- bind_rows(hist_plot, future_df) %>% arrange(as.numeric(Term))
     
-    # Combine historical and forecast data
-    combined_df <- bind_rows(hist_data, future_df)
+    # Create a descriptive TermLabel.
+    combined_income <- combined_income %>% mutate(TermLabel = ifelse(
+      Type == "Forecast",
+      paste(input$income_semester, input$income_forecast_year),
+      ifelse(as.numeric(Term) <= length(term_order),
+             term_order[as.numeric(Term)],
+             paste("Term", Term)
+      )
+    ))
+    combined_income$TermLabel <- factor(combined_income$TermLabel, levels = unique(combined_income$TermLabel))
     
-    # Sort by the numeric Term value and convert TermLabel to an ordered factor
-    combined_df <- combined_df %>% arrange(Term)
-    combined_df$TermLabel <- factor(combined_df$TermLabel, levels = unique(combined_df$TermLabel))
+    ## --- Build the Main Income Forecast Plot ---
+    p_income <- ggplot(combined_income, aes(x = TermLabel, y = Income, color = Type, group = 1)) +
+      geom_line() +
+      geom_point(size = 3) +
+      labs(title = paste("Income Forecast for", input$income_mealplan),
+           x = "Term", y = "Income ($)") +
+      theme_minimal()
     
-    cat("Combined data for plotting:\n")
-    print(head(combined_df))
-    
-    # Plot the combined income forecast data
-    p <- ggplot(combined_df, aes(x = TermLabel, y = Income, group = Type, color = Type,
-                                 text = paste0(
-                                   "Term: ", TermLabel, "<br>",
-                                   "Income: $", scales::dollar(Income), "<br>",
-                                   "Meal Plan Count: ", round(MealPlanCount, 0), "<br>",
-                                   "Cost per Plan: $", round(Cost, 2)
-                                 ))) +
-      geom_line(size = 1) +
-      geom_point(size = 2) +
-      labs(x = "Term", y = "Income ($)", title = paste("Income Forecast for", selected_plan)) +
-      theme_minimal() +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    
-    output$income_model_plot <- renderPlotly({ ggplotly(p, tooltip = "text") })
+    # Return both the forecast plot and the price_model for diagnostics.
+    list(
+      p_income = p_income,
+      price_model = price_model
+    )
+  }, ignoreNULL = FALSE)  # This ensures the reactive runs at startup with default inputs.
+  
+  # Render the Income Forecast Plot (converted to Plotly):
+  output$income_forecast_plot <- renderPlotly({
+    req(income_forecast_data())
+    ggplotly(income_forecast_data()$p_income)
   })
+  
+  # Render the Poisson Residual Plot:
+  output$income_poisson_resid_plot <- renderPlot({
+    req(income_forecast_data())
+    plot(fitted(m1), resid(m1),
+         xlab = "Fitted Values", ylab = "Residuals",
+         main = paste("Poisson Residuals for", input$income_mealplan),
+         pch = 19, col = "blue")
+    abline(h = 0, lty = 2, col = "red")
+  })
+  
+  # Render the Price Model Residual Plot:
+  output$income_price_resid_plot <- renderPlot({
+    req(income_forecast_data())
+    price_model <- income_forecast_data()$price_model
+    plot(fitted(price_model), resid(price_model),
+         xlab = "Fitted Price", ylab = "Residuals",
+         main = paste("Price Model Residuals for", input$income_mealplan),
+         pch = 19, col = "blue")
+    abline(h = 0, lty = 2, col = "red")
+  })
+  
+  
   
   
   

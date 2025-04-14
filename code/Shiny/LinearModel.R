@@ -46,5 +46,7 @@ fit_linear_model <- function() {
     family = poisson(link = "log")
   )
   
+  
+  
   return(list(model = m1, data = data.final))
 }
