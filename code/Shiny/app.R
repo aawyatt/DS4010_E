@@ -73,19 +73,6 @@ ui <- dashboardPage(
       
       # Conclusion Section
       menuItem("Conclusion", tabName = "conclusion", icon = icon("clipboard-check"))
-    ),
-    
-    # Global filters
-    tags$div(
-      class = "sidebar-filters",
-      hr(),
-      h4("Global Filters", style = "padding-left: 15px;"),
-      selectInput("term_filter", "Select Term:",
-                  choices = term_order,
-                  multiple = TRUE,
-                  selected = term_order),
-      
-      checkboxInput("combine_blocks", "Combine Block Meal Plans", value = TRUE)
     )
   ),
   
@@ -499,6 +486,16 @@ ui <- dashboardPage(
             tabPanel("Price Model",
                      fluidRow(
                        box(
+                         title = "About the Linear Price Model",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 12,
+                         p("The Price Model uses linear regression to estimate the yearly price of each meal plan over time."),
+                         p("By leveraging historical price data and adjusting for projected inflation, the model predicts future prices for a given year.")
+                       )
+                     ),
+                     fluidRow(
+                       box(
                          title = "Price Model Controls",
                          status = "primary",
                          solidHeader = TRUE,
@@ -518,7 +515,9 @@ ui <- dashboardPage(
                          status = "info",
                          solidHeader = TRUE,
                          width = 9,
-                         plotlyOutput("price_forecast_plot", height = "400px")
+                         plotlyOutput("price_forecast_plot", height = "400px"),
+                         tags$p("The Price Forecast Plot visualizes the trend in historical yearly prices for the selected meal plan, and projects the future price adjusted for inflation. The red diamond represents the forecasted value.")
+                         
                        )
                      ),
                      # Diagnostic plots
@@ -722,20 +721,7 @@ server <- function(input, output, session) {
   # Basic reactive dataset
   filtered_data <- reactive({
     data <- clean_data
-    
-    if (!is.null(input$term_filter)) {
-      data <- data %>% filter(Term.Session.Description %in% input$term_filter)
-    }
-    
-    if (input$combine_blocks) {
-      data <- data %>%
-        mutate(
-          Meal.Plan.Description = case_when(
-            grepl("block|blocks", tolower(Meal.Plan.Description), ignore.case = TRUE) ~ "Block Meal Plan",
-            TRUE ~ Meal.Plan.Description
-          )
-        )
-    }
+    data$Term.Session.Description <- gsub("Spring Only", "Spring", data$Term.Session.Description)
     
     data <- data %>%
       mutate(Term.Session.Description = factor(Term.Session.Description, 
