@@ -120,3 +120,4 @@ The meal plan price prediction model’s purpose is to predict the future price 
 
 The Poisson model’s purpose is to predict the amount of each meal plan purchased in a term. The explanatory variables are the Meal Plan (Campanile, Cardinal, Gold, Meal Blocks), Semester (Spring, Fall), Year, and the number of undergraduate students (from Iowa Regents data). The response variable is the number of meal plans purchased. Users can select each of the explanatory variables that they want to fit into the model. The default values for the inputs will be all meal plan types, the upcoming semester/year (in this case, Fall 2025), and the previous year’s undergrad student count. Users can change any of these values to fit their interests or use cases. For example, ISU Dining could input the Fall 2025 number of undergraduate students if they have that information before the public does. 
 
+## 2025-04-20: Dashboard Peer Review
