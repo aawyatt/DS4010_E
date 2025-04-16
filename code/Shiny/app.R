@@ -439,6 +439,25 @@ ui <- dashboardPage(
             tabPanel("Poisson Model",
                      fluidRow(
                        box(
+                         title = "About the Poisson Model",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 12,
+                         p("A Poisson Regression is used to model and predict counts: 
+                           variables with a minimum of 0 and an unbounded maximum. In the ISU Dining context, 
+                           a count is the number of students that purchase a meal plan in a semester. 
+                           The explanatory variables in the Poisson model are the Meal Plan 
+                           (Campanile, Cardinal, Gold, or Meal Blocks), Semester (Spring or Fall), Year, 
+                           and the number of undergraduate students (from Iowa Board of Regents data). 
+                           The model incorporates a ‘log link,’ exponentiating the linear predictors, 
+                           which ensures the predicted counts are positive. "),
+                         p("Select a Meal Plan, Semester, Year, and Undergraduate Count to see 
+                         future predictions for the number of meal plans purchased. 
+                           The default values are the upcoming term (Fall 2025) and the current undergraduate count of 25,500. ")
+                       )
+                     ),
+                     fluidRow(
+                       box(
                          title = "Poisson Model Controls",
                          status = "primary",
                          solidHeader = TRUE,
@@ -471,14 +490,28 @@ ui <- dashboardPage(
                          status = "warning",
                          solidHeader = TRUE,
                          width = 6,
-                         plotOutput("residual_plot", height = "300px")
+                         plotOutput("residual_plot", height = "300px"),
+                         tags$p("The Residuals vs. Fitted plot shows how far off the 
+                               model’s predictions are by comparing the predicted 
+                               values to the differences between those predictions 
+                               and the actual data. Ideally, the points are scattered 
+                               around zero with no clear pattern. The groupings in 
+                               this plot are due to the different ‘groupings’ of meal plans, like Meal Blocks.")
                        ),
                        box(
                          title = "Actual vs. Predicted with Confidence Intervals",
                          status = "warning",
                          solidHeader = TRUE,
                          width = 6,
-                         plotlyOutput("actual_vs_pred_plot", height = "300px")
+                         plotlyOutput("actual_vs_pred_plot", height = "300px"),
+                         tags$p("The Actual vs. Predicted plot compares the true 
+                                historical amount of a given meal plan purchased 
+                                and the value predicted by the Poisson model. Each 
+                                point has a 95% prediction interval, which is a 
+                                range of values that a future observation is estimated 
+                                to fall, based on the previous data. The green dashed
+                                line has a slope of one and an intercept of zero, 
+                                visualizing the actual and predicted values having a 1:1 relationship.")
                        )
                      )
             ),
@@ -606,7 +639,7 @@ ui <- dashboardPage(
             
             width = 12,
             p("A Markov Chain is a statistical model that describes a sequence of possible events, where the probability of each event depends only on the state attained in the previous event."),
-            p("In this dashboard, it helps us model and simulate how a student will change between meal plans during their time at ISU.")
+            p("In this dashboard, the Markov Chain helps us model and simulate how a student will change between meal plans during their time at ISU.")
             
           ),
           column(
