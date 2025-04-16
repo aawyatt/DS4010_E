@@ -543,6 +543,15 @@ ui <- dashboardPage(
             tabPanel("Income Forecast",
                      fluidRow(
                        box(
+                         title = "About Income Forecast",
+                         status = "primary",
+                         solidHeader = TRUE,
+                         width = 12,
+                         p("This tab simply combines the prediction of student count per meal plan with the projected price to get an estimate of the income for a selected term.")
+                       )
+                     ),
+                     fluidRow(
+                       box(
                          title = "Income Forecast Controls",
                          status = "primary",
                          solidHeader = TRUE,
