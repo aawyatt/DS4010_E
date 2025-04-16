@@ -434,8 +434,6 @@ ui <- dashboardPage(
             width = 12,
             id = "mealPlanPredictionTabs",
             # First subtab: Current Prediction Model content
-            # In your POISSON MODEL TAB section of app.R
-            # In your POISSON MODEL TAB section, add the prediction controls and plot as before:
             tabPanel("Poisson Model",
                      fluidRow(
                        box(
