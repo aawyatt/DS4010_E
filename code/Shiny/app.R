@@ -1350,14 +1350,25 @@ server <- function(input, output, session) {
     
     # Filter historical data for the selected meal plan (includes all semesters)
     hist_data <- data_final %>% filter(MealPlan == input$poisson_mealplan)
-    
+    hist_data <- hist_data %>%
+      mutate(hover_txt = sprintf(
+        "Year: %s<br>Semester: %s<br>Actual count: %s",
+        Year, Semester, MealPlanCount
+      ))
     # Build the main Poisson prediction ggplot:
-    p_main <- ggplot(hist_data, aes(x = Year, y = MealPlanCount, color = Semester)) +
+    p_main <- ggplot(hist_data,
+                     aes(x = Year,
+                         y = MealPlanCount,
+                         color = Semester,
+                         text  = hover_txt)) +
       geom_point(size = 3) +
       geom_line(aes(group = Semester), size = 1) +
-      # Overlay the prediction as a red diamond:
-      geom_point(aes(x = input$poisson_year, y = predicted_count),
-                 color = "red", size = 4, shape = 18) +
+      geom_point(aes(x = input$poisson_year,
+                     y = predicted_count,
+                     text = sprintf("Forecast<br>Year: %s<br>Predicted: %.0f",
+                                    input$poisson_year,
+                                    predicted_count)),
+                 color = "red", shape = 18, size = 4)  +
       labs(title = paste("Poisson Prediction for", input$poisson_mealplan, "(", input$poisson_semester, ")"),
            x = "Year", y = "Meal Plan Count") +
       theme_minimal()
@@ -1379,25 +1390,32 @@ server <- function(input, output, session) {
     hist_data$lower_ci <- pred_results$fit - 1.96 * pred_results$se.fit
     hist_data$upper_ci <- pred_results$fit + 1.96 * pred_results$se.fit
     
-    p_ci <- ggplot(hist_data, aes(x = MealPlanCount, y = pred)) +
+    p_ci <- ggplot(hist_data,
+                   aes(x = MealPlanCount,
+                       y = pred,
+                       text = sprintf(
+                         "Actual: %s<br>Predicted: %.1f<br>95%% CI: %.1f – %.1f",
+                         MealPlanCount, pred, lower_ci, upper_ci))) +
       geom_point(color = "blue", alpha = 0.6) +
-      geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2, color = "red") +
+      geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci),
+                    width = 0.2,
+                    color = "red") +
       geom_abline(slope = 1, intercept = 0, color = "green", linetype = "dashed") +
       labs(title = "Actual vs. Predicted Meal Plan Count",
            x = "Actual Meal Plan Count", y = "Predicted Meal Plan Count") +
       theme_minimal()
     
     list(
-      p_main = p_main,
+      p_main = ggplotly(p_main, tooltip = "text"),
       p_resid = p_resid,
-      p_ci = p_ci
+      p_ci = ggplotly(p_ci, tooltip = "text")
     )
   }, ignoreNULL = FALSE)
   
   # Render the main Poisson prediction plot as a Plotly object
   output$poisson_plot <- renderPlotly({
     req(poisson_model_results())
-    ggplotly(poisson_model_results()$p_main)
+    poisson_model_results()$p_main
   })
   
   # Render the Poisson Residual Plot (base R plot)
@@ -1409,7 +1427,7 @@ server <- function(input, output, session) {
   # Render the Actual vs. Predicted Diagnostic Plot as a Plotly object
   output$actual_vs_pred_plot <- renderPlotly({
     req(poisson_model_results())
-    ggplotly(poisson_model_results()$p_ci)
+    poisson_model_results()$p_ci
   })
   
   
@@ -1456,9 +1474,18 @@ server <- function(input, output, session) {
     
     # Build the main Price Forecast Plot:
     p_forecast <- ggplot() +
-      geom_point(data = plan_data, aes(x = Year, y = Price.Year), color = "blue", size = 3) +
-      geom_line(data = plan_data, aes(x = Year, y = Price.Year), color = "blue", size = 1) +
-      geom_point(aes(x = input$forecast_year, y = adjusted_pred), color = "red", shape = 18, size = 4) +
+      geom_point(data = plan_data,
+                 aes(x = Year,
+                     y = Price.Year,
+                     text = sprintf("Year: %s<br>Price: $%0.0f", Year, Price.Year)),
+                 color = "blue", size = 3) +
+      geom_line(data = plan_data,
+                aes(x = Year, y = Price.Year, group = 1), color = "blue") +
+      geom_point(aes(x = input$forecast_year,
+                     y = adjusted_pred,
+                     text = sprintf("Forecast<br>Year: %s<br>Price: $%0.0f",
+                                    input$forecast_year, adjusted_pred)),
+                 color = "red", shape = 18, size = 4) +
       labs(title = paste("Price Forecast for", input$price_meal_plan),
            subtitle = paste("Forecast Year:", input$forecast_year, "| Inflation Rate:", input$price_inflation, "%"),
            x = "Year", y = "Yearly Price ($)") +
@@ -1491,7 +1518,7 @@ server <- function(input, output, session) {
     
     # Return a list with the forecast plot and the diagnostic components.
     list(
-      p_forecast = p_forecast,
+      p_forecast = ggplotly(p_forecast, tooltip = "text"),
       p_resid = p_resid,
       p_diag = p_diag
     )
@@ -1500,7 +1527,7 @@ server <- function(input, output, session) {
   # Render the main Price Forecast Plot as a Plotly object:
   output$price_forecast_plot <- renderPlotly({
     req(price_model_results())
-    ggplotly(price_model_results()$p_forecast)
+    price_model_results()$p_forecast
   })
   
   # Render the Price Model Residual Plot (base R plot):
@@ -1602,10 +1629,18 @@ server <- function(input, output, session) {
              paste("Term", Term)
       )
     ))
+    
     combined_income$TermLabel <- factor(combined_income$TermLabel, levels = unique(combined_income$TermLabel))
+    combined_income <- combined_income %>%
+      mutate(hover_txt = sprintf("%s<br>Income: $%0.0f", Term, Income))
     
     ## --- Build the Main Income Forecast Plot ---
-    p_income <- ggplot(combined_income, aes(x = TermLabel, y = Income, color = Type, group = 1)) +
+    p_income <- ggplot(combined_income,
+                       aes(x = as.factor(Term),
+                           y = Income,
+                           color = Type,
+                           group = 1,
+                           text = hover_txt)) +
       geom_line() +
       geom_point(size = 3) +
       labs(title = paste("Income Forecast for", input$income_mealplan),
@@ -1614,7 +1649,7 @@ server <- function(input, output, session) {
     
     # Return both the forecast plot and the price_model for diagnostics.
     list(
-      p_income = p_income,
+      p_income = ggplotly(p_income, tooltip = "text"),
       price_model = price_model
     )
   }, ignoreNULL = FALSE)  # This ensures the reactive runs at startup with default inputs.
@@ -1622,7 +1657,7 @@ server <- function(input, output, session) {
   # Render the Income Forecast Plot (converted to Plotly):
   output$income_forecast_plot <- renderPlotly({
     req(income_forecast_data())
-    ggplotly(income_forecast_data()$p_income)
+    income_forecast_data()$p_income
   })
   
   # Render the Poisson Residual Plot:
