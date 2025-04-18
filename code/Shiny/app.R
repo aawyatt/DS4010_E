@@ -847,7 +847,7 @@ server <- function(input, output, session) {
   output$total_meal_plans_box <- renderValueBox({
     n_plans <- length(unique(filtered_data()$Meal.Plan.Description))
     valueBox(
-      n_plans + " (6 active plans)",
+      n_plans,
       "Meal Plan Options",
       icon = icon("utensils"),
       color = "green"
