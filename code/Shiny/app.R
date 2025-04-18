@@ -1478,8 +1478,20 @@ server <- function(input, output, session) {
   
   # Render the Poisson Residual Plot (base R plot)
   output$residual_plot <- renderPlot({
-    req(poisson_model_results())
-    poisson_model_results()$p_resid
+    # Use the global Poisson model 'm1' fitted at startup
+    fitted_vals <- fitted(m1)
+    resid_vals   <- resid(m1)
+    
+    plot(
+      fitted_vals,
+      resid_vals,
+      xlab = "Fitted Values",
+      ylab = "Residuals",
+      main = paste("Residual vs. Fitted"),
+      pch   = 19,
+      col   = theme_colors$primary
+    )
+    abline(h = 0, lty = 2, col = theme_colors$danger)
   })
   
   # Render the Actual vs. Predicted Diagnostic Plot as a Plotly object
@@ -1723,7 +1735,7 @@ server <- function(input, output, session) {
     req(income_forecast_data())
     plot(fitted(m1), resid(m1),
          xlab = "Fitted Values", ylab = "Residuals",
-         main = paste("Poisson Residuals for", input$income_mealplan),
+         main = paste("Poisson Residuals"),
          pch = 19, col = "blue")
     abline(h = 0, lty = 2, col = "red")
   })
