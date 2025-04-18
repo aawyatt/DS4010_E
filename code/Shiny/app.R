@@ -845,7 +845,7 @@ server <- function(input, output, session) {
   })
   
   output$total_meal_plans_box <- renderValueBox({
-    n_plans <- length(unique(filtered_data()$Meal.Plan.Description))
+    n_plans <- length(unique(filtered_data()$Meal.Plan.Description)) + " (6 active)"
     valueBox(
       n_plans,
       "Meal Plan Options",
