@@ -105,20 +105,20 @@ predict_and_plot_prices <- function(data, future_years, inflation_rate = 0) {
 # Run Prediction with Inflation
 #-------------------------------
 # Load data
-data <- load_meal_data()
+#data <- load_meal_data()
 
 # Set parameters
-future_years <- c(2024,2025,2026,2027)
-inflation_rate <- c(0.02,0.03,0.03,0.01)  # 3% annual inflation
+#future_years <- c(2024,2025,2026,2027)
+#inflation_rate <- c(0.02,0.03,0.03,0.01)  # 3% annual inflation
 
 # Get results
-result <- predict_and_plot_prices(data, future_years, inflation_rate)
+#result <- predict_and_plot_prices(data, future_years, inflation_rate)
 
 # View predictions
 #print(result$predictions)
 
 # View one plot
-print(result$plots[["Cardinal"]])
+#print(result$plots[["Cardinal"]])
 
 
 

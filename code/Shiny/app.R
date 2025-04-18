@@ -1472,8 +1472,18 @@ server <- function(input, output, session) {
   
   # Render the main Poisson prediction plot as a Plotly object
   output$poisson_plot <- renderPlotly({
-    req(poisson_model_results())
-    poisson_model_results()$p_main
+    if (input$run_poisson == 0) {
+      # Display placeholder before the button is clicked
+      p <- ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Please run the simulation", 
+                 size = 6, hjust = 0.5) +
+        theme_void()
+      return(ggplotly(p))
+    } else {
+      # Render the actual plot after the button is clicked
+      req(poisson_model_results())
+      poisson_model_results()$p_main
+    }
   })
   
   # Render the Poisson Residual Plot (base R plot)
@@ -1496,8 +1506,18 @@ server <- function(input, output, session) {
   
   # Render the Actual vs. Predicted Diagnostic Plot as a Plotly object
   output$actual_vs_pred_plot <- renderPlotly({
-    req(poisson_model_results())
-    poisson_model_results()$p_ci
+    if (input$run_poisson == 0) {
+      # Display placeholder before the button is clicked
+      p <- ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Please run the simulation", 
+                 size = 6, hjust = 0.5) +
+        theme_void()
+      return(ggplotly(p))
+    } else {
+      # Render the actual plot after the button is clicked
+      req(poisson_model_results())
+      poisson_model_results()$p_ci
+    }
   })
   
   
@@ -1594,22 +1614,43 @@ server <- function(input, output, session) {
     )
   }, ignoreNULL = FALSE)
   
-  # Render the main Price Forecast Plot as a Plotly object:
+  # Price Forecast Plot
   output$price_forecast_plot <- renderPlotly({
-    req(price_model_results())
-    price_model_results()$p_forecast
+    if (input$run_price_model == 0) {
+      p <- ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Please run the simulation", 
+                 size = 6, hjust = 0.5) +
+        theme_void()
+      return(ggplotly(p))
+    } else {
+      req(price_model_results())
+      price_model_results()$p_forecast
+    }
   })
   
-  # Render the Price Model Residual Plot (base R plot):
-  output$price_residual_plot <- renderPlot({
-    req(price_model_results())
-    price_model_results()$p_resid
-  })
-  
-  # Render the Actual vs. Predicted Diagnostic Plot as a Plotly object:
+  # Actual vs. Predicted Plot
   output$price_actual_vs_pred_plot <- renderPlotly({
-    req(price_model_results())
-    ggplotly(price_model_results()$p_diag)
+    if (input$run_price_model == 0) {
+      p <- ggplot() +
+        annotate("text", x = 0.5, y = 0.5, label = "Please run the simulation", 
+                 size = 6, hjust = 0.5) +
+        theme_void()
+      return(ggplotly(p))
+    } else {
+      req(price_model_results())
+      ggplotly(price_model_results()$p_diag)
+    }
+  })
+  
+  # Residual vs. Fitted Plot
+  output$price_residual_plot <- renderPlot({
+    if (input$run_price_model == 0) {
+      plot.new()
+      text(0.5, 0.5, "Please run the simulation", cex = 2)
+    } else {
+      req(price_model_results())
+      price_model_results()$p_resid
+    }
   })
   
   
