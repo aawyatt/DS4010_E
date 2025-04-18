@@ -465,10 +465,21 @@ ui <- dashboardPage(
                          selectInput("poisson_semester", "Semester:",
                                      choices = c("Fall", "Spring"),
                                      selected = "Fall"),
-                         numericInput("poisson_year", "Year:",
-                                      value = 2025, min = 2021, max = 2040, step = 1),
-                         numericInput("poisson_undergrad", "Undergrad Count:",
-                                      value = 25500, min = 0, step = 1),
+                         sliderInput(
+                           "poisson_year", "Year:",
+                           min   = 2025,
+                           max   = 2035,
+                           value = 2025,
+                           step  = 1,
+                           sep   = "",
+                           ticks = FALSE       # show tick marks
+                         ),
+                         
+                         sliderInput("poisson_undergrad", "Undergrad Count:",
+                                     min   = 20000,
+                                     max   = 30000,
+                                     value = 25500,
+                                     step  = 100),
                          actionButton("run_poisson", "Run Poisson Prediction",
                                       icon = icon("calculator"),
                                       class = "btn-primary btn-block")
@@ -534,9 +545,24 @@ ui <- dashboardPage(
                          # Select the meal plan from available choices
                          selectInput("price_meal_plan", "Meal Plan:", choices = NULL),
                          # Numeric input for the forecast year (user specifies desired future year)
-                         numericInput("forecast_year", "Forecast Year:", value = 2025, min = 2000, max = 2100, step = 1),
-                         # Numeric input for inflation rate (as a percentage)
-                         numericInput("price_inflation", "Inflation Rate (%)", value = 3, step = 0.1),
+                         sliderInput(
+                           "forecast_year", "Year:",
+                           min   = 2025,
+                           max   = 2035,
+                           value = 2025,
+                           step  = 1,
+                           sep   = "",
+                           ticks = FALSE       # show tick marks
+                         ),
+                         sliderInput(
+                           "price_inflation", "Inflation Rate (%):",
+                           min   = 0,
+                           max   = 100,
+                           value = 3,
+                           step  = .1,
+                           sep   = "",
+                           ticks = FALSE       # show tick marks
+                         ),
                          actionButton("run_price_model", "Run Price Prediction",
                                       icon = icon("calculator"),
                                       class = "btn-primary btn-block")
@@ -590,9 +616,42 @@ ui <- dashboardPage(
                          # These inputs apply to both sub-models
                          selectInput("income_mealplan", "Meal Plan:", choices = NULL),
                          selectInput("income_semester", "Semester:", choices = c("Fall", "Spring"), selected = "Fall"),
-                         numericInput("income_forecast_year", "Forecast Year:", value = 2025, min = 2021, max = 2040, step = 1),
-                         numericInput("income_undergrad", "Undergrad Count:", value = 25500, min = 0, step = 1),
-                         numericInput("income_inflation", "Inflation Rate (%)", value = 3, step = 0.1),
+                         #numericInput("income_forecast_year", "Forecast Year:", value = 2025, min = 2021, max = 2040, step = 1),
+                         
+                         sliderInput(
+                           "income_forecast_year", "Year:",
+                           min   = 2021,
+                           max   = 2035,
+                           value = 2025,
+                           step  = 1,
+                           sep   = "",
+                           ticks = FALSE       # show tick marks
+                         ),
+                         
+                         #numericInput("income_undergrad", "Undergrad Count:", value = 25500, min = 0, step = 1),
+                         
+                         sliderInput(
+                           "income_undergrad", "Undergrad Count:",
+                           min   = 20000,
+                           max   = 30000,
+                           value = 25500,
+                           step  = 100,
+                         ),
+                       
+                       
+                       sliderInput(
+                         "income_inflation", "Inflation Rate (%):",
+                         min   = 0,
+                         max   = 100,
+                         value = 3,
+                         step  = .1,
+                         sep   = "",
+                         ticks = FALSE       # show tick marks
+                       ),
+                         
+                         #numericInput("income_inflation", "Inflation Rate (%)", value = 3, step = 0.1),
+                       
+                       
                          actionButton("run_income_forecast", "Run Income Forecast",
                                       icon = icon("calculator"),
                                       class = "btn-primary btn-block")
