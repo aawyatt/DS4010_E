@@ -246,9 +246,9 @@ ui <- dashboardPage(
             status = "primary", 
             solidHeader = TRUE,
             width = 12,
-            p("This project aims to analyze and predict trends in the ISU Dining meal plan. By examining historical meal plan purchases, residence hall occupancy, and churn rates over semesters and years, we will identify the most popular meal plans, analyze student retention, and forecast meal plan sales and revenue for Fall 2025."),
-            p("Additionally, we will assess how many students in residence halls who do not require meal plans still choose to purchase them and whether this changes over time. Using predictive modeling, churn analysis, and comparative analytics, we will uncover patterns in meal plan adoption and student housing trends."),
-            p("The insights from this study will help ISU Dining and Housing Services optimize pricing, meal plan structures, and retention strategies, ensuring financial sustainability while improving student satisfaction. Our team will develop interactive dashboards to track trends and predictions, making data-driven policy decisions more accessible.")
+            p("This project aims to analyze and predict trends in the ISU Dining meal plan. By examining historical meal plan purchases, residence hall occupancy, and churn rates over semesters and years, we will identify the most popular meal plans, analyze student retention, and forecast meal plan sales and revenue for future terms.
+              Using exploratory analysis, we will draw conclusions regarding meal plan adoption by housing location."),
+            p("The insights from this study are designed to help ISU Dining optimize pricing, meal plan structures, and retention strategies, ensuring financial sustainability while improving student satisfaction. This interactive dashboard visualizes trends predictions, making data-driven policy decisions more accessible.")
           )
         ),
         
