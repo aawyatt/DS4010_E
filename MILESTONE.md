@@ -1,3 +1,6 @@
+## 2025-02-09: Project Milestone
+This week, we created our GitHub environment for our project which can be visited here: https://github.com/aawyatt/DS4010_E. Additionally, we have created folders to organize our raw data for our project once we decide on our final datasets, but we are currently waiting to hear back from ISU Dining be fore that can happen. The README.md file will outline the description of what we intend to do with our project and will be regularly updated as the project progresses. Along with the additions of new folders and definitions of key terms.
+
 ## 2025-02-17: Acquire Data Milestone
 
 ### Data Wrangling
