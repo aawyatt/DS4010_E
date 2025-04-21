@@ -959,7 +959,10 @@ server <- function(input, output, session) {
       arrange(desc(count)) %>%
       head(10) # Top 10 meal plans for better visibility
     
-    p <- ggplot(meal_plan_counts, aes(x = reorder(Meal.Plan.Description, count), y = count, fill = count)) +
+    p <- ggplot(meal_plan_counts, aes(x = reorder(Meal.Plan.Description, count), y = count, fill = count,text = paste0(
+      "Meal Plan: ", Meal.Plan.Description, "<br>",
+      "Students: ", count, "<br>"
+    ))) +
       geom_bar(stat = "identity") +
       scale_fill_viridis_c() +
       coord_flip() +
