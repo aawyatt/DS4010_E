@@ -1980,9 +1980,7 @@ server <- function(input, output, session) {
     ))
     chat_history(new_hist)
   })
-  
-  # 5) Render the chat history into the sidebar div
-  output$chat_history <- renderUI({
+    output$chat_history <- renderUI({
     msgs <- chat_history()
     if (length(msgs) == 0) return(NULL)
     
