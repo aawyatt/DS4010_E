@@ -754,26 +754,25 @@ ui <- dashboardPage(
             width = 12,
             h4("Meal Plan Trends:"),
             tags$div(class = "insight-item",
-                     p("Analysis shows that [meal plan] is consistently the most popular choice across all terms, with [percentage]% of students selecting this option.")),
+                     p("The Cardinal meal plan has remained the most popular option across all academic terms, consistently leading student adoption.")),
             tags$div(class = "insight-item",
-                     p("Block meal plans have seen a [trend] in popularity since [term], with a [percentage]% change in adoption.")),
-            tags$div(class = "insight-item",
-                     p("Price sensitivity appears highest among students in [housing location], where a [percentage]% change in price correlates with a [percentage]% change in adoption.")),
+                     p("Initially the second-most selected option, the Gold plan was gradually surpassed by the Campanile plan after its introduction, which now ranks as the second-most chosen meal plan.")),
             
-            h4("Housing Insights:"),
+            h4("Housing Plan Trends:"),
             tags$div(class = "insight-item",
-                     p("[Housing location] has the highest proportion of optional meal plan purchases at [percentage]%.")),
+                     p("In dormitory-style housing where meal plans are typically required, student meal plan selections closely reflect overall campus trends.")),
             tags$div(class = "insight-item",
-                     p("Students in [housing location] have the lowest churn rate, with [percentage]% maintaining the same meal plan between terms.")),
+                     p("Apartment-style housing communities, such as Frederiksen Court and SUV, demonstrate significantly higher adoption of block meal plans compared to traditional residence halls.")),
+            tags$div(class = "insight-item",
+                     p("Dormitories without mandatory meal plans—such as Linden, Wallace, and Wilson—follow similar trends as the broader student population, though a notable share of residents in these locations still opt for block meal plans.")),
+            tags$div(class = "insight-item",
+                     p("The Campanile meal plan is particularly popular in apartment-style housing, where many students also choose block meal options to complement their flexible living arrangements.")),
             
             h4("Predictive Insights:"),
             tags$div(class = "insight-item",
-                     p("Our model predicts a [trend] in overall meal plan enrollment for Fall 2025, with [number] students expected to purchase meal plans.")),
+                     p("Block meal plans exhibit the highest overall retention rates among all available plan types, indicating strong continued preference across terms.")),
             tags$div(class = "insight-item",
-                     p("The most significant growth is predicted in [meal plan], with a projected increase of [percentage]%.")),
-            tags$div(class = "insight-item",
-                     p("Churn analysis indicates that students most frequently transition from [meal plan A] to [meal plan B], suggesting an opportunity for targeted retention strategies."))
-          )
+                     p("Among standard meal plans, Campanile demonstrates the highest retention rate, outperforming both Cardinal and Gold in retaining students across consecutive terms.")))
         ),
         fluidRow(
           box(
@@ -939,14 +938,16 @@ server <- function(input, output, session) {
       summarise(n_students = n_distinct(ID)) %>%
       arrange(Term.Session.Description)
     
-    p <- ggplot(trend_data, aes(x = Term.Session.Description, y = n_students, group = 1)) +
+    p <- ggplot(trend_data, aes(x = Term.Session.Description, y = n_students, group = 1,
+                                text = paste("Term:", Term.Session.Description,
+                                             "<br>Students:", n_students))) +
       geom_line(color = theme_colors$primary, size = 1) +
       geom_point(color = theme_colors$primary, size = 3) +
       theme_minimal() +
       labs(x = "Term", y = "Number of Students") +
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
     
-    ggplotly(p) %>% 
+    ggplotly(p, tooltip = "text") %>% 
       layout(margin = list(b = 100)) %>%
       config(displayModeBar = FALSE)
   })
@@ -959,10 +960,9 @@ server <- function(input, output, session) {
       arrange(desc(count)) %>%
       head(10) # Top 10 meal plans for better visibility
     
-    p <- ggplot(meal_plan_counts, aes(x = reorder(Meal.Plan.Description, count), y = count, fill = count,text = paste0(
-      "Meal Plan: ", Meal.Plan.Description, "<br>",
-      "Students: ", count, "<br>"
-    ))) +
+    p <- ggplot(meal_plan_counts, aes(x = reorder(Meal.Plan.Description, count), y = count, fill = count,
+                                      text = paste("Meal Plan:", Meal.Plan.Description,
+                                                   "<br>Students:", count))) +
       geom_bar(stat = "identity") +
       scale_fill_viridis_c() +
       coord_flip() +
@@ -970,7 +970,7 @@ server <- function(input, output, session) {
       labs(x = "Meal Plan", y = "Number of Students") +
       theme(legend.position = "none")
     
-    ggplotly(p) %>% config(displayModeBar = FALSE)
+    ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
   })
   
   # Data Dictionary
@@ -1835,13 +1835,14 @@ server <- function(input, output, session) {
     sim <- rmarkovchain(n = 4, object = mc, t0 = input$starting_meal_plan, include.t0 = TRUE)
     sim_df <- data.frame(Time = 0:4, State = sim)
     
-    p <- ggplot(sim_df, aes(x = Time, y = State, group = 1)) +
+    p <- ggplot(sim_df, aes(x = Time, y = State, group = 1,
+                            text = paste("Term Step:", Time, "<br>Meal Plan:", State))) +
       geom_line(color = "#C8102E", size = 1) +
       geom_point(size = 3, color = "#F1BE48") +
       labs(title = paste("Meal Plan Simulation Starting from", input$starting_meal_plan),
            x = "Term Step", y = "Meal Plan") +
       theme_minimal()
-    ggplotly(p)
+    ggplotly(p,tooltip = "text")
   })
   
   # Render Self-Retention Probabilities Plot
@@ -1849,14 +1850,16 @@ server <- function(input, output, session) {
     diag_probs <- diag(transition)
     df <- data.frame(MealPlan = states, Retention = diag_probs)
     
-    p <- ggplot(df, aes(x = reorder(MealPlan, Retention), y = Retention, fill = Retention)) +
+    p <- ggplot(df, aes(x = reorder(MealPlan, Retention), y = Retention, fill = Retention,
+                        text = paste("Meal Plan:", MealPlan,
+                                     "<br>Retention Rate:", round(Retention, 3)))) +
       geom_col() +
       scale_fill_viridis_c() +
       coord_flip() +
       theme_minimal() +
       labs(title = "Retention Probabilities", x = "Meal Plan", y = "Probability")
     
-    ggplotly(p)
+    ggplotly(p, tooltip = "text")
   })
   
   # ===== CONCLUSION TAB OUTPUTS =====
@@ -1896,26 +1899,26 @@ server <- function(input, output, session) {
       tagList(
         h4("Meal Plan Trends:"),
         tags$div(class = "insight-item",
-                 p(paste0(most_popular$Meal.Plan.Description, " is consistently the most popular choice across all terms, with ", 
-                          round(most_popular$count / nrow(filtered_data()) * 100, 1), "% of students selecting this option."))),
+                 p("The Cardinal meal plan has remained the most popular option across all academic terms, consistently leading student adoption.")),
         tags$div(class = "insight-item",
-                 p(paste0("Block meal plans have seen a ", block_trend_desc, " in popularity since ", term_order[1], 
-                          ", with a ", round(abs(block_change), 1), "% change in adoption."))),
+                 p("Initially the second-most selected option, the Gold plan was gradually surpassed by the Campanile plan after its introduction, which now ranks as the second-most chosen meal plan.")),
         
-        h4("Housing Insights:"),
+        h4("Housing Plan Trends:"),
         tags$div(class = "insight-item",
-                 p("Frederiksen Court has the highest proportion of optional meal plan purchases at 45.2%.")),
+                 p("In dormitory-style housing where meal plans are typically required, student meal plan selections closely reflect overall campus trends.")),
         tags$div(class = "insight-item",
-                 p("Students in Maple Hall have the lowest churn rate, with 78.3% maintaining the same meal plan between terms.")),
+                 p("Apartment-style housing communities, such as Frederiksen Court and SUV, demonstrate significantly higher adoption of block meal plans compared to traditional residence halls.")),
+        tags$div(class = "insight-item",
+                 p("Dormitories without mandatory meal plans—such as Linden, Wallace, and Wilson—follow similar trends as the broader student population, though a notable share of residents in these locations still opt for block meal plans.")),
+        tags$div(class = "insight-item",
+                 p("The Campanile meal plan is particularly popular in apartment-style housing, where many students also choose block meal options to complement their flexible living arrangements.")),
         
         h4("Predictive Insights:"),
         tags$div(class = "insight-item",
-                 p("Our model predicts a slight increase in overall meal plan enrollment for Fall 2025, with approximately 9,200 students expected to purchase meal plans.")),
+                 p("Block meal plans exhibit the highest overall retention rates among all available plan types, indicating strong continued preference across terms.")),
         tags$div(class = "insight-item",
-                 p("The most significant growth is predicted in Gold meal plan, with a projected increase of 3.2%.")),
-        tags$div(class = "insight-item",
-                 p("Churn analysis indicates that students most frequently transition from Cardinal to Gold meal plans, suggesting an opportunity for targeted retention strategies."))
-      )
+                 p("Among standard meal plans, Campanile demonstrates the highest retention rate, outperforming both Cardinal and Gold in retaining students across consecutive terms."))
+        )
     })
   })
 }
