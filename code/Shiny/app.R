@@ -267,7 +267,9 @@ ui <- dashboardPage(
             status = "primary",
             solidHeader = TRUE,
             width = 6,
-            plotlyOutput("student_trend_plot", height = "300px")
+            plotlyOutput("student_trend_plot", height = "300px"),
+            tags$p("Only students who took a meal plan that semester")
+            
           ),
           box(
             title = "Meal Plan Distribution",
@@ -967,7 +969,7 @@ server <- function(input, output, session) {
       scale_fill_viridis_c() +
       coord_flip() +
       theme_minimal() +
-      labs(x = "Meal Plan", y = "Number of Students") +
+      labs(x = "Meal Plan", y = "Number of Meal Plans Purchased") +
       theme(legend.position = "none")
     
     ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
