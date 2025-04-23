@@ -894,7 +894,7 @@ server <- function(input, output, session) {
     n_students <- length(unique(filtered_data()$ID))
     valueBox(
       formatC(n_students, big.mark = ","),
-      "Unique Students Purchsing Meal Plans (Since Fall 2021)",
+      "Unique Students",
       icon = icon("users"),
       color = "blue"
     )
