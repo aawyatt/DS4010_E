@@ -964,7 +964,7 @@ server <- function(input, output, session) {
     
     p <- ggplot(meal_plan_counts, aes(x = reorder(Meal.Plan.Description, count), y = count, fill = count,
                                       text = paste("Meal Plan:", Meal.Plan.Description,
-                                                   "<br>Students:", count))) +
+                                                   "<br>Count:", count))) +
       geom_bar(stat = "identity") +
       scale_fill_viridis_c() +
       coord_flip() +
