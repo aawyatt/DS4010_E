@@ -1,3 +1,23 @@
+## 2025-02-02: Team Formation
+
+Team Name: Statistical Superstars 
+The team name came from a name generator using we wanted something relating to statistics. 
+
+GitHub Link: https://github.com/aawyatt/DS4010_E  
+
+Summary of Project Idea Discussion (one paragraph): 
+The team talked about working on a project relating to ISU Dining, depending on the data that we could gain access to. The team has already reached out to ISU Dining to see what data we could use and is currently awaiting a response. A second project was using data from the US Census and iowa.data.gov to create a dashboard using GIS and demographic data for the state of Iowa. Finally, the last project that the group was interested in was working with data from the USDA and agriculture patterns in Iowa. 
+
+Summary of Tool Proficiencies/Preferences (one paragraph): 
+Each member in the group knows how to use R and Python the most with a preference for working with R. The group does have some experience in using SQL as well however not in a collaborative environment. Some additional technologies were discussed, especially for the dashboard where Tableau and RShiny would require additional learning by the group but were deemed as really useful for what we want to do for the project goals. 
+  
+Summary of Communication Platform to be used (one paragraph):
+The team has decided to use Microsoft Teams as the main source of communication. Each group member has access to Teams through Iowa State, which provides the most versatility and reliability for communicating. While a Snapchat group chat was discussed, the team felt it was unreliable due to messages deleting after a period of time. Thus resulting on the final decision of using Teams. 
+  
+Plan/Tasks to settle on a Project (one paragraph): 
+The team has decided to return on Monday with roughly 3 to 4 data source ideas (1 per group member) to help the group decide on our project going forward. As mentioned above, we are currently waiting on responses from private sources and will hopefully have responses by the middle of next week. If not, the goal of the 3 to 4 source ideas is to be flexible in the case of certain sources falling through. 
+ 
+
 ## 2025-02-09: Pick Data/Project Milestone
 This week, we created our GitHub environment for our project which can be visited here: https://github.com/aawyatt/DS4010_E. Additionally, we have created folders to organize our raw data for our project once we decide on our final datasets, but we are currently waiting to hear back from ISU Dining be fore that can happen. The README.md file will outline the description of what we intend to do with our project and will be regularly updated as the project progresses. Along with the additions of new folders and definitions of key terms.
 
