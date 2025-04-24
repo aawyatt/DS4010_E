@@ -248,7 +248,11 @@ ui <- dashboardPage(
             width = 12,
             p("This project aims to analyze and predict trends in the ISU Dining meal plan. By examining historical meal plan purchases, residence hall occupancy, and churn rates over semesters and years, we will identify the most popular meal plans, analyze student retention, and forecast meal plan sales and revenue for future terms.
               Using exploratory analysis, we will draw conclusions regarding meal plan adoption by housing location."),
-            p("The insights from this study are designed to help ISU Dining optimize pricing, meal plan structures, and retention strategies, ensuring financial sustainability while improving student satisfaction. This interactive dashboard visualizes trends predictions, making data-driven policy decisions more accessible.")
+            p("The insights from this study are designed to help ISU Dining optimize pricing, meal plan structures, and retention strategies, ensuring financial sustainability while improving student satisfaction. This interactive dashboard visualizes trends predictions, making data-driven policy decisions more accessible."),
+            p("Several assumptions were made to simplify analysis and draw clear conclusions. Students in the data set from ISU Dining are assumed
+              to be undergraduates so the Iowa Board of Regents data could be used for total undergraduate count. All students are also treated independently.
+              RA and CA plans were excluded due to their small sample size, and flex meals were grouped with block plans for consistency. Additionally, ISU Dining's meal plan income is assumed
+              to come solely from the students purchasing the plans, excluding other contributions or purchases.")
           )
         ),
         
