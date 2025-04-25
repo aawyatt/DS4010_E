@@ -276,7 +276,7 @@ ui <- dashboardPage(
           ),
           box(
             title = "Meal Plan Distribution",
-            status = "info",
+            status = "primary",
             solidHeader = TRUE,
             width = 6,
             plotlyOutput("overview_meal_plan_dist", height = "300px")
@@ -339,15 +339,6 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             width = 6,
             plotlyOutput("price_trends_plot", height = "350px")
-          )
-        ),
-        fluidRow(
-          box(
-            title = "Detailed Meal Plan Data",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            DTOutput("meal_plan_table")
           )
         )
       ),
@@ -465,7 +456,7 @@ ui <- dashboardPage(
                        ),
                        box(
                          title = "Poisson Prediction Plot",
-                         status = "info",
+                         status = "primary",
                          solidHeader = TRUE,
                          width = 9,
                          plotlyOutput("poisson_plot", height = "400px")
@@ -475,7 +466,7 @@ ui <- dashboardPage(
                      fluidRow(
                        box(
                          title = "Residual vs. Fitted Plot",
-                         status = "warning",
+                         status = "info",
                          solidHeader = TRUE,
                          width = 6,
                          plotOutput("residual_plot", height = "300px"),
@@ -488,7 +479,7 @@ ui <- dashboardPage(
                        ),
                        box(
                          title = "Actual vs. Predicted with Confidence Intervals",
-                         status = "warning",
+                         status = "info",
                          solidHeader = TRUE,
                          width = 6,
                          plotlyOutput("actual_vs_pred_plot", height = "300px"),
@@ -548,7 +539,7 @@ ui <- dashboardPage(
                        ),
                        box(
                          title = "Price Forecast Plot",
-                         status = "info",
+                         status = "primary",
                          solidHeader = TRUE,
                          width = 9,
                          plotlyOutput("price_forecast_plot", height = "400px"),
@@ -560,14 +551,14 @@ ui <- dashboardPage(
                      fluidRow(
                        box(
                          title = "Residual vs. Fitted Plot",
-                         status = "warning",
+                         status = "info",
                          solidHeader = TRUE,
                          width = 6,
                          plotOutput("price_residual_plot", height = "300px")
                        ),
                        box(
                          title = "Actual vs. Predicted with Confidence Intervals",
-                         status = "warning",
+                         status = "info",
                          solidHeader = TRUE,
                          width = 6,
                          plotlyOutput("price_actual_vs_pred_plot", height = "300px")
@@ -616,28 +607,28 @@ ui <- dashboardPage(
                            value = 25500,
                            step  = 100,
                          ),
-                       
-                       
-                       sliderInput(
-                         "income_inflation", "Inflation Rate (%):",
-                         min   = 0,
-                         max   = 100,
-                         value = 3,
-                         step  = .1,
-                         sep   = "",
-                         ticks = FALSE       # show tick marks
-                       ),
+                         
+                         
+                         sliderInput(
+                           "income_inflation", "Inflation Rate (%):",
+                           min   = 0,
+                           max   = 100,
+                           value = 3,
+                           step  = .1,
+                           sep   = "",
+                           ticks = FALSE       # show tick marks
+                         ),
                          
                          #numericInput("income_inflation", "Inflation Rate (%)", value = 3, step = 0.1),
-                       
-                       
+                         
+                         
                          actionButton("run_income_forecast", "Run Income Forecast",
                                       icon = icon("calculator"),
                                       class = "btn-primary btn-block")
                        ),
                        box(
                          title = "Income Forecast Plot",
-                         status = "info",
+                         status = "primary",
                          solidHeader = TRUE,
                          width = 9,
                          plotlyOutput("income_forecast_plot", height = "400px")
@@ -646,14 +637,14 @@ ui <- dashboardPage(
                      fluidRow(
                        box(
                          title = "Poisson Model Diagnostic: Residual vs. Fitted",
-                         status = "warning",
+                         status = "info",
                          solidHeader = TRUE,
                          width = 6,
                          plotOutput("income_poisson_resid_plot", height = "300px")
                        ),
                        box(
                          title = "Price Model Diagnostic: Residual vs. Fitted",
-                         status = "warning",
+                         status = "info",
                          solidHeader = TRUE,
                          width = 6,
                          plotOutput("income_price_resid_plot", height = "300px")
@@ -702,7 +693,7 @@ ui <- dashboardPage(
             width = 8,
             box(
               title = "Markov Simulation of Student",
-              status = "info",
+              status = "primary",
               solidHeader = TRUE,
               width = 12,
               plotlyOutput("retention_forecast_plot", height = "400px"),
@@ -713,7 +704,7 @@ ui <- dashboardPage(
         fluidRow(
           box(
             title = "Self-Retention Probabilities",
-            status = "warning",
+            status = "info",
             solidHeader = TRUE,
             width = 12,
             plotlyOutput("retention_prob_plot"),
@@ -752,37 +743,6 @@ ui <- dashboardPage(
                      p("Block meal plans exhibit the highest overall retention rates among all available plan types, indicating strong continued preference across terms.")),
             tags$div(class = "insight-item",
                      p("Among standard meal plans, Campanile demonstrates the highest retention rate, outperforming both Cardinal and Gold in retaining students across consecutive terms.")))
-        ),
-        fluidRow(
-          box(
-            title = "Strategic Recommendations",
-            status = "success",
-            solidHeader = TRUE,
-            width = 12,
-            h4("Pricing Strategy:"),
-            tags$ol(
-              tags$li("Consider [specific pricing recommendation] for [meal plan] to optimize revenue while maintaining adoption rates."),
-              tags$li("Implement tiered pricing structured around the most common transition paths to encourage upgrades rather than downgrades.")
-            ),
-            
-            h4("Product Development:"),
-            tags$ol(
-              tags$li("Develop a new meal plan option that addresses the gap between [meal plan A] and [meal plan B], targeting the [number] students who currently switch between these options."),
-              tags$li("Consider specialized meal plans for [housing location] residents based on their unique usage patterns.")
-            ),
-            
-            h4("Retention Strategy:"),
-            tags$ol(
-              tags$li("Implement a targeted communication campaign for students in [housing location] during [time period] to address the higher churn rate observed."),
-              tags$li("Develop incentives for students to maintain their meal plan from [term A] to [term B], when transitions are most common.")
-            ),
-            
-            h4("Long-term Planning:"),
-            tags$ol(
-              tags$li("Prepare for projected [increase/decrease] in overall meal plan adoption by adjusting staffing and resources accordingly."),
-              tags$li("Use steady-state projections to inform long-term facility planning and investment decisions.")
-            )
-          )
         )
       )
     )
@@ -1125,30 +1085,6 @@ server <- function(input, output, session) {
     ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = "h", y = -0.2))
   })
   
-  # Meal Plan Table
-  output$meal_plan_table <- renderDT({
-    data <- meal_plan_data() %>%
-      group_by(Term.Session.Description, Meal.Plan.Description) %>%
-      summarise(
-        Students = n(),
-        `Unique Housing Locations` = n_distinct(Room.Location.Description),
-        `Avg Yearly Price` = mean(Price.Year, na.rm = TRUE),
-        .groups = 'drop'
-      ) %>%
-      arrange(Term.Session.Description, desc(Students))
-    
-    datatable(
-      data,
-      options = list(
-        pageLength = 10,
-        dom = 'Bfrtip',
-        buttons = c('copy', 'csv', 'excel'),
-        scrollX = TRUE
-      ),
-      rownames = FALSE
-    ) %>%
-      formatCurrency(columns = "Avg Yearly Price", digits = 0)
-  })
   
   # ===== HOUSING TAB OUTPUTS =====
   
@@ -1464,7 +1400,7 @@ server <- function(input, output, session) {
   })
   
   
-
+  
   # ===== Price MODEL TAB ===========
   
   # Ensure that the 'price_meal_plan' input is populated using the pricing data.
@@ -1608,7 +1544,7 @@ server <- function(input, output, session) {
   
   source("../../code/Models/priceModel.R")
   # Update choices for the Income Forecast meal plan from the Poisson model data (from LinearModel.R)
-
+  
   
   # Update the Income Forecast Meal Plan selectInput if not already done:
   observe({
@@ -1741,10 +1677,10 @@ server <- function(input, output, session) {
   
   # ===== MARKOV MODEL TAB OUTPUTS =====
   states <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Campanile", "Cardinal", "Gold", "NA")
-
+  
   transition <- matrix(as.numeric(used_proportions$Proportions), nrow = 7, byrow = TRUE)
   
- 
+  
   
   # Create markovchain
   planChain <- new("markovchain", states = states, transitionMatrix = transition)
@@ -1858,11 +1794,10 @@ server <- function(input, output, session) {
                  p("Block meal plans exhibit the highest overall retention rates among all available plan types, indicating strong continued preference across terms.")),
         tags$div(class = "insight-item",
                  p("Among standard meal plans, Campanile demonstrates the highest retention rate, outperforming both Cardinal and Gold in retaining students across consecutive terms."))
-        )
+      )
     })
   })
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
