@@ -1,6 +1,6 @@
 ## 2025-02-02: Team Formation
 
-Team Name: Statistical Superstars 
+Team Name: Statistical Superstars   
 The team name came from a name generator as the team was struggling to come up with a name we felt was creative yet relatable. We knew we wanted the name to deal with something related to statistics and after going though some of the options presented to us by the generator, the group really like the name Statistical Superstars. Thus was the group name going forward.
 
 GitHub Link: https://github.com/aawyatt/DS4010_E  
