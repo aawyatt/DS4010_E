@@ -1,12 +1,12 @@
 ## 2025-02-02: Team Formation
 
 Team Name: Statistical Superstars 
-The team name came from a name generator using we wanted something relating to statistics. 
+The team name came from a name generator as the team was struggling to come up with a name we felt was creative yet relatable. We knew we wanted the name to deal with something related to statistics and after going though some of the options presented to us by the generator, the group really like the name Statistical Superstars. Thus was the group name going forward.
 
 GitHub Link: https://github.com/aawyatt/DS4010_E  
 
 Summary of Project Idea Discussion (one paragraph): 
-The team talked about working on a project relating to ISU Dining, depending on the data that we could gain access to. The team has already reached out to ISU Dining to see what data we could use and is currently awaiting a response. A second project was using data from the US Census and iowa.data.gov to create a dashboard using GIS and demographic data for the state of Iowa. Finally, the last project that the group was interested in was working with data from the USDA and agriculture patterns in Iowa. 
+The team talked about working on a project relating to ISU Dining, depending on the data that we could gain access to. The team has already reached out to ISU Dining to see what data we could use and is currently awaiting a response. A second project was using data from the US Census and Iowa.data.gov to create a dashboard using GIS and demographic data for the state of Iowa. Finally, the last project that the group was interested in was working with data from the USDA and agriculture patterns in Iowa. 
 
 Summary of Tool Proficiencies/Preferences (one paragraph): 
 Each member in the group knows how to use R and Python the most with a preference for working with R. The group does have some experience in using SQL as well however not in a collaborative environment. Some additional technologies were discussed, especially for the dashboard where Tableau and RShiny would require additional learning by the group but were deemed as really useful for what we want to do for the project goals. 
