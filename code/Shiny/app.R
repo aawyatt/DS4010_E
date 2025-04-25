@@ -267,12 +267,11 @@ ui <- dashboardPage(
         # Main overview charts
         fluidRow(
           box(
-            title = "Student Distribution Over Time",
+            title = " Distribution of Students with Meal Plan Over Time",
             status = "primary",
             solidHeader = TRUE,
             width = 6,
-            plotlyOutput("student_trend_plot", height = "300px"),
-            tags$p("Only students who took a meal plan that semester")
+            plotlyOutput("student_trend_plot", height = "300px")
             
           ),
           box(
@@ -281,32 +280,6 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             width = 6,
             plotlyOutput("overview_meal_plan_dist", height = "300px")
-          )
-        ),
-        
-        # Data Dictionary Section
-        fluidRow(
-          box(
-            title = "Data Dictionary",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            collapsible = TRUE,
-            collapsed = FALSE,
-            DTOutput("data_dictionary")
-          )
-        ),
-        
-        # Data Preview Section
-        fluidRow(
-          box(
-            title = "Data Preview",
-            status = "primary",
-            solidHeader = TRUE,
-            width = 12,
-            collapsible = TRUE,
-            collapsed = TRUE,
-            DTOutput("data_preview")
           )
         )
       ),
@@ -979,45 +952,6 @@ server <- function(input, output, session) {
     ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
   })
   
-  # Data Dictionary
-  output$data_dictionary <- renderDT({
-    data.frame(
-      Column = c("ID", "Term.Session.Description", "Meal.Plan.Description", 
-                 "Room.Location.Description", "Price.Year", "Price.Semester"),
-      Description = c(
-        "Unique identifier for each student",
-        "Academic term (e.g., Fall 2021, Spring 2022)",
-        "Type of meal plan selected by the student",
-        "Housing location where the student resides",
-        "Annual cost of the meal plan",
-        "Cost of the meal plan per semester"
-      ),
-      Type = c("Character", "Factor", "Factor", "Factor", "Numeric", "Numeric"),
-      Example = c(
-        "1001", 
-        "Fall 2021", 
-        "Gold", 
-        "Frederiksen Court", 
-        "$4,200", 
-        "$2,100"
-      )
-    ) %>%
-      datatable(options = list(dom = 't', paging = FALSE, ordering = FALSE),
-                rownames = FALSE)
-  })
-  
-  # Data Preview
-  output$data_preview <- renderDT({
-    datatable(
-      head(clean_data, 50),
-      options = list(
-        scrollX = TRUE,
-        pageLength = 10,
-        dom = 'ftip'
-      ),
-      rownames = FALSE
-    )
-  })
   
   # ===== MEAL PLANS TAB OUTPUTS =====
   
