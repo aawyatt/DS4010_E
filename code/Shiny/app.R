@@ -53,6 +53,33 @@ ui <- dashboardPage(
   
   # Sidebar
   dashboardSidebar(
+    
+    tags$head(
+      tags$style(HTML("
+        label[for='chat_query'] {
+          color: #000 !important;
+        }
+        #chat_query,
+        #send_chat {
+          width: 80% !important;
+          box-sizing: border-box;
+        }
+        #clear_chat {
+          width: 80% !important;
+          box-sizing: border-box;
+        }
+        #chat_history p {
+          color: #000 !important;
+        }
+        @media (max-width: 400px) {
+        #send_chat {
+          padding: 4px 6px !important;
+          font-size: 12px !important;
+        }
+      } 
+      "))
+    ),
+    
     sidebarMenu(
       id = "sidebar",
       # Overview Section
@@ -73,6 +100,16 @@ ui <- dashboardPage(
       
       # Conclusion Section
       menuItem("Conclusion", tabName = "conclusion", icon = icon("clipboard-check"))
+    ),
+    tags$hr(),
+    div(
+      style = "padding: 10px;",
+      textInput("chat_query", "Ask the Dashboard:", placeholder = "Type a question..."),
+      actionButton("send_chat", "Send", icon = icon("paper-plane"),class = "btn-primary btn-block",style = "width:100%; box-sizing:border-box; padding:6px 10px; font-size:14px;"),
+      actionButton("clear_chat", "Refresh Chat", icon = icon("redo"),class = "btn-secondary btn-block",style = "width:100%; margin-top:5px; box-sizing:border-box;"),
+      uiOutput("chat_history", container = function(...) {
+        div(..., style = "margin-top:10px; max-height:400px; overflow-y:auto;")
+      })
     )
   ),
   
@@ -1796,6 +1833,46 @@ server <- function(input, output, session) {
                  p("Among standard meal plans, Campanile demonstrates the highest retention rate, outperforming both Cardinal and Gold in retaining students across consecutive terms."))
       )
     })
+  })
+  
+  ##=== CHATBOT INTEGRATION =====
+  source("../../code/Chatbot.R")
+  context_text <- readr::read_file("../../data_folder/Context.txt")
+  chat_history <- reactiveVal(list())
+  observeEvent(input$send_chat, {
+    req(input$chat_query)
+    user_q <- input$chat_query
+    
+    # build the prompt
+    prompt_body <- make_prompt(user_q, context_text)
+    
+    #Gemini
+    bot_a <- tryCatch(
+      gemini(prompt_body),
+      error = function(e) paste0("Error: ", e$message)
+    )
+    
+    # update history: list of lists with $q and $a
+    new_hist <- append(chat_history(), list(
+      list(q = user_q, a = bot_a)
+    ))
+    chat_history(new_hist)
+  })
+  output$chat_history <- renderUI({
+    msgs <- chat_history()
+    if (length(msgs) == 0) return(NULL)
+    
+    # produce a <div> for each question/answer
+    lapply(msgs, function(entry) {
+      tagList(
+        tags$p(tags$b("You: "), entry$q),
+        tags$p(tags$b("Bot: "), entry$a),
+        tags$hr()
+      )
+    })
+  })
+  observeEvent(input$clear_chat, {
+    chat_history(list())  # reset to an empty list
   })
 }
 

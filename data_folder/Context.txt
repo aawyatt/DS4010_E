@@ -1,0 +1,122 @@
+Project and Overview
+DS4010_E is the ISU Data Science Capstone Team E repository, developed to analyze and forecast meal-plan trends, churn, and revenue for ISU Dining via interactive dashboards and predictive models.
+
+Dashboard Purpose
+This project aims to analyze and predict trends in the ISU Dining meal plan. By examining historical meal plan purchases, residence hall occupancy, and churn rates over semesters and years, we will identify the most popular meal plans, analyze student retention, and forecast meal plan sales and revenue for future terms. Using exploratory analysis, we will draw conclusions regarding meal plan adoption by housing location.
+
+The insights from this study are designed to help ISU Dining optimize pricing, meal plan structures, and retention strategies, ensuring financial sustainability while improving student satisfaction. This interactive dashboard visualizes trends predictions, making data-driven policy decisions more accessible.
+
+Authors
+This repository was created by a group by the name of "The Statistical Superstars"
+
+Milestones and Workflow
+The project follows iterative sprints, documented in MILESTONE.md, from initial exploratory analyses and simple price models to advanced churn and count predictions, concluding with a deployed Shiny dashboard.
+
+Data Organization
+data_folder/
+  Raw/ - Unprocessed datasets (Dining_Data, Regents_Data, Dining_Hall_Webscraped, Prices Data, Reddit_Webscraped), each with METADATA.md
+
+Regents_Data: This folder contains the Regent_University_Fall_Enrollment_By_Student_Classification_And_Resident_Status.csv file with enrollment numbers for Iowa universities for undergraduate, graduate, and professional students.
+
+Dining_Data: This folder contains Meal Plan Data for Student Project.xlsx with randomized student ID numbers, the student's purchased meal plan, and room location description.
+
+Dining_Hall_Webscraped: This folder contains web-scraped reviews of the dining halls. There are individual files for each dining hall review and a file, CleanedDiningHalls.csv with ratings and comments on overall dining.
+
+Prices_Data: This folder contains the Meal Plan Prices.xlsx file containing historic price information on meal plans.
+
+Reddit_Webscraped: need description for this folder
+
+Each folder also contains a metadata file describing the different variables of the associated dataset.
+  
+
+Transformed/ - Yearly subsets and a unified dataset for downstream analysis
+  Clean/ - CSV exports of cleaned Dining, Regents, and Price data
+
+MealPlanBySemester.csv has one row for each student ID in the data and one column for each semester in the data we received from ISU Dining. For every ID, the semester contains the Meal Plan for that semester or NA if no Meal Plan was purchased that semester. If a student purchased more than one meal plan that term, the plans are separated by commas.
+
+RoomLocationBySemester.csv has one row for each student ID in the data and one column for each semester in the data we received from ISU Dining. For every ID, the semester contains the room location of that student for that semester or NA if the student did not purchase a meal plan that semester.
+
+CleanedReviews.csv has one row per review found from Reddit, Google Reviews, or our custom survey. In each row, there is:
+
+Rating: Rating from the review. Reddit posts were ran through a sentiment analysis algorithm to get rating(see RedditGoogleJoiner.py for more details), Google reviews were scraped with a given rating out of 5 already, and our custom survey was converted to be out of 5.
+
+Body: Body of the review if the review gives any reasoning for their score.
+
+Dining Hall: Which dining hall in particular they are refering to.
+
+reviewUrl: Link to where the data came from.
+
+Date: When the review was posted.
+
+CleanedReviews.csv has 1 row per residence area on campus and one column for each semester starting in Spring 2021 and ending in Spring 2025. Each cell within this file has the total population of students residing in that hall in the given term.
+
+CleanDiningData.csv has all the meal plan information and housing location semester-wise by student. For each student, it stores a term, meal plan, housing location, and random unique ID.
+
+CurrentDiningData.csv has all the meal plan information and housing location semester-wise by student for the currently continuing plans (Does not have the discontinued plans). For each student, it stores a term, meal plan, housing location, and random unique ID.
+
+Exploratory Analysis
+Exploratory Folder/
+  Plots.R - Generates interactive visualizations (time-series trends, distributions) to uncover patterns and seasonality in meal-plan usage.
+  Summary_Stats.R - Produces summary tables and descriptive statistics to identify key variables, detect anomalies, and validate assumptions.
+Importance: EDA is critical for understanding data structure, spotting outliers, and guiding model selection processes, ensuring robust predictions.
+
+Core R Scripts
+code/
+  Churn.R - Classifies one-, two-, and multi-semester purchasers.
+  Data_Visualization.R - Cleans data and creates publication-quality plots.
+  ShinyDashboard.R & TestDashboard.R - Iterative builds of the interactive dashboard.
+  OnlineApp.R - Deployment scaffolding for shinyapps.io.
+
+Predictive Models
+code/Models/
+  LinearModel.R - Forecasts future meal-plan prices using simple linear regression.
+  priceModel.R - Regression on historical pricing to inform budget planning.
+  Markov.R - Constructs a transition matrix to model student enrollment switches between meal plans.
+  PredictCounts.R - Applies Poisson regression to predict count-based outcomes like churn or meal-plan uptake.
+Importance: These models enable precise revenue forecasting, student behavior insights, and data-driven decision-making for resource allocation.
+
+Shiny App Deployment
+code/Shiny/
+  app.R - Launches the Shiny application.
+  Supporting scripts and cleaned CSVs for seamless app functionality.
+  rsconnect/ - Configuration for remote deployment.
+
+Project and Overview
+DS4010_E is the ISU Data Science Capstone Team E repository, developed to analyze and forecast meal-plan trends, churn, and revenue for ISU Dining via interactive dashboards and predictive models.
+
+Milestones and Workflow
+The project follows iterative sprints, documented in MILESTONE.md, from initial exploratory analyses and simple price models to advanced churn and count predictions, concluding with a deployed Shiny dashboard.
+
+Data Organization
+data_folder/
+  Raw/ - Unprocessed datasets (Dining_Data, Regents_Data, Dining_Hall_Webscraped, Prices_Data, Reddit_Webscraped), each with METADATA.md
+  Transformed/ - Yearly subsets and a unified dataset for downstream analysis
+  Clean/ - CSV exports of cleaned Dining, Regents, and Price data
+
+Exploratory Analysis
+Exploratory Folder/
+  Plots.R - Generates interactive visualizations (time-series trends, distributions) to uncover patterns and seasonality in meal-plan usage.
+  Summary_Stats.R - Produces summary tables and descriptive statistics to identify key variables, detect anomalies, and validate assumptions.
+Importance: EDA is critical for understanding data structure, spotting outliers, and guiding model selection processes, ensuring robust predictions.
+
+Core R Scripts
+code/
+  Churn.R - Classifies one-, two-, and multi-semester purchasers.
+  Data_Visualization.R - Cleans data and creates publication-quality plots.
+  ShinyDashboard.R & TestDashboard.R - Iterative builds of the interactive dashboard.
+  OnlineApp.R - Deployment scaffolding for shinyapps.io.
+
+Predictive Models
+code/Models/
+  LinearModel.R - Forecasts future meal-plan prices using simple linear regression.
+  priceModel.R - Regression on historical pricing to inform budget planning.
+  Markov.R - Constructs a transition matrix to model student enrollment switches between meal plans.
+  PredictCounts.R - Applies Poisson regression to predict count-based outcomes like churn or meal-plan uptake.
+Importance: These models enable precise revenue forecasting, student behavior insights, and data-driven decision-making for resource allocation.
+
+Shiny App Deployment
+code/Shiny/
+  app.R - Launches the Shiny application.
+  Supporting scripts and cleaned CSVs for seamless app functionality.
+  rsconnect/ - Configuration for remote deployment.
+
