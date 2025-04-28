@@ -7,8 +7,8 @@ library(glmnet)
 library(car)
 
 # read in the data
-dining <- read.csv("./data_folder/clean/CurrentDiningData.csv")
-regents <- read.csv("./data_folder/clean/CleanRegents.csv")
+dining <- read.csv("../../data_folder/clean/CurrentDiningData.csv")
+regents <- read.csv("../../data_folder/clean/CleanRegents.csv")
 # make `MealPlan` and `Term` factors, and `Term` numerical from 1-8 for their corresponding factor levels
 # calculate price for each semester (price.year/2)
 dining <- dining %>%

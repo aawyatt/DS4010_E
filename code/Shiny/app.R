@@ -802,7 +802,6 @@ server <- function(input, output, session) {
       mutate(Term.Session.Description = factor(Term.Session.Description, 
                                                levels = term_order,
                                                ordered = TRUE))
-    
     return(data)
   })
   
@@ -914,18 +913,23 @@ server <- function(input, output, session) {
       summarise(n_students = n_distinct(ID)) %>%
       arrange(Term.Session.Description)
     
-    p <- ggplot(trend_data, aes(x = Term.Session.Description, y = n_students, group = 1,
-                                text = paste("Term:", Term.Session.Description,
-                                             "<br>Students:", n_students))) +
-      geom_line(color = theme_colors$primary, size = 1) +
-      geom_point(color = theme_colors$primary, size = 3) +
-      theme_minimal() +
-      labs(x = "Term", y = "Number of Students") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    p <- ggplot2::ggplot(trend_data, ggplot2::aes(x = Term.Session.Description, y = n_students, group = 1,
+                                                  text = paste("Term:", Term.Session.Description,
+                                                               "<br>Students:", n_students))) +
+      ggplot2::geom_line(color = theme_colors$primary, size = 1) +
+      ggplot2::geom_point(color = theme_colors$primary, size = 3) +
+      ggplot2::theme_minimal() +
+      ggplot2::labs(x = "Term", y = "Number of Students") +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45, hjust = 1))
+    
+    plotly_obj <- plotly::ggplotly(p, tooltip = "text")
     
     ggplotly(p, tooltip = "text") %>% 
       layout(margin = list(b = 100)) %>%
       config(displayModeBar = FALSE)
+    plotly_obj %>%
+      plotly::layout(margin = list(b = 100)) %>%
+      plotly::config(displayModeBar = FALSE)
   })
   
   # Overview Meal Plan Distribution
@@ -936,18 +940,18 @@ server <- function(input, output, session) {
       arrange(desc(count)) %>%
       head(10) # Top 10 meal plans for better visibility
     
-    p <- ggplot(meal_plan_counts, aes(x = reorder(Meal.Plan.Description, count), y = count, fill = count,
+    p <- ggplot2::ggplot(meal_plan_counts, ggplot2:: aes(x = reorder(Meal.Plan.Description, count), y = count, fill = count,
                                       text = paste("Meal Plan:", Meal.Plan.Description,
                                                    "<br>Number of Meal plans:", count))) +
-      geom_bar(stat = "identity") +
-      scale_fill_viridis_c() +
-      coord_flip() +
-      theme_minimal() +
-      labs(x = "Meal Plan", y = "Number of Meal Plans Purchased") +
-      theme(legend.position = "none")
+      ggplot2 :: geom_bar(stat = "identity") +
+      ggplot2 :: scale_fill_viridis_c() +
+      ggplot2 :: coord_flip() +
+      ggplot2 :: theme_minimal() +
+      ggplot2 :: labs(x = "Meal Plan", y = "Number of Meal Plans Purchased") +
+      ggplot2 :: theme(legend.position = "none")
     
-    ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
-  })
+    plotly_obj <-plotly::ggplotly(p, tooltip = "text")
+    plotly_obj %>% plotly::config(displayModeBar = FALSE)  })
   
   
   # ===== MEAL PLANS TAB OUTPUTS =====
@@ -975,20 +979,20 @@ server <- function(input, output, session) {
       arrange(desc(value)) %>%
       mutate(Meal.Plan.Description = factor(Meal.Plan.Description, levels = Meal.Plan.Description))
     
-    p <- ggplot(data, aes(x = Meal.Plan.Description, y = value, fill = value, text = paste0(
+    p <- ggplot2 :: ggplot(data, ggplot2 :: aes(x = Meal.Plan.Description, y = value, fill = value, text = paste0(
       "Meal Plan: ", Meal.Plan.Description, "<br>",
       "Students: ", count, "<br>",
       "Percentage: ", round((count/total)*100, 1), "%"
     ))) +
-      geom_bar(stat = "identity") +
-      scale_fill_viridis_c() +
-      coord_flip() +
-      theme_minimal() +
-      labs(x = "Meal Plan", y = y_label) +
-      theme(legend.position = "none")
-    
-    ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
-  })
+      ggplot2 :: geom_bar(stat = "identity") +
+      ggplot2 :: scale_fill_viridis_c() +
+      ggplot2 :: coord_flip() +
+      ggplot2 :: theme_minimal() +
+      ggplot2 :: labs(x = "Meal Plan", y = y_label) +
+      ggplot2 :: theme(legend.position = "none")
+    plotly_obj <-plotly::ggplotly(p, tooltip = "text")
+    plotly_obj %>% plotly::config(displayModeBar = FALSE)  
+    })
   
   # Meal Plan Trends Plot
   output$meal_plan_trends_plot <- renderPlotly({
@@ -1039,24 +1043,24 @@ server <- function(input, output, session) {
         .groups = 'drop'
       )
     
-    p <- ggplot(data, aes(x = avg_price, y = count, 
+    p <- ggplot2 :: ggplot(data, ggplot2 :: aes(x = avg_price, y = count, 
                           text = paste0(
                             "Meal Plan: ", Meal.Plan.Description, "<br>",
                             "Average Price: $", round(avg_price, 2), "<br>",
                             "Students: ", count
                           ))) +
-      geom_point(aes(size = count, color = avg_price), alpha = 0.7) +
-      geom_text_repel(aes(label = Meal.Plan.Description),
+      ggplot2 :: geom_point(aes(size = count, color = avg_price), alpha = 0.7) +
+      ggrepel :: geom_text_repel(aes(label = Meal.Plan.Description),
                       box.padding = 0.5,
                       force = 2,
                       size = 3) +
-      scale_color_viridis_c() +
-      theme_minimal() +
-      labs(x = "Average Yearly Price ($)", y = "Number of Students") +
-      scale_x_continuous(labels = dollar_format()) +
-      theme(legend.position = "bottom")
-    
-    ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
+      ggplot2 :: scale_color_viridis_c() +
+      ggplot2 :: theme_minimal() +
+      ggplot2 :: labs(x = "Average Yearly Price ($)", y = "Number of Students") +
+      ggplot2 :: scale_x_continuous(labels = dollar_format()) +
+      ggplot2 :: theme(legend.position = "bottom")
+    plotly_obj <-plotly::ggplotly(p, tooltip = "text")
+    plotly_obj %>% plotly::config(displayModeBar = FALSE)  
   })
   
   # Top 5 Meal Plans Plot
@@ -1148,19 +1152,20 @@ server <- function(input, output, session) {
       arrange(desc(value)) %>%
       mutate(Room.Location.Description = factor(Room.Location.Description, levels = Room.Location.Description))
     
-    p <- ggplot(data, aes(x = Room.Location.Description, y = value, fill = value, text = paste0(
+    p <- ggplot2 :: ggplot(data, ggplot2 :: aes(x = Room.Location.Description, y = value, fill = value, text = paste0(
       "Housing Location: ", Room.Location.Description, "<br>",
       "Students: ", count, "<br>",
       "Percentage: ", round((count/total)*100, 1), "%"
     ))) +
-      geom_bar(stat = "identity") +
-      scale_fill_viridis_c() +
-      coord_flip() +
-      theme_minimal() +
-      labs(x = "Housing Location", y = y_label) +
-      theme(legend.position = "none")
+      ggplot2 :: geom_bar(stat = "identity") +
+      ggplot2 :: scale_fill_viridis_c() +
+      ggplot2 :: coord_flip() +
+      ggplot2 :: theme_minimal() +
+      ggplot2 :: labs(x = "Housing Location", y = y_label) +
+      ggplot2 :: theme(legend.position = "none")
     
-    ggplotly(p, tooltip = "text") %>% config(displayModeBar = FALSE)
+    plotly_obj <-plotly::ggplotly(p, tooltip = "text")
+    plotly_obj %>% plotly::config(displayModeBar = FALSE)  
   })
   
   # Housing Meal Plan Plot

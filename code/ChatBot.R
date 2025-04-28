@@ -1,7 +1,7 @@
 library(httr)
 library(jsonlite)
 
-Sys.setenv(GEMINI_API_KEY = "key")
+Sys.setenv(GEMINI_API_KEY = "PUT THE KEY HERE") ##
 # Function
 gemini <- function(prompt, 
                    temperature=1,
