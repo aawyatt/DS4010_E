@@ -367,15 +367,17 @@ ui <- dashboardPage(
             title = "Top 5 Meal Plans by Term",
             status = "info",
             solidHeader = TRUE,
-            width = 6,
-            plotlyOutput("top_meal_plans_plot", height = "350px")
-          ),
+            width = 12,
+            plotlyOutput("top_meal_plans_plot", height = "500px")
+          )
+        ),
+        fluidRow(
           box(
             title = "Meal Plan Price Trends",
             status = "info",
             solidHeader = TRUE,
-            width = 6,
-            plotlyOutput("price_trends_plot", height = "350px")
+            width = 12,
+            plotlyOutput("price_trends_plot", height = "450px")
           )
         )
       ),
@@ -839,8 +841,10 @@ server <- function(input, output, session) {
   observe({
     # Update meal plan filter choices
     meal_plans <- sort(unique(filtered_data()$Meal.Plan.Description))
-    updateSelectInput(session, "mealplan_filter", choices = meal_plans, selected = meal_plans[1:min(5, length(meal_plans))])
-    #updateSelectInput(session, "starting_meal_plan", choices = meal_plans, selected = meal_plans[1])
+    current_meal_plans <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks","Cardinal","Campanile","Gold")
+    available_meals <- intersect(meal_plans, current_meal_plans)
+    updateSelectInput(session, "mealplan_filter", choices = meal_plans, selected = available_meals)
+    #updateSelectInput(session, "mealplan_filter", choices = meal_plans, selected = meal_plans[1:min(5, length(meal_plans))])
     
     # Update housing filter choices
     housing_locations <- sort(unique(filtered_data()$Room.Location.Description))
@@ -851,7 +855,9 @@ server <- function(input, output, session) {
   observeEvent(input$reset_mealplan_filters, {
     updateSelectInput(session, "mealplan_term_filter", selected = term_order)
     meal_plans <- sort(unique(filtered_data()$Meal.Plan.Description))
-    updateSelectInput(session, "mealplan_filter", selected = meal_plans[1:min(5, length(meal_plans))])
+    current_meal_plans <- c("100 Meal Blocks", "25 Meal Blocks", "50 Meal Blocks", "Cardinal", "Campanile", "Gold")
+    available_meals <- intersect(meal_plans, current_meal_plans)
+    updateSelectInput(session, "mealplan_filter", selected = available_meals)
     updateCheckboxInput(session, "show_percentage", value = TRUE)
   })
   
@@ -1090,8 +1096,10 @@ server <- function(input, output, session) {
       scale_fill_viridis_d(direction = -1) +
       theme_minimal() +
       labs(x = "Meal Plan", y = "Number of Students", fill = "Rank") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),
-            legend.position = "none")
+      theme(axis.text.x = element_text(angle = 25, hjust = 1),
+            legend.position = "none",
+            plot.margin = margin(t = 10, r = 10, b = 40, l = 10),
+            axis.title.x = element_text(margin = margin(t = 40)))
     
     ggplotly(p, tooltip = "text") %>% layout(margin = list(b = 120))
   })
@@ -1120,7 +1128,7 @@ server <- function(input, output, session) {
       scale_y_continuous(labels = dollar_format()) +
       theme_minimal() +
       labs(x = "Term", y = "Average Yearly Price ($)", color = "Meal Plan") +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+      theme(axis.text.x = element_text(angle = 25, hjust = 1),
             legend.position = "bottom")
     
     ggplotly(p, tooltip = "text") %>% layout(legend = list(orientation = "h", y = -0.2))
