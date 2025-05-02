@@ -148,10 +148,12 @@ We first calculated the proportion of students who transitioned to one of the si
 ![Code example for fitting the Markov model.](Code Example.png)
 Once trained, the model can predict the long-term probability of which of our seven states (six meal plans or NA) a student may be in. These probabilities are obtained through the use of the “steadyStates” function as shown below:
 
+![Long-term probabilities for each state.](Steadystates.png)
+
 ### Model Visualization
 Using the trained Markov model and the “ggplot2” package in R, we are able to create a visualization for the simulation of a student from a given starting meal plan. The figure below shows an example plot made using ggplot2 of a simulation where the term we are in is on the x-axis and the predicted meal plan of that student is on the y-axis with a line to tract the progression.
 
-![Code example for fitting the Markov modeMarkov_Visual.png.png)
+![Plot of trained Markov model simulation.](Markov_Visual.png)
 
 ### Price Prediction Model (Linear Regression)
 
