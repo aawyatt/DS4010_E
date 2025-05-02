@@ -139,3 +139,13 @@ summary(finalModel)
 
 In the Shiny dashboard, users can input a meal plan, semester, year, and the number of undergraduate students to predict the number of meal plans purchased.
 
+## Markov Model
+To gain a better understanding and better simulate the churn of meal plans amongst students, we developed a Markov model based on the proportions at which students transition from one meal plan to another from Spring 2024 to Fall 2024. A Markov model is a statistical model that describes a sequence of possible events, where the probability of each event depends only on the state attained in the previous event. The purpose of this model in this project is to help provide a predictive analysis of which meal plans may be most popular in the long term, as well as a simulation of how a student may progress through meal plans across four years, to help ISU Dining in deciding which meal plans may need to be modified and which as good as they currently are.
+
+### Model Description & Implementation
+We first calculated the proportion of students who transitioned to one of the six current meal plans in the Fall 2024 term, starting from the Spring 2024 term, for each meal plan. We still included “NA” values as a current student may choose not to have a meal plan in a semester. We get the proportions by filtering the full data for only the Spring 2024 and Fall 2024 terms, getting the counts of occurrences of each combination of meal plans, and then finally dividing each by the total number of occurrences where the meal plan was in the Spring 2024 starting term. We still The model is then fitted using the new function in base R, being given “markovchain” as the object of interest, the 7 meal plans as the states at which we can be in, and our calculated proportion in the form of a matrix known as the “Transition Matrix” using the matrix() function in base R.
+
+Once trained, the model can predict the long-term probability of which of our seven states (six meal plans or NA) a student may be in. These probabilities are obtained through the use of the “steadyStates” function as shown below:
+
+### Model Visualization
+Using the trained Markov model and the “ggplot2” package in R, we are able to create a visualization for the simulation of a student from a given starting meal plan. The figure below shows an example plot made using ggplot2 of a simulation where the term we are in is on the x-axis and the predicted meal plan of that student is on the y-axis with a line to tract the progression.
