@@ -370,6 +370,6 @@ The public dashboard is contained in this link: https://ds4010groupe.shinyapps.i
 ### Acknowledgement 
 Our group would like to acknowledge the following people for supplying us with ISU's dining and housing data that was used to create each of the models and visuals during this project. Without them this project would not have been possible:
 
-- Rodekamp, Karen S [DNING]
-- Schott, Mary A [DNING]
-- Chappell, Joshua M [RES H]
+- Rodekamp, Karen S [DINING]
+- Schott, Mary A [DINING]
+- Chappell, Joshua M [RESIDENCE HALL]
