@@ -209,3 +209,69 @@ if (!is.null(input$inflation)) {
 }
 ```
 
+
+## Dashboard
+
+The dashboard for the Statistical Superstars project was built using **R Shiny**, a web application framework for R. Shiny was selected due to its flexibility, ability to integrate R code directly into web interfaces, and its support for building dynamic, interactive dashboards, aligning perfectly with our project goals.
+
+### Dashboard Construction and Layout
+
+The dashboard consists of several structured **tabs** to organize content meaningfully:
+
+<div style= "float:right;position: relative; top: -80px;">
+```{r, echo=FALSE}
+knitr::include_graphics("dashboard.png")
+```
+</div>
+
+-   **Overview:** Introduction to the project, purpose, assumptions, and key definitions.
+-   **Explanatory Analysis:**
+    -   **Meal Plans:** Visualizations of meal plan distributions, trends over time, and price analyses.
+    -   **Housing:** Exploration of student housing distributions and their relation to meal plan selections.
+-   **Predictive Models:**
+    -   **Churn Analysis:** Markov Chain simulations for meal plan transitions.
+    -   **Meal Plan Prediction:** Predictive models for the number of meal plans purchased (Poisson) and price forecasting (Linear Regression).
+-   **Conclusion:** Summary of findings, key insights, and recommendations based on analysis and model results.
+
+This layout directly supports the project goals by separating **exploratory** and **predictive** components and providing the audience with a clear, logical path from understanding the data to making future decisions.
+
+### Logic Behind Layout
+
+The dashboard is designed to progressively guide users from: 1. Understanding the background and purpose (Overview), 2. Exploring the historical data (Explanatory Analysis), 3. Predicting future trends (Predictive Models), 4. Summarizing takeaways (Conclusion).
+
+By moving from simple explanations to complex modeling, the dashboard ensures accessibility for both statistical and non-statistical users, supporting ISU Dining's decision-making process.
+
+### User Inputs and Controls
+
+The dashboard offers multiple types of **user inputs** to make exploration customizable:
+
+-   **Select Inputs (Categorical):** Users can select specific semesters, meal plans, and housing locations to filter the data displayed.
+-   **Numeric Inputs:** For model components, users can input inflation factors for price prediction or set seeds for Markov simulations.
+-   **Multiple Selections:** Users can select multiple meal plans or housing locations to compare.
+-   **Sliders and Ranges:** Some filters allow users to select a range of semesters or years for more dynamic analysis.
+-   **Optional Text Inputs:** Setting random seeds for simulations.
+
+These inputs allow users to personalize the analysis based on their needs and support project goals by enabling flexible scenario analysis for ISU Dining.
+
+### Outputs
+
+The dashboard dynamically displays the following **outputs**:
+
+-   **Interactive Plots (Plotly):** Distribution graphs, time-series plots, model prediction plots, and Markov simulation graphs.
+-   **Tables:** Snapshots of the underlying data, summaries of model outputs (e.g., coefficients, prediction tables).
+-   **Text Outputs:** Summaries and interpretations for visualizations, conclusions from model results.
+-   **Chatbot Summaries:** An AI chatbot provides simplified descriptions of graphs for better accessibility.
+
+As users adjust inputs, **plots, tables, and texts** immediately update to reflect new selections, making the dashboard highly responsive and user-centered.
+
+### Technology and Hosting
+
+-   **Technology Stack:** RStudio, Shiny, Plotly, dplyr, tidyr, ggplot2, shinydashboard, Bootstrap themes.
+-   **Hosting:** Deployed on [ShinyApps.io](https://www.shinyapps.io/), providing public access without the need for local hosting.
+
+### Assessment of Technology
+
+Overall, **R Shiny** provided a smooth development experience for building the dashboard. Shiny’s **ease of use** was critical — it allowed us to integrate plots, models, and text with relatively minimal code overhead. The **features** like reactive inputs and Plotly for interactive graphs made the user experience dynamic and intuitive. **Speed** was generally sufficient for the dashboard’s size, although model simulations like Markov chains can take slightly longer depending on the number of simulations.
+
+Overall, Shiny was an excellent choice for this project, balancing power, interactivity, and usability for both the developers and the intended ISU Dining audience.
+
