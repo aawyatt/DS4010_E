@@ -275,3 +275,33 @@ Overall, **R Shiny** provided a smooth development experience for building the d
 
 Overall, Shiny was an excellent choice for this project, balancing power, interactivity, and usability for both the developers and the intended ISU Dining audience.
 
+
+## Next Steps
+
+###Overview
+
+Currently, our team is confident in our dashboard with regard to its abilities and overall setup, however, we could make additional meaningful implementations given more time. 
+
+
+###Data 
+Our current data sources are sufficient for the needs of our dashboard. However, there were steps of our data collection that, if provided, would have enabled us to look into deeper trends. For the sake of student privacy, the IDs for each student were randomized in the data set provided by Iowa State University Dining. However, if this was not the case, we could look into more relationships like the correlation between an individual's year in school and meal plans, the correlation between majors and meal plan purchases, or being able to predict the meal plan based on the extended features of each individual. With more time, maybe these ideas, along with the insights of our current dashboard, could be proposed to ISU dining to have access to more insightful data.
+
+
+Building on the search for more data, our team was working with the housing department during the preliminary weeks of the project with the intention of trying to get more information on reviews of the dining halls. The useful information from this data would have been individual survey results like:
+
+
+
+-    Future living plans (whether students are planning to return to living on campus)
+-    Reasons why students are moving off campus
+-    Satisfaction with ISU Dining and parts of the meal plan
+
+These results would have provided more evidence supporting our findings. Put simply, it would enable ISU dining to not only see the trends but also recognize the issues that could be causing these trends. This data was unable to be collected because of the randomization of student IDs; with more time and working closely with ISU Dining, we believe that that could eventually be solved.
+
+
+
+###UI
+
+As said previously in the report, our team has incorporated a chatbot into our dashboard. Currently, the context of the bot goes as far as summarizing the current file layout, model layout, and the findings of each section of the dashboard. This is a good start; however, our team proposed giving the bot the ability to "see" the dynamically changing graphs to aid the user's understanding of the specific relationships that they input into the model. This is within the realm of the bot API; our team was simply not able to add this feature with the constraint of time.
+
+
+
