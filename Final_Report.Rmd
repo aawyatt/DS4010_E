@@ -6,3 +6,59 @@ output: html_document
 
 #### Introduction
 Meal plans are an integral part of almost every college student on the Iowa State campus. Along with that, there are many varieties of meal plans to fit a specific student’s needs.  This project aims to answer the question of “What is the general popularity of the meal plans of Iowa State University?” as well as be able to predict the counts and pricing of each of the current meal plans at ISU in the near future. The answers to these questions are intended to help the administration of ISU Dining make more informed decisions about the build of and changes to the meal plans they currently offer. This would be through a one-stop interactive dashboard made to help simplify current data and provide simple visuals of predictive price and count models of each meal plan. This unique project simulates working with a client on a real-world problem. During this project, we were able to gain experience working with client-supplied data while formulating our questions and processing data based on the client’s requests or interests. Additionally, this project also introduces implementing an AI chatbot into our dashboard to act as an assistant to users by supplying a simplified summary of our visualizations to make the dashboard more friendly to a wider range of users.
+
+# Data Pipeline
+
+## Data Collection
+
+### Dining Data
+
+Karen Rodekamp and Mary Schott from ISU Dining provided an Excel file containing one observation for each student who purchased a meal plan from Fall 2021 through Spring 2025. Each term was held in an individual Excel Sheet within the file. We combined each sheet into one .csv file and only kept fields we were interested in, dropping `Entry Status Description`. The following fields remained:
+
+`ID`: randomized ID representing a student at Iowa State. This value represents the same student across all terms. Example: **ID=10090081**
+
+`Meal.Plan.Description`: name of meal plan purchased by a student. Included values in the original data were **Cardinal, Gold, Campanile, Bronze, Cyclone, Silver, CyFlex, Flex Blocks, Meal Blocks, and RA Plans**. We dropped RA Plans and CyFlex due to low popularity and combined Flex Blocks and Meal Blocks for consistency as they are similar meal plan types. The remaining values are **Cardinal, Gold, Campanile, Bronze, Cyclone, Silver, 25 Meal Blocks, 50 Meal Blocks, and 100 Meal Blocks**.
+
+`Term.Session.Description`: term which the meal plan was purchased in. Possible values: **Fall 2021, Spring 2022, Fall 2022, Spring 2023, Fall 2023, Spring 2024, Fall 2024, Spring 2025**.
+
+`Room.Location.Description`: housing location of student purchasing meal plan. Possible values include on-campus residence halls, **Barton, Birch, Buchanan, Eaton, Elm, Freeman, Friley, Geoffrey, Helser, Larch, Linden, Lyon, Maple, Martin, Oak, Roberts, Wallace, Welch, Willow, and Wilson**; campus apartment housing, **Fredericksen Court, Schilletter Village, and University Village**; and **Off-Campus**.
+
+We also received historical price data for each of the meal plans from ISU Dining. This file included each meal plan, the academic year (e.g., 2024-2025), the price for the entire year, and the price for each semester.
+
+We joined the yearly price information with the meal plan data to get our final data set, which has 59,246 total observations.
+
+`Price.Year`: the annual price of a meal plan, in dollars. Example: **\$3928**
+
+```{r, echo=FALSE}
+library(knitr)
+data <- read.csv("DS4010_E/data_folder/clean/CurrentDiningData.csv")
+
+kable(data[1:5, ], caption = "ISU Dining Data")
+
+```
+
+### Regents Data
+
+We downloaded public data owned by the Iowa Board of Regents from *data.iowa.gov* containing enrollment numbers by student classification. We kept only Iowa State University information and the years we were interested in.
+
+```{r, echo=FALSE}
+data <- read.csv("DS4010_E/data_folder/clean/CleanRegents.csv")
+data1 <- data[,2:4]
+kable(data1, caption = "Iowa Board of Regents Enrollment Data")
+
+```
+
+### Housing Populations
+
+We were interested in the relationship between on-campus locations and dining plans. Joshua Chappell with the Department of Residence provided us with the population of each residence hall for the terms we were interested in.
+
+```{r}
+data <- read.csv("DS4010_E/data_folder/clean/HousingPopulations.csv")
+kable(data[1:5,], caption = "Department of Residence, Housing Populations")
+```
+
+### Assumptions
+
+Due to the limited information we were given about the students in our data set, a few assumptions had to be made. All observations in the data set from ISU Dining are assumed to be undergraduate students so the Iowa Board of Regents data could be used for total undergraduate count. All students are also treated independently.
+
+As stated earlier, RA plans and CyFlex were excluded due to their small sample size, and Flex Blocks were grouped with Meal Blocks for consistency.
