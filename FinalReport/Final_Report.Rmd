@@ -2,6 +2,7 @@
 title: "ISU Dining Capstone"
 authors: "Alison Wyatt, Cael Leistikow, Jonah Landas, Srika Raja"
 output: html_document
+mainfont: Times New Roman
 ---
 <style>
 body {
