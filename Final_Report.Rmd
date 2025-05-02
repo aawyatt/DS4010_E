@@ -62,3 +62,80 @@ kable(data[1:5,], caption = "Department of Residence, Housing Populations")
 Due to the limited information we were given about the students in our data set, a few assumptions had to be made. All observations in the data set from ISU Dining are assumed to be undergraduate students so the Iowa Board of Regents data could be used for total undergraduate count. All students are also treated independently.
 
 As stated earlier, RA plans and CyFlex were excluded due to their small sample size, and Flex Blocks were grouped with Meal Blocks for consistency.
+
+## Poisson Regression Model
+
+We were interested in predicting how many of each meal plan would be purchased in a given term. A Poisson Model was used to predict the number of meal plan purchases. Based on historical information, users can predict how many of a specific meal plan in a given semester will be purchased. 
+The historic data is visualized below.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+# read in the data
+dining <- read.csv("DS4010_E/data_folder/clean/CurrentDiningData.csv")
+regents <- read.csv("DS4010_E/data_folder/clean/CleanRegents.csv")
+# make `MealPlan` and `Term` factors, and `Term` numerical from 1-8 for their corresponding factor levels
+# calculate price for each semester (price.year/2)
+dining <- dining %>%
+  mutate(MealPlan = factor(dining$Meal.Plan.Description),
+         Term = as.numeric(factor(dining$Term.Session.Description, 
+                                  levels = c("Fall 2021", "Spring 2022", "Fall 2022", "Spring 2023", 
+                                             "Fall 2023", "Spring 2024", "Fall 2024", "Spring 2025"))),
+         Price = Price.Year/2
+  )
+
+# make frequency table for MealPlan and Term
+
+counts <- as.data.frame(table(dining$MealPlan, dining$Term)) %>%
+  rename(MealPlan = Var1, Term = Var2, MealPlanCount = Freq) %>%
+  mutate(Term = as.numeric(Term), 
+         MealPlanCount = ifelse(MealPlanCount==0, NA, MealPlanCount))
+
+undergradCounts <- regents %>%
+  filter(Student.Classification=="Undergraduate") %>%
+  dplyr::select(Year, count) %>%
+  slice(rep(1:n(), each=2)) %>%
+  mutate(Term = c(1:8),
+         UndergradCount=count) %>%
+  dplyr::select(-count)
+
+data.final <- counts %>%
+  left_join(dining %>% dplyr::select(MealPlan, Term, Price) %>% distinct(), by = c("MealPlan", "Term")) %>%
+  dplyr::select(MealPlan, Term, Price, MealPlanCount) %>%
+  left_join(undergradCounts, by="Term") %>%
+  mutate(Semester = ifelse(Term %% 2 == 0, "Spring", "Fall")) %>%
+  dplyr::select(MealPlan, Term, Semester, Year, MealPlanCount, UndergradCount)
+g <- ggplot(data.final,
+            aes(x = Year,
+                y = MealPlanCount,
+                color = MealPlan,
+                shape = Semester,
+                group = interaction(MealPlan, Semester))) + 
+  geom_point(position = position_jitterdodge(
+    jitter.width = 0.1, jitter.height = 0,
+    dodge.width = 0.1)) +
+  geom_line() + 
+  scale_y_log10()
+
+g
+```
+
+### Model Description and Implementation
+Poisson Regressions can be used when a response variable is a count with no clear maximum. The response variable, in this context, $Y_i$, the number of meal plans purchased, is assumed to follow a Poisson distribution: $Y_i \sim Poisson(\mu_i)$ where the expected count of $Y_i$ is $E(Y_i)=\mu_i$.Poisson Models also assume that the observations are independent of one another and the mean of the Poisson variable is equal to its variance.
+
+Model selection was used to choose the most important explanatory variables when predicting meal plan count. The explanatory variables selected are the Meal Plan, Semester, Year, and the number of undergraduate students. The final model is as follows: $log(\hat{MealPlanCount})= \hat{\beta_0} + \hat{\beta_1}MealPlan + \hat{\beta_2}Semester+\hat{\beta_3}Year+\hat{\beta_4}UndergradCount$
+
+The model is built in R using the `glm()` function. `data.clean` is the dining data with NA values omitted.
+
+`finalModel <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount, data=data.clean, family=poisson(link="log"))`
+
+```{r, echo=FALSE}
+data.clean <- na.omit(data.final)
+finalModel <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
+                  data=data.clean, family=poisson(link="log"))
+
+summary(finalModel)
+```
+
+In the Shiny dashboard, users can input a meal plan, semester, year, and the number of undergraduate students to predict the number of meal plans purchased.
+
