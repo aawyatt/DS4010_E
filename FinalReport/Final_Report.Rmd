@@ -31,7 +31,7 @@ We joined the yearly price information with the meal plan data to get our final 
 
 ```{r, echo=FALSE}
 library(knitr)
-data <- read.csv("DS4010_E/data_folder/clean/CurrentDiningData.csv")
+data <- read.csv("../data_folder/clean/CurrentDiningData.csv")
 
 kable(data[1:5, ], caption = "ISU Dining Data")
 
@@ -42,7 +42,7 @@ kable(data[1:5, ], caption = "ISU Dining Data")
 We downloaded public data owned by the Iowa Board of Regents from *data.iowa.gov* containing enrollment numbers by student classification. We kept only Iowa State University information and the years we were interested in.
 
 ```{r, echo=FALSE}
-data <- read.csv("DS4010_E/data_folder/clean/CleanRegents.csv")
+data <- read.csv("../data_folder/clean/CleanRegents.csv")
 data1 <- data[,2:4]
 kable(data1, caption = "Iowa Board of Regents Enrollment Data")
 
@@ -52,8 +52,8 @@ kable(data1, caption = "Iowa Board of Regents Enrollment Data")
 
 We were interested in the relationship between on-campus locations and dining plans. Joshua Chappell with the Department of Residence provided us with the population of each residence hall for the terms we were interested in.
 
-```{r}
-data <- read.csv("DS4010_E/data_folder/clean/HousingPopulations.csv")
+```{r, echo=FALSE}
+data <- read.csv("../data_folder/clean/HousingPopulations.csv")
 kable(data[1:5,], caption = "Department of Residence, Housing Populations")
 ```
 
@@ -72,8 +72,8 @@ The historic data is visualized below.
 library(ggplot2)
 library(dplyr)
 # read in the data
-dining <- read.csv("DS4010_E/data_folder/clean/CurrentDiningData.csv")
-regents <- read.csv("DS4010_E/data_folder/clean/CleanRegents.csv")
+dining <- read.csv("../data_folder/clean/CurrentDiningData.csv")
+regents <- read.csv("../data_folder/clean/CleanRegents.csv")
 # make `MealPlan` and `Term` factors, and `Term` numerical from 1-8 for their corresponding factor levels
 # calculate price for each semester (price.year/2)
 dining <- dining %>%
