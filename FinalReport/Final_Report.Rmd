@@ -149,3 +149,63 @@ Once trained, the model can predict the long-term probability of which of our se
 
 ### Model Visualization
 Using the trained Markov model and the “ggplot2” package in R, we are able to create a visualization for the simulation of a student from a given starting meal plan. The figure below shows an example plot made using ggplot2 of a simulation where the term we are in is on the x-axis and the predicted meal plan of that student is on the y-axis with a line to tract the progression.
+
+### Price Prediction Model (Linear Regression)
+
+To forecast future meal plan pricing, a linear regression model was developed to predict the expected price of a selected meal plan type for an upcoming term (e.g., Fall 2025). Based on historical pricing data, the model optionally incorporates an inflation factor, allowing ISU Dining to simulate and plan offerings in response to anticipated pricing trends and economic conditions.
+
+#### Model Description
+
+We implemented a **simple linear regression model** of the form:
+
+$$
+\text{Price}_{i} = \beta_0 + \beta_1 \cdot \text{Term}_i + \epsilon_i
+$$
+
+For each meal plan type, we fit a separate linear model using past prices and term (numeric encoding of semester/year). The model assumes a linear relationship between the term and the price of the meal plan. Users may also optionally apply an **inflation adjustment**, allowing them to forecast prices based on projected inflation beyond historical trends.
+
+-   **Response Variable:** `Price` (numeric, in dollars)
+-   **Explanatory Variable:** `Term` (e.g., Spring 2021 = 1, ..., Fall 2024 = 8)
+-   **Model Type:** Simple linear regression
+-   **Optional User Input:** Inflation factor (numeric multiplier on predicted price)
+
+This model assumes:
+
+-   Linearity between term and price
+
+-   Normally distributed residuals
+
+-   Homoscedasticity (constant variance)
+
+-   Independence of observations
+
+#### Model Implementation
+
+This model was implemented using `lm()` function from base R.
+
+**Packages Used:**
+
+-   `shiny` – For UI integration
+
+-   `dplyr`, `tidyr` – Data manipulation
+
+-   `ggplot2` – For exploratory price visualizations
+
+**Simplified Code Example:**
+
+```{r, eval=FALSE}
+# Filter the dataset for a specific meal plan
+meal_data <- filter(meal_prices_df, MealPlan == input$selected_mealplan)
+
+# Fit the linear model
+price_model <- lm(Price ~ Term, data = meal_data)
+
+# Predict price for a given term
+predicted_price <- predict(price_model, newdata = data.frame(Term = input$future_term))
+
+# Apply optional inflation adjustment
+if (!is.null(input$inflation)) {
+  predicted_price <- predicted_price * input$inflation
+}
+```
+
