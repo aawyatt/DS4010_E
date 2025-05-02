@@ -329,6 +329,14 @@ Overall, **R Shiny** provided a smooth development experience for building the d
 
 Overall, Shiny was an excellent choice for this project, balancing power, interactivity, and usability for both the developers and the intended ISU Dining audience.
 
+##Learning
+
+### Dashboard Insights
+The dashboard provides several insights into the meal plan purchasing behavior of Iowa State University students. The most popular meal plans over the years provided are Cardinal and Gold, with Campanile actually surpassing Gold in the more recent terms. The data also shows that the number of meal plans has been gradually increasing over time and is predicted to continue this trend. Additionally, the dashboard provides a simulation of how students may transition between meal plans over time, which can help ISU Dining understand how to better market their meal plans to students. From our analysis, we can see that Campanile has the best retention rate of the more popular meal plans while the Block meal plans outperform **all** other meals plans.
+
+### Team Takeaways
+The team learned a lot about the process of building a dashboard and the importance of data visualization. We learned how to work with a "client" and ensure their data aligns with what we had planned for the dashboard. We also learned how to work with different data sources, how to clean and manipulate data for analysis, how to integrate a custom LLM api, how to integrate predictive models to meet real world needs, and how to put everything together using an application like R-shiny. The experience of working with a real world dataset gave the team a sense of what data science outside of course work looks like.
+
 
 ## Next Steps
 
