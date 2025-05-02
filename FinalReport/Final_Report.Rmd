@@ -2,6 +2,7 @@
 title: "Final_Report"
 authors: ""
 output: html_document
+mainfont: Times New Roman
 ---
 
 ## Introduction
