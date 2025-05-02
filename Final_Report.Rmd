@@ -1,5 +1,8 @@
 ---
 title: "Final_Report"
+authors: ""
 output: html_document
 ---
 
+#### Introduction
+Meal plans are an integral part of almost every college student on the Iowa State campus. Along with that, there are many varieties of meal plans to fit a specific student’s needs.  This project aims to answer the question of “What is the general popularity of the meal plans of Iowa State University?” as well as be able to predict the counts and pricing of each of the current meal plans at ISU in the near future. The answers to these questions are intended to help the administration of ISU Dining make more informed decisions about the build of and changes to the meal plans they currently offer. This would be through a one-stop interactive dashboard made to help simplify current data and provide simple visuals of predictive price and count models of each meal plan. This unique project simulates working with a client on a real-world problem. During this project, we were able to gain experience working with client-supplied data while formulating our questions and processing data based on the client’s requests or interests. Additionally, this project also introduces implementing an AI chatbot into our dashboard to act as an assistant to users by supplying a simplified summary of our visualizations to make the dashboard more friendly to a wider range of users.
