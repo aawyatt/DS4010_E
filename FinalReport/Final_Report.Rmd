@@ -218,14 +218,15 @@ if (!is.null(input$inflation)) {
 The dashboard for the Statistical Superstars project was built using **R Shiny**, a web application framework for R. Shiny was selected due to its flexibility, ability to integrate R code directly into web interfaces, and its support for building dynamic, interactive dashboards, aligning perfectly with our project goals.
 
 ### Dashboard Construction and Layout
+```{r, results='asis', echo=FALSE}
+cat('
+<div style="float: right; width: 140px; margin-left: 15px;">
+  <img src="dashboard.png" style="width: 100%;">
+</div>
+')
+```
 
 The dashboard consists of several structured **tabs** to organize content meaningfully:
-
-<div style= "float:right;position: relative; top: -80px;">
-```{r, echo=FALSE}
-knitr::include_graphics("dashboard.png")
-```
-</div>
 
 -   **Overview:** Introduction to the project, purpose, assumptions, and key definitions.
 -   **Explanatory Analysis:**
