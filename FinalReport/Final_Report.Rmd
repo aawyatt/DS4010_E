@@ -30,7 +30,7 @@ body .tocify {
 
 body {
   font-family: "Times New Roman", Times, serif;
-  font-size: 17px;
+  font-size: 14px;
   line-height: 1.65;
   color: #2c2c2c;
   background-color: #fafafa;
