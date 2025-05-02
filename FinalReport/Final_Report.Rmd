@@ -312,11 +312,12 @@ Building on the search for more data, our team was working with the housing depa
 
 These results would have provided more evidence supporting our findings. Put simply, it would enable ISU dining to not only see the trends but also recognize the issues that could be causing these trends. This data was unable to be collected because of the randomization of student IDs; with more time and working closely with ISU Dining, we believe that that could eventually be solved.
 
-
-
 ### UI
 
 As said previously in the report, our team has incorporated a chatbot into our dashboard. Currently, the context of the bot goes as far as summarizing the current file layout, model layout, and the findings of each section of the dashboard. This is a good start; however, our team proposed giving the bot the ability to "see" the dynamically changing graphs to aid the user's understanding of the specific relationships that they input into the model. This is within the realm of the bot API; our team was simply not able to add this feature with the constraint of time.
 
+### Availability
+All documentation for this project can be found in the GitHub repository https://github.com/aawyatt/DS4010_E/tree/main. Within the repository, the code for the dashboard is within Code → Shiny. 
+The public dashboard is contained in this link: https://ds4010groupe.shinyapps.io/shiny/. We plan to keep the link public, but we will not receive additional data for ISU Dining, so the dashboard will not include any future data.
 
 
