@@ -171,7 +171,8 @@ g
 #### Model Description and Implementation
 Poisson Regressions can be used when a response variable is a count with no clear maximum. The response variable, in this context, $Y_i$, the number of meal plans purchased, is assumed to follow a Poisson distribution: $Y_i \sim Poisson(\mu_i)$ where the expected count of $Y_i$ is $E(Y_i)=\mu_i$.Poisson Models also assume that the observations are independent of one another and the mean of the Poisson variable is equal to its variance.
 
-Model selection was used to choose the most important explanatory variables when predicting meal plan count. The explanatory variables selected are the Meal Plan, Semester, Year, and the number of undergraduate students. The final model is as follows: $log(\hat{MealPlanCount})= \hat{\beta_0} + \hat{\beta_1}MealPlan + \hat{\beta_2}Semester+\hat{\beta_3}Year+\hat{\beta_4}UndergradCount$
+Model selection was used to choose the most important explanatory variables when predicting meal plan count. The explanatory variables selected are the Meal Plan, Semester, Year, and the number of undergraduate students. The final model is as follows: 
+$log(\hat{MealPlanCount})= \hat{\beta_0} + \hat{\beta_1}MealPlan + \hat{\beta_2}Semester+\hat{\beta_3}Year+\hat{\beta_4}UndergradCount$
 
 The model is built in R using the `glm()` function. `data.clean` is the dining data with NA values omitted.
 
@@ -329,7 +330,7 @@ Overall, **R Shiny** provided a smooth development experience for building the d
 
 Overall, Shiny was an excellent choice for this project, balancing power, interactivity, and usability for both the developers and the intended ISU Dining audience.
 
-##Learning
+## Learning
 
 ### Dashboard Insights
 The dashboard provides several insights into the meal plan purchasing behavior of Iowa State University students. The most popular meal plans over the years provided are Cardinal and Gold, with Campanile actually surpassing Gold in the more recent terms. The data also shows that the number of meal plans has been gradually increasing over time and is predicted to continue this trend. Additionally, the dashboard provides a simulation of how students may transition between meal plans over time, which can help ISU Dining understand how to better market their meal plans to students. From our analysis, we can see that Campanile has the best retention rate of the more popular meal plans while the Block meal plans outperform **all** other meals plans.
