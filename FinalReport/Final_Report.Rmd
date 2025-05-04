@@ -363,11 +363,11 @@ These results would have provided more evidence supporting our findings. Put sim
 
 As said previously in the report, our team has incorporated a chatbot into our dashboard. Currently, the context of the bot goes as far as summarizing the current file layout, model layout, and the findings of each section of the dashboard. This is a good start; however, our team proposed giving the bot the ability to "see" the dynamically changing graphs to aid the user's understanding of the specific relationships that they input into the model. This is within the realm of the bot API; our team was simply not able to add this feature with the constraint of time.
 
-### Availability
+## Availability
 All documentation for this project can be found in the GitHub repository https://github.com/aawyatt/DS4010_E/tree/main. Within the repository, the code for the dashboard is within Code → Shiny. 
 The public dashboard is contained in this link: https://ds4010groupe.shinyapps.io/shiny/. We plan to keep the link public, but we will not receive additional data for ISU Dining, so the dashboard will not include any future data.
 
-### Acknowledgement 
+## Acknowledgement 
 Our group would like to acknowledge the following people for supplying us with ISU's dining and housing data that was used to create each of the models and visuals during this project. Without them this project would not have been possible:
 
 - Rodekamp, Karen S [DINING]
