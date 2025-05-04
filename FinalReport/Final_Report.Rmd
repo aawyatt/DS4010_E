@@ -1,6 +1,6 @@
 ---
 title: "ISU Dining Capstone"
-authors: "Alison Wyatt, Cael Leistikow, Jonah Landas, Srika Raja"
+author: "Alison Wyatt, Cael Leistikow, Jonah Landas, Srika Raja"
 output: 
   html_document:
     theme: cosmo  
