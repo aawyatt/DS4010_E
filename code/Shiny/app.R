@@ -1761,7 +1761,7 @@ server <- function(input, output, session) {
     sim <- rmarkovchain(n = 4, object = mc, t0 = input$starting_meal_plan, include.t0 = TRUE)
     sim_df <- data.frame(Time = 0:4, State = sim)
     
-    p <- ggplot(sim_df, aes(x = Time, y = State, group = 1,
+    p <- ggplot(sim_df, aes(x = Time, y = fct_rev(State), group = 1,
                             text = paste("Term Step:", Time, "<br>Meal Plan:", State))) +
       geom_line(color = "#C8102E", size = 1) +
       geom_point(size = 3, color = "#F1BE48") +
