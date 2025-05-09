@@ -1,5 +1,5 @@
 ---
-title: "ISU Dining Capstone"
+title: "ISU Dining"
 author: "Alison Wyatt, Cael Leistikow, Jonah Landas, Srika Raja"
 output: 
   html_document:
