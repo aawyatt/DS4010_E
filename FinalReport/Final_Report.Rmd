@@ -202,7 +202,7 @@ Once trained, the model can predict the long-term probability of which of our se
 #### Model Visualization
 Using the trained Markov model and the “ggplot2” package in R, we are able to create a visualization for the simulation of a student from a given starting meal plan. The figure below shows an example plot made using ggplot2 of a simulation where the term we are in is on the x-axis and the predicted meal plan of that student is on the y-axis with a line to tract the progression.
 
-![Plot of trained Markov model simulation.](Markov_Visual.png)
+![Plot of trained Markov model simulation.](Better_Visual.png)
 
 ### Price Prediction Model (Linear Regression)
 
