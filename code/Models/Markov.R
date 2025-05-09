@@ -98,13 +98,13 @@ library(ggplot2)
 
 simulated_data <- data.frame(Time = 1:4, State = modelStates[1:4], 4)
                             
-
-ggplot(data = simulated_data, aes(x = Time, y = State, color = State)) +
+library(forcats)
+ggplot(data = simulated_data, aes(x = Time, y = fct_rev(State), color = State)) +
   geom_point() +
   geom_line() + 
   labs(title = "State Evolution Over Time", x = "Time", y = "State") +
   theme_minimal()
-
+ 
 
 
 
