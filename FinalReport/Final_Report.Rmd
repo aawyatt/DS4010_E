@@ -341,10 +341,7 @@ The team learned a lot about the process of building a dashboard and the importa
 
 ## Next Steps
 
-### Overview
-
 Currently, our team is confident in our dashboard with regard to its abilities and overall setup, however, we could make additional meaningful implementations given more time. 
-
 
 ### Data 
 Our current data sources are sufficient for the needs of our dashboard. However, there were steps of our data collection that, if provided, would have enabled us to look into deeper trends. For the sake of student privacy, the IDs for each student were randomized in the data set provided by Iowa State University Dining. However, if this was not the case, we could look into more relationships like the correlation between an individual's year in school and meal plans, the correlation between majors and meal plan purchases, or being able to predict the meal plan based on the extended features of each individual. With more time, maybe these ideas, along with the insights of our current dashboard, could be proposed to ISU dining to have access to more insightful data.
