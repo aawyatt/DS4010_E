@@ -53,9 +53,9 @@ code {
 ## Introduction
 Meal plans are an integral part of almost every college student on the Iowa State campus. Along with that, there are many varieties of meal plans to fit a specific student’s needs.  This project aims to answer the question of “What is the general popularity of the meal plans of Iowa State University?” as well as be able to predict the counts and pricing of each of the current meal plans at ISU in the near future. The answers to these questions are intended to help the administration of ISU Dining make more informed decisions about the build of and changes to the meal plans they currently offer. This would be through a one-stop interactive dashboard made to help simplify current data and provide simple visuals of predictive price and count models of each meal plan. This unique project simulates working with a client on a real-world problem. During this project, we were able to gain experience working with client-supplied data while formulating our questions and processing data based on the client’s requests or interests. Additionally, this project also introduces implementing an AI chatbot into our dashboard to act as an assistant to users by supplying a simplified summary of our visualizations to make the dashboard more friendly to a wider range of users.
 
-## Data Pipeline
+## Data Collection
 
-### Data Collection
+Several data sources were used to assist in analyzing trends within ISU Dining and answering our research question. We received data from ISU Dining and the Department of Residence and downloaded data from the Iowa Board of Regents website.
 
 #### Dining Data
 
@@ -75,12 +75,14 @@ We joined the yearly price information with the meal plan data to get our final 
 
 `Price.Year`: the annual price of a meal plan, in dollars. Example: \$3928
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 library(knitr)
-data <- read.csv("../data_folder/clean/CurrentDiningData.csv")
-
-kable(data[1:5, ], caption = "ISU Dining Data")
-
+library(kableExtra)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+df <- data.frame(read.csv("../data_folder/clean/CurrentDiningData.csv"))
+df %>% head(6) %>% kbl() %>% kable_styling(full_width = F)
 ```
 
 #### Regents Data
@@ -88,9 +90,10 @@ kable(data[1:5, ], caption = "ISU Dining Data")
 We downloaded public data owned by the Iowa Board of Regents from *data.iowa.gov* containing enrollment numbers by student classification. We kept only Iowa State University information and the years we were interested in.
 
 ```{r, echo=FALSE}
-data <- read.csv("../data_folder/clean/CleanRegents.csv")
-data1 <- data[,2:4]
-kable(data1, caption = "Iowa Board of Regents Enrollment Data")
+df <- data.frame(read.csv("../data_folder/clean/CleanRegents.csv"))
+df2 <- df %>% dplyr::select(Year, Student.Classification, count) %>% pivot_wider(names_from=Year, values_from = count)
+
+df2 %>% kbl() %>% kable_styling(full_width = F)
 
 ```
 
@@ -99,8 +102,8 @@ kable(data1, caption = "Iowa Board of Regents Enrollment Data")
 We were interested in the relationship between on-campus locations and dining plans. Joshua Chappell with the Department of Residence provided us with the population of each residence hall for the terms we were interested in.
 
 ```{r, echo=FALSE}
-data <- read.csv("../data_folder/clean/HousingPopulations.csv")
-kable(data[1:5,], caption = "Department of Residence, Housing Populations")
+df <- read.csv("../data_folder/clean/HousingPopulations.csv")
+df %>% head(6) %>% kbl() %>% kable_styling(full_width = F)
 ```
 
 ### Assumptions
@@ -111,14 +114,15 @@ As stated earlier, RA plans and CyFlex were excluded due to their small sample s
 
 ## Models
 
+Using our cleaned data, we built three models to predict meal plan trends and answer questions we had. A Poisson Regression was used to predict future meal plan purchases. A Markov model simulates a student's future meal plan purchases, based on their current meal plan. Finally, a linear regression was utilized to predict meal plan prices, which was utilized in combination with meal plan count predictions to predict income for ISU Dining.
+
 ### Poisson Regression Model
 
 We were interested in predicting how many of each meal plan would be purchased in a given term. A Poisson Model was used to predict the number of meal plan purchases. Based on historical information, users can predict how many of a specific meal plan in a given semester will be purchased. 
 The historic data is visualized below.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-library(ggplot2)
-library(dplyr)
+
 # read in the data
 dining <- read.csv("../data_folder/clean/CurrentDiningData.csv")
 regents <- read.csv("../data_folder/clean/CleanRegents.csv")
@@ -176,14 +180,23 @@ $log(\hat{MealPlanCount})= \hat{\beta_0} + \hat{\beta_1}MealPlan + \hat{\beta_2}
 
 The model is built in R using the `glm()` function. `data.clean` is the dining data with NA values omitted.
 
-`finalModel <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount, data=data.clean, family=poisson(link="log"))`
+`finalModel <- glm(` <br>
+`  MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,` <br>
+`  data = data.clean,` <br>
+`  family = poisson(link = "log"))`
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning = FALSE}
+library(broom)
+library(knitr)
+library(kableExtra)
 data.clean <- na.omit(data.final)
 finalModel <- glm(MealPlanCount ~ MealPlan + Semester + Year + UndergradCount,
                   data=data.clean, family=poisson(link="log"))
 
-summary(finalModel)
+tidy(finalModel) %>%
+  mutate(across(where(is.numeric), round, 4)) %>%
+  kable(caption = "Poisson Regression Results", align = 'lcccc') %>%
+  kable_styling(full_width = F)
 ```
 
 In the Shiny dashboard, users can input a meal plan, semester, year, and the number of undergraduate students to predict the number of meal plans purchased.
