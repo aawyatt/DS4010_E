@@ -212,7 +212,11 @@ Once trained, the model can predict the long-term probability of which of our se
 
 ![Code to obtain long-term probabilities](States.png)
 
+<br>
+
 ![Resulting probabilities for each meal plan](Steadystates.png)
+
+<br>
 
 #### Model Visualization
 Using the trained Markov model and the “ggplot2” package in R, we are able to create a visualization for the simulation of a student from a given starting meal plan. The figure below shows an example plot made using ggplot2 of a simulation where the term we are in is on the x-axis and the predicted meal plan of that student is on the y-axis with a line to tract the progression.
