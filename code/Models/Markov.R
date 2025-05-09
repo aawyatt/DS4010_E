@@ -99,7 +99,7 @@ library(ggplot2)
 simulated_data <- data.frame(Time = 1:4, State = modelStates[1:4], 4)
                             
 library(forcats)
-ggplot(data = simulated_data, aes(x = Time, y = fct_rev(State), color = State)) +
+ggplot(data = simulated_data, aes(x = Time, y = fct_relevel(State, "NA", "25 Meal Blocks", "50 Meal Blocks", "100 Meal Blocks", "Campanile", "Gold", "Cardinal"), color = State)) +
   geom_point() +
   geom_line() + 
   labs(title = "State Evolution Over Time", x = "Time", y = "State") +
