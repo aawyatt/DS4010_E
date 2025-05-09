@@ -61,19 +61,19 @@ Meal plans are an integral part of almost every college student on the Iowa Stat
 
 Karen Rodekamp and Mary Schott from ISU Dining provided an Excel file containing one observation for each student who purchased a meal plan from Fall 2021 through Spring 2025. Each term was held in an individual Excel Sheet within the file. We combined each sheet into one .csv file and only kept fields we were interested in, dropping `Entry Status Description`. The following fields remained:
 
-`ID`: randomized ID representing a student at Iowa State. This value represents the same student across all terms. Example: **ID=10090081**
+`ID`: randomized ID representing a student at Iowa State. This value represents the same student across all terms. Example: ID=10090081
 
-`Meal.Plan.Description`: name of meal plan purchased by a student. Included values in the original data were **Cardinal, Gold, Campanile, Bronze, Cyclone, Silver, CyFlex, Flex Blocks, Meal Blocks, and RA Plans**. We dropped RA Plans and CyFlex due to low popularity and combined Flex Blocks and Meal Blocks for consistency as they are similar meal plan types. The remaining values are **Cardinal, Gold, Campanile, Bronze, Cyclone, Silver, 25 Meal Blocks, 50 Meal Blocks, and 100 Meal Blocks**.
+`Meal.Plan.Description`: name of meal plan purchased by a student. Included values in the original data were Cardinal, Gold, Campanile, Bronze, Cyclone, Silver, CyFlex, Flex Blocks, Meal Blocks, and RA Plans. We dropped RA Plans and CyFlex due to low popularity and combined Flex Blocks and Meal Blocks for consistency as they are similar meal plan types. The remaining values are Cardinal, Gold, Campanile, Bronze, Cyclone, Silver, 25 Meal Blocks, 50 Meal Blocks, and 100 Meal Blocks.
 
-`Term.Session.Description`: term which the meal plan was purchased in. Possible values: **Fall 2021, Spring 2022, Fall 2022, Spring 2023, Fall 2023, Spring 2024, Fall 2024, Spring 2025**.
+`Term.Session.Description`: term which the meal plan was purchased in. Possible values: Fall 2021, Spring 2022, Fall 2022, Spring 2023, Fall 2023, Spring 2024, Fall 2024, Spring 2025.
 
-`Room.Location.Description`: housing location of student purchasing meal plan. Possible values include on-campus residence halls, **Barton, Birch, Buchanan, Eaton, Elm, Freeman, Friley, Geoffrey, Helser, Larch, Linden, Lyon, Maple, Martin, Oak, Roberts, Wallace, Welch, Willow, and Wilson**; campus apartment housing, **Fredericksen Court, Schilletter Village, and University Village**; and **Off-Campus**.
+`Room.Location.Description`: housing location of student purchasing meal plan. Possible values include on-campus residence halls, Barton, Birch, Buchanan, Eaton, Elm, Freeman, Friley, Geoffrey, Helser, Larch, Linden, Lyon, Maple, Martin, Oak, Roberts, Wallace, Welch, Willow, and Wilson; campus apartment housing, Fredericksen Court, Schilletter Village, and University Village; and Off-Campus.
 
 We also received historical price data for each of the meal plans from ISU Dining. This file included each meal plan, the academic year (e.g., 2024-2025), the price for the entire year, and the price for each semester.
 
 We joined the yearly price information with the meal plan data to get our final data set, which has 59,246 total observations.
 
-`Price.Year`: the annual price of a meal plan, in dollars. Example: **\$3928**
+`Price.Year`: the annual price of a meal plan, in dollars. Example: \$3928
 
 ```{r, echo=FALSE}
 library(knitr)
