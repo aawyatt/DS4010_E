@@ -351,6 +351,8 @@ Overall, Shiny was an excellent choice for this project, balancing power, intera
 
 ## Learning
 
+This section summarizes the key takeaways from the project, including insights gained from the data analysis, dashboard development process, and skills acquired over the course of the semester.
+
 ### Dashboard Insights
 The dashboard provides several insights into the meal plan purchasing behavior of Iowa State University students. The most popular meal plans over the years provided are Cardinal and Gold, with Campanile actually surpassing Gold in the more recent terms. The data also shows that the number of meal plans has been gradually increasing over time and is predicted to continue this trend. Additionally, the dashboard provides a simulation of how students may transition between meal plans over time, which can help ISU Dining understand how to better market their meal plans to students. From our analysis, we can see that Campanile has the best retention rate of the more popular meal plans while the Block meal plans outperform **all** other meals plans.
 
