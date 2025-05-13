@@ -75,7 +75,7 @@ We joined the yearly price information with the meal plan data to get our final 
 
 `Price.Year`: the annual price of a meal plan, in dollars. Example: \$3928
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
 library(kableExtra)
 library(ggplot2)
@@ -176,7 +176,7 @@ g
 Poisson Regressions can be used when a response variable is a count with no clear maximum. The response variable, in this context, $Y_i$, the number of meal plans purchased, is assumed to follow a Poisson distribution: $Y_i \sim Poisson(\mu_i)$ where the expected count of $Y_i$ is $E(Y_i)=\mu_i$.Poisson Models also assume that the observations are independent of one another and the mean of the Poisson variable is equal to its variance.
 
 Model selection was used to choose the most important explanatory variables when predicting meal plan count. The explanatory variables selected are the Meal Plan, Semester, Year, and the number of undergraduate students. The final model is as follows: 
-$log(\hat{MealPlanCount})= \hat{\beta_0} + \hat{\beta_1}MealPlan + \hat{\beta_2}Semester+\hat{\beta_3}Year+\hat{\beta_4}UndergradCount$
+$log(\mu_i)= \beta_0 + \beta_1MealPlan + \beta_2Semester+\beta_3Year+\beta_4UndergradCount$
 
 The model is built in R using the `glm()` function. `data.clean` is the dining data with NA values omitted.
 
